@@ -3,65 +3,86 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image
-from rembg import remove, new_session
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "--source",
-    default="/Users/christianblasacosta/Huellas_Studio_Assets/characters/duo/Duo_Master_v1.png"
+
+DEFAULT_SOURCE = (
+    Path.home()
+    / "Huellas_Studio_Assets/characters/duo/Duo_Master_v1.png"
 )
-args = parser.parse_args()
 
-source = Path(args.source).expanduser()
 
-if not source.is_file():
-    raise FileNotFoundError(source)
+def extract_duo_cutouts(source, output_dir, model="u2net"):
+    try:
+        from rembg import new_session, remove
+    except ImportError as error:
+        raise RuntimeError(
+            "Falta rembg. Instala las dependencias con: "
+            "pip install -e '.[background-removal]'"
+        ) from error
 
-output = source.parent.parent / "cutouts"
-output.mkdir(parents=True, exist_ok=True)
+    source = Path(source).expanduser()
+    output = Path(output_dir).expanduser()
+    if not source.is_file():
+        raise FileNotFoundError(source)
+    output.mkdir(parents=True, exist_ok=True)
 
-print("Cargando modelo de segmentación...")
+    print("Cargando modelo de segmentación...")
+    session = new_session(model)
+    with Image.open(source) as original:
+        result = remove(
+            original.convert("RGBA"),
+            session=session
+        ).convert("RGBA")
 
-session = new_session("u2net")
+    result.save(output / "duo_master_rgba.png")
+    alpha = np.asarray(result.getchannel("A"))
+    occupancy = (alpha > 32).sum(axis=0)
+    width, height = result.size
 
-with Image.open(source) as original:
-    original = original.convert("RGBA")
-    result = remove(original, session=session).convert("RGBA")
+    start = int(width * 0.40)
+    end = int(width * 0.75)
+    if end <= start:
+        raise ValueError("La imagen es demasiado estrecha para separar personajes")
 
-result.save(output / "duo_master_rgba.png")
+    split = start + int(np.argmin(occupancy[start:end]))
+    print("Resolución:", width, height)
+    print("Separación detectada:", split)
 
-alpha = np.asarray(result.getchannel("A"))
-occupancy = (alpha > 32).sum(axis=0)
+    outputs = []
+    for name, bounds in (
+        ("dog_master_rgba", (0, 0, split, height)),
+        ("cat_master_rgba", (split, 0, width, height))
+    ):
+        crop = result.crop(bounds)
+        bbox = crop.getchannel("A").point(
+            lambda value: 255 if value > 8 else 0
+        ).getbbox()
+        if bbox is None:
+            raise RuntimeError(f"No se detectó el personaje {name}")
+        crop = crop.crop(bbox)
+        destination = output / f"{name}.png"
+        crop.save(destination)
+        outputs.append(destination)
+        print(f"[OK] {name}: {crop.width}x{crop.height}")
 
-width, height = result.size
+    print("\nEXTRACCIÓN COMPLETADA")
+    print("Directorio:", output)
+    return outputs
 
-# Buscar el espacio entre ambos personajes.
-start = int(width * 0.48)
-end = int(width * 0.70)
 
-split = start + int(np.argmin(occupancy[start:end]))
-
-print("Resolución:", width, height)
-print("Separación detectada:", split)
-
-def save_character(name, bounds):
-    crop = result.crop(bounds)
-
-    bbox = crop.getchannel("A").getbbox()
-
-    if bbox is None:
-        raise RuntimeError(f"No se detectó el personaje {name}")
-
-    crop = crop.crop(bbox)
-    crop.save(output / f"{name}_cutout.png")
-
-    print(
-        f"[OK] {name}: "
-        f"{crop.width}x{crop.height}"
+def main():
+    parser = argparse.ArgumentParser(
+        description="Split the duo master image into dog and cat cutouts"
     )
+    parser.add_argument("--source", default=str(DEFAULT_SOURCE))
+    parser.add_argument(
+        "--output-dir",
+        default=str(Path.home() / "Huellas_Studio_Assets/characters/cutouts_v2")
+    )
+    parser.add_argument("--model", default="u2net")
+    args = parser.parse_args()
+    extract_duo_cutouts(args.source, args.output_dir, args.model)
 
-save_character("dog", (0, 0, split, height))
-save_character("cat", (split, 0, width, height))
 
-print("\nEXTRACCIÓN COMPLETADA")
-print("Directorio:", output)
+if __name__ == "__main__":
+    main()
