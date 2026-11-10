@@ -15,7 +15,8 @@ from huellas_engine.scene_composer import SCENE_LAYOUTS, load_character
 from huellas_engine.scene_engine import validate_episode
 from huellas_engine.video_engine import build_animatic_command
 from huellas_engine.subtitle_engine import (
-    build_subtitle_timeline, format_srt_timestamp, render_srt, split_subtitle_text
+    build_subtitle_timeline, build_subtitle_timeline_from_audio,
+    format_srt_timestamp, render_srt, split_subtitle_text
 )
 
 
@@ -328,3 +329,63 @@ def test_kokoro_splits_long_text_without_losing_words():
     assert len(chunks) > 2
     assert " ".join(chunks).replace("  ", " ") == source
     assert all(len(chunk) <= 80 for chunk in chunks)
+
+
+
+def test_subtitles_use_measured_audio_timeline_when_available(tmp_path):
+    episode_dir = tmp_path / "episode"
+    (episode_dir / "locales").mkdir(parents=True)
+    (episode_dir / "audio" / "es").mkdir(parents=True)
+    (episode_dir / "episode.json").write_text(
+        json.dumps({
+            "episode_id": "episode_test",
+            "supported_languages": ["es"],
+            "scenes": [{
+                "scene_id": "SC001",
+                "duration_seconds": 5,
+                "location": "sala",
+                "characters": ["dog"],
+                "action": "habla",
+                "visual_prompt": "perro"
+            }]
+        }),
+        encoding="utf-8"
+    )
+    locale = {
+        "language": "es",
+        "episode": {"title": "Prueba", "description": "Prueba"},
+        "scenes": {
+            "SC001": {
+                "title": "Prueba",
+                "narration": "Hola mundo.",
+                "dialogue": []
+            }
+        }
+    }
+    (episode_dir / "locales" / "es.json").write_text(
+        json.dumps(locale), encoding="utf-8"
+    )
+    (episode_dir / "audio" / "es" / "audio_timeline.json").write_text(
+        json.dumps({
+            "language": "es",
+            "duration_seconds": 5,
+            "cues": [{
+                "scene_id": "SC001",
+                "start": 1.0,
+                "end": 3.0,
+                "text": "Hola mundo desde Huellas Studio"
+            }]
+        }),
+        encoding="utf-8"
+    )
+
+    timeline = build_subtitle_timeline_from_audio(
+        episode_dir, "es", max_chars=10, max_lines=1
+    )
+    assert timeline["timing_basis"] == "measured_tts_clip_durations"
+    assert timeline["cues"][0]["start"] == 1.0
+    assert timeline["cues"][-1]["end"] == 3.0
+    assert all(
+        timeline["cues"][i]["end"] <= timeline["cues"][i + 1]["start"]
+        for i in range(len(timeline["cues"]) - 1)
+    )
