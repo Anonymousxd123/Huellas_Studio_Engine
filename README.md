@@ -118,13 +118,34 @@ Preparar el manifiesto de trabajos de voz sin generar audio:
 python scripts/build_voice_manifest.py --episode episode_001
 ```
 
-Generar audiciones cortas para comparar las voces locales con las referencias de Daniela y Akira:
+### Configurar las voces originales de ElevenLabs
+
+La narración oficial usa los Voice IDs originales:
+
+- Akira (inglés, masculino): `aHYS10erl9IGphnXtDeD`.
+- Daniela (español): `8tm9IYjg8ybDoxe8w6Rk`.
+
+El archivo `config/tts/production_profiles.json` guarda los Voice IDs y el modelo `eleven_multilingual_v2`. La API Key nunca se guarda en el repositorio.
+
+Crea tu archivo local `.env` a partir de la plantilla:
+
+```bash
+cp .env.example .env
+```
+
+Edita `.env` y configura `ELEVENLABS_API_KEY` con tu clave privada de ElevenLabs. El archivo `.env` está excluido de Git. No pegues la clave en el chat ni la subas a GitHub.
+
+Las voces de narración se generan con ElevenLabs usando sus ajustes de voz guardados: el motor no envía sobrescrituras de estabilidad, similitud ni estilo. Los diálogos del perro y el gato siguen utilizando voces Kokoro locales.
+
+**Aviso de coste:** cada generación de narración llama a ElevenLabs y consume créditos/cuota de tu cuenta. La caché evita volver a pagar por clips cuyo texto, voz y modelo no hayan cambiado. `--force` vuelve a generarlos y consume créditos nuevamente.
+
+Generar audiciones cortas con las voces originales:
 
 ```bash
 .venv/bin/python scripts/preview_voice_profiles.py --episode episode_001
 ```
 
-Las audiciones se guardan en `projects/<episode>/audio/voice_previews/`. El perfil inicial usa `ef_dora` para Daniela y `af_bella` para Akira, con `af_heart` como alternativa inglesa. La voz femenina española `ef_dora` es la única voz femenina española del paquete oficial base de Kokoro; por eso debe validarse escuchando el resultado antes de fijarla como voz definitiva.
+Las audiciones se guardan en `projects/<episode>/audio/voice_previews/`. Esta prueba consume créditos de ElevenLabs.
 
 Generar narración y diálogos reales en español e inglés:
 
@@ -132,7 +153,7 @@ Generar narración y diálogos reales en español e inglés:
 .venv/bin/python scripts/generate_voice.py --episode episode_001
 ```
 
-El generador reutiliza WAV existentes. Añade `--force` para regenerarlos. En Apple Silicon, el dispositivo se detecta automáticamente y se utiliza MPS cuando está disponible; también puedes indicar `--device cpu`.
+El generador reutiliza WAV existentes cuando coinciden texto, proveedor, modelo y Voice ID. Añade `--force` para regenerarlos. En Apple Silicon, Kokoro detecta MPS automáticamente para los diálogos locales; también puedes indicar `--device cpu`.
 
 Para ejecutar el pipeline de previsualización con voz real:
 
@@ -140,9 +161,9 @@ Para ejecutar el pipeline de previsualización con voz real:
 .venv/bin/python scripts/produce_episode_preview.py --episode episode_001 --with-voice
 ```
 
-La mezcla final se escribe en `audio/<language>/final_mix.wav` y se incorpora al MP4. Si una escena no tiene tiempo suficiente para su narración y diálogos, la síntesis falla de forma explícita: no se recorta la voz automáticamente.
+La mezcla final se escribe en `audio/<language>/final_mix.wav`, la línea de tiempo real en `audio/<language>/audio_timeline.json` y ambas se utilizan en el MP4. Si una escena no tiene tiempo suficiente para su narración y diálogos, la síntesis falla explícitamente: no se recorta la voz automáticamente.
 
-Los perfiles editables están en `config/tts/voice_profiles.json`. Los audios de referencia de ElevenLabs sirven como guía auditiva; Kokoro usa voces predefinidas y no clona ni replica exactamente a Daniela o Akira.
+Los perfiles de producción están en `config/tts/production_profiles.json`; las voces locales de personajes, en `config/tts/voice_profiles.json`.
 
 Renderizar un animatic MP4 con las composiciones estáticas y subtítulos:
 
@@ -173,4 +194,4 @@ python scripts/validate_bilingual.py --episode episode_001
 
 ## Alcance actual
 
-La etapa automatizada cubre preparación del episodio, validación bilingüe, generación de fondos, composición **estática** de las ocho escenas, síntesis local de narración y diálogos con Kokoro, mezcla de audio y exportación de animatics con subtítulos. La composición usa recortes maestros, por lo que no sustituye la animación de personajes. La sincronización labial, animación, mezcla musical/efectos, control de calidad final y publicación siguen siendo etapas separadas.
+La etapa automatizada cubre preparación del episodio, validación bilingüe, generación de fondos, composición **estática** de las ocho escenas, narración con las voces originales de ElevenLabs (Akira y Daniela), diálogos locales de personajes con Kokoro, mezcla de audio y exportación de animatics con subtítulos. La composición usa recortes maestros, por lo que no sustituye la animación de personajes. La sincronización labial, animación, mezcla musical/efectos, control de calidad final y publicación siguen siendo etapas separadas.
