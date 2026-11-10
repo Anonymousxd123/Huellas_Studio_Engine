@@ -1,0 +1,32 @@
+{
+  "profile": "/Users/christianblasacosta/Huellas_Studio_Engine/config/profiles/duo.json",
+  "reference": "/Users/christianblasacosta/Huellas_Studio_Assets/characters/duo/Duo_Master_v1.png",
+  "count": 3,
+  "base_seed": 2177522523,
+  "results": [
+    {
+      "index": 1,
+      "seed": 2177522523,
+      "prompt_id": "68d41e6f-e622-46ae-8e32-de87b3b02b8d",
+      "images": [
+        "/Users/christianblasacosta/Huellas_Studio_Engine/projects/duo/images/duo_batch_001_00001_.png"
+      ]
+    },
+    {
+      "index": 2,
+      "seed": 2177522524,
+      "prompt_id": "71c6ce66-19f1-4c94-b1e0-a6db181ac1bd",
+      "images": [
+        "/Users/christianblasacosta/Huellas_Studio_Engine/projects/duo/images/duo_batch_002_00001_.png"
+      ]
+    },
+    {
+      "index": 3,
+      "seed": 2177522525,
+      "prompt_id": "2f02335d-5050-4dd1-90a2-00606522d338",
+      "images": [
+        "/Users/christianblasacosta/Huellas_Studio_Engine/projects/duo/images/duo_batch_003_00001_.png"
+      ]
+    }
+  ]
+}

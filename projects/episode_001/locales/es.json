@@ -1,0 +1,125 @@
+{
+  "language": "es",
+  "episode": {
+    "title": "6 cosas que tu perro y tu gato hacen y tú interpretas MAL",
+    "description": "Descubre seis comportamientos sorprendentes de perros y gatos y aprende a entender mejor a tus mascotas."
+  },
+  "scenes": {
+    "SC001": {
+      "title": "El misterio de las mascotas",
+      "narration": "¿Tu gato te sigue al baño? ¿Tu perro inclina la cabeza cuando le hablas? Hoy descubriremos seis comportamientos que probablemente has interpretado mal.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "Yo solamente intento entender a los humanos."
+        },
+        {
+          "character": "cat",
+          "text": "Empieza por entender por qué necesitan cerrar la puerta."
+        }
+      ]
+    },
+    "SC002": {
+      "title": "El gato que te sigue al baño",
+      "narration": "Los gatos pueden seguirnos porque buscan compañía, atención, comida o simplemente sienten curiosidad. También aprenden nuestras rutinas y aprovechan los momentos en los que estamos quietos para interactuar.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "¡Eso es amistad! Yo también sigo a mi humano."
+        },
+        {
+          "character": "cat",
+          "text": "Tú lo sigues porque escuchaste abrir una bolsa de comida."
+        }
+      ]
+    },
+    "SC003": {
+      "title": "El perro que inclina la cabeza",
+      "narration": "Los perros pueden inclinar la cabeza al escuchar sonidos o voces. Una explicación posible es que estén intentando procesar mejor la información auditiva o ajustar su perspectiva visual. No existe una explicación única para todos los casos.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "Es que hablas veinte minutos y todavía no dices paseo."
+        },
+        {
+          "character": "cat",
+          "text": "Yo inclino la cabeza cuando escucho abrir una lata."
+        }
+      ]
+    },
+    "SC004": {
+      "title": "El gato que tira todo al suelo",
+      "narration": "Los gatos tienen instintos de exploración y caza. Golpear objetos les permite investigar cómo se mueven. También pueden hacerlo por aburrimiento o porque han aprendido que tirar algo provoca atención.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "¡Eso es vandalismo!"
+        },
+        {
+          "character": "cat",
+          "text": "No. Es investigación científica."
+        }
+      ]
+    },
+    "SC005": {
+      "title": "El perro que te recibe con un juguete",
+      "narration": "Muchos perros reciben a sus humanos con sus juguetes favoritos. Puede ser una expresión de entusiasmo, una invitación al juego o una forma de compartir un momento de interacción.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "¡Has vuelto! ¡Tengo algo para ti!"
+        },
+        {
+          "character": "cat",
+          "text": "¿Y dónde está mi regalo?"
+        },
+        {
+          "character": "dog",
+          "text": "Tú tienes una caja entera de juguetes y juegas con una factura."
+        }
+      ]
+    },
+    "SC006": {
+      "title": "El gato que hace galletas",
+      "narration": "Los gatitos realizan el movimiento de amasado durante la lactancia para estimular la salida de leche. Muchos gatos conservan este comportamiento al hacerse adultos. Puede estar relacionado con comodidad, relajación y comportamientos instintivos.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "¿Entonces está preparando galletas?"
+        },
+        {
+          "character": "cat",
+          "text": "Sí. Y no pienso compartirlas contigo."
+        }
+      ]
+    },
+    "SC007": {
+      "title": "El parpadeo lento del gato",
+      "narration": "Los gatos pueden comunicarse mediante el parpadeo lento. La investigación ha encontrado respuestas positivas a esta señal durante las interacciones entre gatos y humanos. Puedes probarlo mirando tranquilamente a tu gato y cerrando despacio los ojos.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "¡Yo también puedo hacerlo!"
+        },
+        {
+          "character": "cat",
+          "text": "Eso no cuenta. Te has quedado dormido."
+        }
+      ]
+    },
+    "SC008": {
+      "title": "Conclusión y despedida",
+      "narration": "Ahora sabes que muchos comportamientos de nuestras mascotas tienen explicaciones interesantes. Cada animal tiene su personalidad. Cuanto más aprendemos sobre ellos, mejor podemos entenderlos y cuidarlos. Cuéntanos cuál de estos comportamientos hace tu mascota. Esto fue Ah Mira Ese Dato. ¡Nos vemos en el próximo episodio!",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "Yo solamente quiero pasear, jugar y comer."
+        },
+        {
+          "character": "cat",
+          "text": "Y yo quiero que respeten mi privacidad."
+        }
+      ]
+    }
+  }
+}

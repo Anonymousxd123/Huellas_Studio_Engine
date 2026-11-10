@@ -1,0 +1,22 @@
+{
+  "episode_id": "episode_001",
+  "scene_id": "SC001",
+  "prompt_id": "b7a28ed7-d887-4e3b-b039-af0b371c86b6",
+  "seed": 20261109,
+  "reference_original": "/Users/christianblasacosta/Huellas_Studio_Assets/characters/duo/Duo_Master_v1.png",
+  "reference_prepared": "/Users/christianblasacosta/Huellas_Studio_Engine/projects/episode_001/metadata/SC001_reference_1024x576.png",
+  "reference_uploaded": "SC001_reference_1024x576.png",
+  "latent_mode": "reference",
+  "denoise": 0.25,
+  "width": 1024,
+  "height": 576,
+  "steps": 30,
+  "cfg": 5.0,
+  "ip_weight": 0.8,
+  "prompt": "Premium 2D animated family cartoon,\npolished professional animation,\nclean dark outlines,\nbeautiful expressive faces,\nsoft cinematic cel shading,\nwarm harmonious colors,\nconsistent character proportions,\nhigh quality animated film illustration,\ndetailed cozy environments,\nlandscape 16:9 composition,\nsingle coherent still frame,\nno photorealism, no 3D.\n\n\nCHARACTER IDENTITY:\n\nEXACTLY TWO MAIN CHARACTERS:\n\nCHARACTER 1 - DOG:\nGolden retriever, golden honey fur,\ncream muzzle and chest, floppy ears,\nwarm DARK BROWN eyes,\nblue collar and round GOLD medallion.\n\nCHARACTER 2 - CAT:\nGray tabby cat, gray striped fur,\nwhite chest, large GREEN eyes,\npink nose and pointed ears.\n\nBoth must match the supplied reference image.\nNever merge, replace or redesign them.\n\n\nSCENE:\n\nA cozy home hallway with an open bathroom doorway.\nThe bathroom is clearly recognizable in the background.\nWarm welcoming interior, cinematic animated environment.\n\n\nACTION:\n\nThe gray tabby cat is walking toward the open bathroom\ndoorway, looking back with a curious expression.\nThe golden retriever is sitting in the hallway,\nwatching the cat with a surprised and curious expression.\nThe human owner remains OFF CAMERA.\n\n\nCOMPOSITION:\n\nEXACTLY TWO ANIMALS, BOTH FULLY VISIBLE.\n\nDOG ON THE LEFT SIDE OF THE IMAGE.\nCAT ON THE RIGHT SIDE OF THE IMAGE.\n\nBoth characters must be visible simultaneously,\nfrom the top of their ears to their paws and tails.\nBoth have clear silhouettes and distinct bodies.\nKeep both characters at similar visual scale.\nLeave safe margins around both characters.\n\nSingle wide establishing shot.\nEye-level camera.\nNo closeups, no split screen, no sequence of shots.\n\n\nSTRICT CHARACTER CONSISTENCY:\nUse the supplied reference image as the identity source.\nPreserve exact fur colors, eye colors, facial features,\ncollars, accessories and body proportions.\n\nDo not omit either main character.\nNo written text inside the image.",
+  "negative_prompt": "one animal, single animal, only one character,\ndog alone, cat alone, missing dog, missing cat,\nmissing second character, invisible cat, invisible dog,\nextra animals, duplicate dogs, duplicate cats,\nmerged characters, overlapping bodies,\ncropped characters, cropped head, cropped paws,\ncharacter outside frame, cut off tail,\nwrong fur color, wrong eye color,\ngreen dog eyes, blue dog eyes,\nbrown cat eyes, missing blue collar,\nmissing gold medallion, different character design,\ndeformed anatomy, extra legs, extra paws,\nextra limbs, photorealistic, photography,\n3D render, blurry, low quality,\ntext, subtitles, watermark, logo.",
+  "images": [
+    "/Users/christianblasacosta/Huellas_Studio_Engine/projects/episode_001/scenes/SC001/images/huellas_SC001_20261109_00002_.png"
+  ],
+  "status": "completed"
+}

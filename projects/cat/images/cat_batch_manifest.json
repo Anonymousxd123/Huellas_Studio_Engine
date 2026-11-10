@@ -1,0 +1,32 @@
+{
+  "profile": "/Users/christianblasacosta/Huellas_Studio_Engine/config/profiles/cat.json",
+  "reference": "/Users/christianblasacosta/Huellas_Studio_Assets/characters/cat/Cat_Master_v1.png",
+  "count": 3,
+  "base_seed": 3797030750,
+  "results": [
+    {
+      "index": 1,
+      "seed": 3797030750,
+      "prompt_id": "21a54cf7-81e4-4863-ba95-8fdc352e481e",
+      "images": [
+        "/Users/christianblasacosta/Huellas_Studio_Engine/projects/cat/images/cat_batch_001_00001_.png"
+      ]
+    },
+    {
+      "index": 2,
+      "seed": 3797030751,
+      "prompt_id": "d32ed40f-b847-43b3-a321-6c440c2fb916",
+      "images": [
+        "/Users/christianblasacosta/Huellas_Studio_Engine/projects/cat/images/cat_batch_002_00001_.png"
+      ]
+    },
+    {
+      "index": 3,
+      "seed": 3797030752,
+      "prompt_id": "e28f7c09-9890-45d0-9c40-6105c73076d7",
+      "images": [
+        "/Users/christianblasacosta/Huellas_Studio_Engine/projects/cat/images/cat_batch_003_00001_.png"
+      ]
+    }
+  ]
+}

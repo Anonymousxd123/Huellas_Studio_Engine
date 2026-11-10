@@ -1,0 +1,276 @@
+{
+  "schema_version": 1,
+  "episode_id": "episode_001",
+  "title": "6 cosas que tu perro y tu gato hacen y tú interpretas MAL",
+  "channel": "Ah Mira Ese Dato",
+  "language": "es",
+  "target_duration_seconds": 480,
+  "visual_style": "2d_cartoon",
+  "resolution": "1920x1080",
+  "fps": 24,
+  "characters": {
+    "dog": {
+      "name": "Golden Retriever",
+      "reference": "~/Huellas_Studio_Assets/characters/dog/Dog_Master_v1.png",
+      "profile": "dog"
+    },
+    "cat": {
+      "name": "Gato atigrado",
+      "reference": "~/Huellas_Studio_Assets/characters/cat/Cat_Master_v1.png",
+      "profile": "cat"
+    },
+    "duo": {
+      "reference": "~/Huellas_Studio_Assets/characters/duo/Duo_Master_v1.png",
+      "profile": "duo"
+    }
+  },
+  "scenes": [
+    {
+      "scene_id": "SC001",
+      "title": "El misterio de las mascotas",
+      "duration_seconds": 35,
+      "location": "Casa, pasillo y baño",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El gato sigue al humano al baño mientras el perro observa con curiosidad.",
+      "narration": "¿Tu gato te sigue al baño? ¿Tu perro inclina la cabeza cuando le hablas? Hoy descubriremos seis comportamientos que probablemente has interpretado mal.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "Yo solamente intento entender a los humanos."
+        },
+        {
+          "character": "cat",
+          "text": "Empieza por entender por qué necesitan cerrar la puerta."
+        }
+      ],
+      "visual_prompt": "Two consistent 2D cartoon characters, golden retriever with blue collar and gold medallion, gray tabby cat with green eyes and white chest, funny bathroom doorway situation, expressive faces, clean polished 2D animation style.",
+      "shot": "Wide shot followed by character closeups",
+      "animation_complexity": "low",
+      "assets_required": [
+        "dog",
+        "cat",
+        "bathroom_background"
+      ]
+    },
+    {
+      "scene_id": "SC002",
+      "title": "El gato que te sigue al baño",
+      "duration_seconds": 65,
+      "location": "Interior de casa y baño",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El gato sigue al humano por distintas habitaciones. El perro lo observa.",
+      "narration": "Los gatos pueden seguirnos porque buscan compañía, atención, comida o simplemente sienten curiosidad. También aprenden nuestras rutinas y aprovechan los momentos en los que estamos quietos para interactuar.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "¡Eso es amistad! Yo también sigo a mi humano."
+        },
+        {
+          "character": "cat",
+          "text": "Tú lo sigues porque escuchaste abrir una bolsa de comida."
+        }
+      ],
+      "visual_prompt": "Gray tabby cartoon cat walking confidently behind its human toward a bathroom, golden retriever watching from the doorway, cozy 2D cartoon house, consistent character identity.",
+      "shot": "Tracking shot and medium shots",
+      "animation_complexity": "medium",
+      "assets_required": [
+        "dog",
+        "cat",
+        "hallway_background",
+        "bathroom_background"
+      ]
+    },
+    {
+      "scene_id": "SC003",
+      "title": "El perro que inclina la cabeza",
+      "duration_seconds": 65,
+      "location": "Salón",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El perro inclina la cabeza mientras escucha. El gato intenta imitarlo.",
+      "narration": "Los perros pueden inclinar la cabeza al escuchar sonidos o voces. Una explicación posible es que estén intentando procesar mejor la información auditiva o ajustar su perspectiva visual. No existe una explicación única para todos los casos.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "Es que hablas veinte minutos y todavía no dices paseo."
+        },
+        {
+          "character": "cat",
+          "text": "Yo inclino la cabeza cuando escucho abrir una lata."
+        }
+      ],
+      "visual_prompt": "Cute golden retriever cartoon character tilting head with curious brown eyes, gray tabby cat imitating the pose, expressive 2D animation, cozy living room.",
+      "shot": "Closeup on dog, reaction shot on cat",
+      "animation_complexity": "low",
+      "assets_required": [
+        "dog",
+        "cat",
+        "living_room_background"
+      ]
+    },
+    {
+      "scene_id": "SC004",
+      "title": "El gato que tira todo al suelo",
+      "duration_seconds": 65,
+      "location": "Salón, mesa",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El gato empuja lentamente un vaso de una mesa mientras el perro intenta detenerlo.",
+      "narration": "Los gatos tienen instintos de exploración y caza. Golpear objetos les permite investigar cómo se mueven. También pueden hacerlo por aburrimiento o porque han aprendido que tirar algo provoca atención.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "¡Eso es vandalismo!"
+        },
+        {
+          "character": "cat",
+          "text": "No. Es investigación científica."
+        }
+      ],
+      "visual_prompt": "Gray tabby cartoon cat pushing a drinking glass near the edge of a coffee table, golden retriever reacting with surprise, humorous polished 2D cartoon animation.",
+      "shot": "Closeup on paw, slow reaction, wide shot",
+      "animation_complexity": "medium",
+      "assets_required": [
+        "dog",
+        "cat",
+        "living_room_background",
+        "glass_prop"
+      ]
+    },
+    {
+      "scene_id": "SC005",
+      "title": "El perro que te recibe con un juguete",
+      "duration_seconds": 65,
+      "location": "Entrada de casa",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El perro recibe a su humano con un juguete en la boca.",
+      "narration": "Muchos perros reciben a sus humanos con sus juguetes favoritos. Puede ser una expresión de entusiasmo, una invitación al juego o una forma de compartir un momento de interacción.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "¡Has vuelto! ¡Tengo algo para ti!"
+        },
+        {
+          "character": "cat",
+          "text": "¿Y dónde está mi regalo?"
+        },
+        {
+          "character": "dog",
+          "text": "Tú tienes una caja entera de juguetes y juegas con una factura."
+        }
+      ],
+      "visual_prompt": "Happy golden retriever cartoon running toward the entrance holding a colorful toy in its mouth, gray tabby cat watching sarcastically, cozy 2D cartoon house.",
+      "shot": "Wide entrance shot and character closeups",
+      "animation_complexity": "medium",
+      "assets_required": [
+        "dog",
+        "cat",
+        "entrance_background",
+        "dog_toy"
+      ]
+    },
+    {
+      "scene_id": "SC006",
+      "title": "El gato que hace galletas",
+      "duration_seconds": 65,
+      "location": "Salón, sofá",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El gato amasa una manta con sus patas delanteras mientras el perro observa.",
+      "narration": "Los gatitos realizan el movimiento de amasado durante la lactancia para estimular la salida de leche. Muchos gatos conservan este comportamiento al hacerse adultos. Puede estar relacionado con comodidad, relajación y comportamientos instintivos.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "¿Entonces está preparando galletas?"
+        },
+        {
+          "character": "cat",
+          "text": "Sí. Y no pienso compartirlas contigo."
+        }
+      ],
+      "visual_prompt": "Gray tabby cartoon cat comfortably kneading a soft blanket on a sofa, golden retriever watching with a puzzled expression, warm cozy 2D animation.",
+      "shot": "Closeup on cat paws and reaction shot",
+      "animation_complexity": "medium",
+      "assets_required": [
+        "dog",
+        "cat",
+        "sofa_background",
+        "blanket_prop"
+      ]
+    },
+    {
+      "scene_id": "SC007",
+      "title": "El parpadeo lento del gato",
+      "duration_seconds": 65,
+      "location": "Salón",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El gato mira al perro y cierra lentamente los ojos. El perro intenta imitarlo.",
+      "narration": "Los gatos pueden comunicarse mediante el parpadeo lento. La investigación ha encontrado respuestas positivas a esta señal durante las interacciones entre gatos y humanos. Puedes probarlo mirando tranquilamente a tu gato y cerrando despacio los ojos.",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "¡Yo también puedo hacerlo!"
+        },
+        {
+          "character": "cat",
+          "text": "Eso no cuenta. Te has quedado dormido."
+        }
+      ],
+      "visual_prompt": "Closeup of expressive gray tabby cat with green eyes slowly blinking, golden retriever cartoon character closing eyes and falling asleep, gentle humorous 2D animation.",
+      "shot": "Extreme closeup, reaction shot",
+      "animation_complexity": "low",
+      "assets_required": [
+        "dog",
+        "cat",
+        "living_room_background"
+      ]
+    },
+    {
+      "scene_id": "SC008",
+      "title": "Conclusión y despedida",
+      "duration_seconds": 55,
+      "location": "Salón",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El perro y el gato se sientan juntos mirando a cámara.",
+      "narration": "Ahora sabes que muchos comportamientos de nuestras mascotas tienen explicaciones interesantes. Cada animal tiene su personalidad. Cuanto más aprendemos sobre ellos, mejor podemos entenderlos y cuidarlos. Cuéntanos cuál de estos comportamientos hace tu mascota. Esto fue Ah Mira Ese Dato. ¡Nos vemos en el próximo episodio!",
+      "dialogue": [
+        {
+          "character": "dog",
+          "text": "Yo solamente quiero pasear, jugar y comer."
+        },
+        {
+          "character": "cat",
+          "text": "Y yo quiero que respeten mi privacidad."
+        }
+      ],
+      "visual_prompt": "Golden retriever and gray tabby cat sitting side by side looking directly at the camera, warm friendly expressions, polished consistent 2D cartoon characters, cozy living room.",
+      "shot": "Medium two-shot followed by final wide shot",
+      "animation_complexity": "low",
+      "assets_required": [
+        "duo",
+        "living_room_background"
+      ]
+    }
+  ]
+}

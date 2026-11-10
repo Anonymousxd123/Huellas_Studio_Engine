@@ -1,0 +1,121 @@
+{
+  "7": {
+    "inputs": {
+      "filename_prefix": "huellas_bg_SC001_20261109",
+      "images": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "10": {
+    "inputs": {
+      "text": "Premium 2D animated family cartoon background,\nprofessional animation art direction,\nclean polished illustration,\nsoft cinematic cel shading,\nwarm harmonious colors,\nbeautiful environmental storytelling,\nconsistent animated film aesthetic,\ndetailed cozy interior,\nwide landscape composition,\nnatural perspective,\nsoft ambient lighting,\nno photorealism, no 3D.\n\n\nENVIRONMENT:\n\nA cozy family home hallway connected to an open bathroom.\nClearly visible bathroom doorway in the background,\nwarm wooden flooring, soft cream walls,\nsubtle bathroom details, welcoming domestic atmosphere.\nKeep the foreground and lower central area visually open.\n\n\nLOCATION FROM EPISODE:\nCasa, pasillo y baño\n\nCOMPOSITION:\nSingle wide establishing background.\nLandscape 16:9.\nEye-level camera.\nNo animals or people.\nNo characters.\nKeep important environmental details visible.\nLeave clear foreground space for character compositing.\nNo written text.",
+      "clip": [
+        "15",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Positive Prompt",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "11": {
+    "inputs": {
+      "text": "dog, cat, puppy, kitten, animals, pets,\npeople, humans, person, character,\nanimal silhouettes, animal shadows,\nfaces, eyes, paws, tails,\nphotorealism, photography, 3D render,\nblurry, low quality, distorted perspective,\ntext, subtitles, watermark, logo.",
+      "clip": [
+        "15",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Negative Prompt",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "12": {
+    "inputs": {
+      "seed": 20261109,
+      "steps": 28,
+      "cfg": 5.0,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 1.0,
+      "model": [
+        "15",
+        0
+      ],
+      "positive": [
+        "10",
+        0
+      ],
+      "negative": [
+        "11",
+        0
+      ],
+      "latent_image": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "13": {
+    "inputs": {
+      "width": 1024,
+      "height": 576,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "14": {
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "15",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "15": {
+    "inputs": {
+      "ckpt_name": "sd_xl_base_1.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  }
+}

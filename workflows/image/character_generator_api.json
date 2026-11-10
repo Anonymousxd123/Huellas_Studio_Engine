@@ -1,0 +1,169 @@
+{
+  "7": {
+    "inputs": {
+      "filename_prefix": "sdxl_simple",
+      "images": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "10": {
+    "inputs": {
+      "text": "A golden retriever and a gray tabby cat together in a cozy living room, matching the exact identity and style of the reference image. The golden retriever has golden honey fur, cream chest, floppy ears, warm brown eyes, blue collar with one round gold medallion. The cat has gray striped fur, white chest, green eyes and pink nose. Clean 2D cartoon illustration, polished animated educational series style, simple clean outlines, soft cel shading, warm cozy lighting, consistent character design, friendly and charming composition.",
+      "clip": [
+        "15",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Positive Prompt",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "11": {
+    "inputs": {
+      "text": "photorealistic, realistic painting, painterly, semi-realistic, 3d render, extra animals, duplicate dog, duplicate cat, deformed anatomy, extra legs, extra paws, blurry, text, watermark, logo",
+      "clip": [
+        "15",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Negative Prompt",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "12": {
+    "inputs": {
+      "seed": 106407771819085,
+      "steps": 28,
+      "cfg": 5.5,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 1,
+      "model": [
+        "20",
+        0
+      ],
+      "positive": [
+        "10",
+        0
+      ],
+      "negative": [
+        "11",
+        0
+      ],
+      "latent_image": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "13": {
+    "inputs": {
+      "width": 1200,
+      "height": 720,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "14": {
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "15",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "15": {
+    "inputs": {
+      "ckpt_name": "sd_xl_base_1.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "18": {
+    "inputs": {
+      "image": "duo_v1_7.50s.jpg"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "19": {
+    "inputs": {
+      "preset": "PLUS (high strength)",
+      "model": [
+        "15",
+        0
+      ]
+    },
+    "class_type": "IPAdapterUnifiedLoader",
+    "_meta": {
+      "title": "IPAdapter Unified Loader"
+    }
+  },
+  "20": {
+    "inputs": {
+      "weight": 0.6,
+      "weight_type": "linear",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 1,
+      "embeds_scaling": "V only",
+      "model": [
+        "19",
+        0
+      ],
+      "ipadapter": [
+        "19",
+        1
+      ],
+      "image": [
+        "18",
+        0
+      ]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "IPAdapter Advanced"
+    }
+  }
+}

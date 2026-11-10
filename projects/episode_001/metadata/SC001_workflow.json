@@ -1,0 +1,185 @@
+{
+  "7": {
+    "inputs": {
+      "filename_prefix": "huellas_SC001_20261109",
+      "images": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "10": {
+    "inputs": {
+      "text": "Premium 2D animated family cartoon,\npolished professional animation,\nclean dark outlines,\nbeautiful expressive faces,\nsoft cinematic cel shading,\nwarm harmonious colors,\nconsistent character proportions,\nhigh quality animated film illustration,\ndetailed cozy environments,\nlandscape 16:9 composition,\nsingle coherent still frame,\nno photorealism, no 3D.\n\n\nCHARACTER IDENTITY:\n\nEXACTLY TWO MAIN CHARACTERS:\n\nCHARACTER 1 - DOG:\nGolden retriever, golden honey fur,\ncream muzzle and chest, floppy ears,\nwarm DARK BROWN eyes,\nblue collar and round GOLD medallion.\n\nCHARACTER 2 - CAT:\nGray tabby cat, gray striped fur,\nwhite chest, large GREEN eyes,\npink nose and pointed ears.\n\nBoth must match the supplied reference image.\nNever merge, replace or redesign them.\n\n\nSCENE:\n\nA cozy home hallway with an open bathroom doorway.\nThe bathroom is clearly recognizable in the background.\nWarm welcoming interior, cinematic animated environment.\n\n\nACTION:\n\nThe gray tabby cat is walking toward the open bathroom\ndoorway, looking back with a curious expression.\nThe golden retriever is sitting in the hallway,\nwatching the cat with a surprised and curious expression.\nThe human owner remains OFF CAMERA.\n\n\nCOMPOSITION:\n\nEXACTLY TWO ANIMALS, BOTH FULLY VISIBLE.\n\nDOG ON THE LEFT SIDE OF THE IMAGE.\nCAT ON THE RIGHT SIDE OF THE IMAGE.\n\nBoth characters must be visible simultaneously,\nfrom the top of their ears to their paws and tails.\nBoth have clear silhouettes and distinct bodies.\nKeep both characters at similar visual scale.\nLeave safe margins around both characters.\n\nSingle wide establishing shot.\nEye-level camera.\nNo closeups, no split screen, no sequence of shots.\n\n\nSTRICT CHARACTER CONSISTENCY:\nUse the supplied reference image as the identity source.\nPreserve exact fur colors, eye colors, facial features,\ncollars, accessories and body proportions.\n\nDo not omit either main character.\nNo written text inside the image.",
+      "clip": [
+        "15",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Positive Prompt",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "11": {
+    "inputs": {
+      "text": "one animal, single animal, only one character,\ndog alone, cat alone, missing dog, missing cat,\nmissing second character, invisible cat, invisible dog,\nextra animals, duplicate dogs, duplicate cats,\nmerged characters, overlapping bodies,\ncropped characters, cropped head, cropped paws,\ncharacter outside frame, cut off tail,\nwrong fur color, wrong eye color,\ngreen dog eyes, blue dog eyes,\nbrown cat eyes, missing blue collar,\nmissing gold medallion, different character design,\ndeformed anatomy, extra legs, extra paws,\nextra limbs, photorealistic, photography,\n3D render, blurry, low quality,\ntext, subtitles, watermark, logo.",
+      "clip": [
+        "15",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Negative Prompt",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "12": {
+    "inputs": {
+      "seed": 20261109,
+      "steps": 30,
+      "cfg": 5.0,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 0.25,
+      "model": [
+        "20",
+        0
+      ],
+      "positive": [
+        "10",
+        0
+      ],
+      "negative": [
+        "11",
+        0
+      ],
+      "latent_image": [
+        "21",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "13": {
+    "inputs": {
+      "width": 1200,
+      "height": 720,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "14": {
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "15",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "15": {
+    "inputs": {
+      "ckpt_name": "sd_xl_base_1.0.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint",
+      "cnr_id": "comfy-core",
+      "ver": "0.33.0"
+    }
+  },
+  "18": {
+    "inputs": {
+      "image": "SC001_reference_1024x576.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "19": {
+    "inputs": {
+      "preset": "PLUS (high strength)",
+      "model": [
+        "15",
+        0
+      ]
+    },
+    "class_type": "IPAdapterUnifiedLoader",
+    "_meta": {
+      "title": "IPAdapter Unified Loader"
+    }
+  },
+  "20": {
+    "inputs": {
+      "weight": 0.8,
+      "weight_type": "linear",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 1,
+      "embeds_scaling": "V only",
+      "model": [
+        "19",
+        0
+      ],
+      "ipadapter": [
+        "19",
+        1
+      ],
+      "image": [
+        "18",
+        0
+      ]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "IPAdapter Advanced"
+    }
+  },
+  "21": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "18",
+        0
+      ],
+      "vae": [
+        "15",
+        2
+      ]
+    },
+    "_meta": {
+      "title": "Reference VAE Encode"
+    }
+  }
+}

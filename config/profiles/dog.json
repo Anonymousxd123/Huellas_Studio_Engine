@@ -1,0 +1,15 @@
+{
+  "name": "dog",
+  "workflow": "workflows/image/character_generator_api.json",
+  "reference": "~/Huellas_Studio_Assets/characters/dog/Dog_Master_v1.png",
+  "positive_prompt": "A single golden retriever cartoon character, full body, standing naturally on four paws, matching the exact identity of the reference image. Golden honey fur, cream chest and muzzle, floppy ears, warm brown eyes, blue collar with one round gold medallion, clean 2D cartoon illustration, polished animated educational series style, simple clean outlines, soft cel shading, cozy indoor setting, consistent character design.",
+  "negative_prompt": "photorealistic, realistic painting, painterly, semi-realistic, 3d render, extra limbs, extra legs, extra paws, deformed anatomy, cropped body, duplicate animals, blurry, text, watermark, logo",
+  "width": 1024,
+  "height": 1024,
+  "steps": 24,
+  "cfg": 5.5,
+  "ip_weight": 0.58,
+  "count": 3,
+  "prefix": "dog_batch",
+  "output_dir": "projects/dog/images"
+}

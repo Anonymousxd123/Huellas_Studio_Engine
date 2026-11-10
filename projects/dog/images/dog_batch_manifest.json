@@ -1,0 +1,32 @@
+{
+  "profile": "/Users/christianblasacosta/Huellas_Studio_Engine/config/profiles/dog.json",
+  "reference": "/Users/christianblasacosta/Huellas_Studio_Assets/characters/dog/Dog_Master_v1.png",
+  "count": 3,
+  "base_seed": 748255427,
+  "results": [
+    {
+      "index": 1,
+      "seed": 748255427,
+      "prompt_id": "c60f837d-3928-45b6-88bc-2d465a5be256",
+      "images": [
+        "/Users/christianblasacosta/Huellas_Studio_Engine/projects/dog/images/dog_batch_001_00001_.png"
+      ]
+    },
+    {
+      "index": 2,
+      "seed": 748255428,
+      "prompt_id": "4eb4a31d-711f-43a7-b59e-5b8693061b3e",
+      "images": [
+        "/Users/christianblasacosta/Huellas_Studio_Engine/projects/dog/images/dog_batch_002_00001_.png"
+      ]
+    },
+    {
+      "index": 3,
+      "seed": 748255429,
+      "prompt_id": "a24bca34-6465-42cd-a9d3-2321f8ebf71d",
+      "images": [
+        "/Users/christianblasacosta/Huellas_Studio_Engine/projects/dog/images/dog_batch_003_00001_.png"
+      ]
+    }
+  ]
+}

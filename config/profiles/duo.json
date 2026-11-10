@@ -1,0 +1,15 @@
+{
+  "name": "duo",
+  "workflow": "workflows/image/character_generator_api.json",
+  "reference": "~/Huellas_Studio_Assets/characters/duo/Duo_Master_v1.png",
+  "positive_prompt": "A golden retriever and a gray tabby cat together in a cozy living room, matching the exact identity and style of the reference image. The golden retriever has golden honey fur, cream chest, floppy ears, warm brown eyes, blue collar with one round gold medallion. The cat has gray striped fur, white chest, green eyes and pink nose. Clean 2D cartoon illustration, polished animated educational series style, simple clean outlines, soft cel shading, warm cozy lighting, consistent character design, friendly and charming composition.",
+  "negative_prompt": "photorealistic, realistic painting, painterly, semi-realistic, 3d render, extra animals, duplicate dog, duplicate cat, deformed anatomy, extra legs, extra paws, blurry, text, watermark, logo",
+  "width": 1200,
+  "height": 720,
+  "steps": 28,
+  "cfg": 5.5,
+  "ip_weight": 0.60,
+  "count": 3,
+  "prefix": "duo_batch",
+  "output_dir": "projects/duo/images"
+}

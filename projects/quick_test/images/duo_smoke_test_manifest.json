@@ -1,0 +1,23 @@
+[
+  {
+    "seed": 415873440,
+    "prompt_id": "c8b4a29c-63d2-480c-b681-209359cbd2cb",
+    "images": [
+      "/Users/christianblasacosta/Huellas_Studio_Engine/projects/quick_test/images/duo_smoke_test_001_00001_.png"
+    ]
+  },
+  {
+    "seed": 415873441,
+    "prompt_id": "10090874-3ab3-4ced-a74d-ad33ba91bd7f",
+    "images": [
+      "/Users/christianblasacosta/Huellas_Studio_Engine/projects/quick_test/images/duo_smoke_test_002_00001_.png"
+    ]
+  },
+  {
+    "seed": 415873442,
+    "prompt_id": "5490df9e-abc6-44d3-b9c3-83b962360d5c",
+    "images": [
+      "/Users/christianblasacosta/Huellas_Studio_Engine/projects/quick_test/images/duo_smoke_test_003_00001_.png"
+    ]
+  }
+]

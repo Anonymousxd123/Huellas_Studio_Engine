@@ -1,0 +1,155 @@
+{
+  "episode_id": "episode_001",
+  "title": "6 cosas que tu perro y tu gato hacen y tú interpretas MAL",
+  "total_scenes": 8,
+  "total_duration_seconds": 480,
+  "scenes": [
+    {
+      "scene_id": "SC001",
+      "duration_seconds": 35,
+      "location": "Casa, pasillo y baño",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El gato sigue al humano al baño mientras el perro observa con curiosidad.",
+      "visual_prompt": "Two consistent 2D cartoon characters, golden retriever with blue collar and gold medallion, gray tabby cat with green eyes and white chest, funny bathroom doorway situation, expressive faces, clean polished 2D animation style.",
+      "shot": "Wide shot followed by character closeups",
+      "animation_complexity": "low",
+      "assets_required": [
+        "dog",
+        "cat",
+        "bathroom_background"
+      ]
+    },
+    {
+      "scene_id": "SC002",
+      "duration_seconds": 65,
+      "location": "Interior de casa y baño",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El gato sigue al humano por distintas habitaciones. El perro lo observa.",
+      "visual_prompt": "Gray tabby cartoon cat walking confidently behind its human toward a bathroom, golden retriever watching from the doorway, cozy 2D cartoon house, consistent character identity.",
+      "shot": "Tracking shot and medium shots",
+      "animation_complexity": "medium",
+      "assets_required": [
+        "dog",
+        "cat",
+        "hallway_background",
+        "bathroom_background"
+      ]
+    },
+    {
+      "scene_id": "SC003",
+      "duration_seconds": 65,
+      "location": "Salón",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El perro inclina la cabeza mientras escucha. El gato intenta imitarlo.",
+      "visual_prompt": "Cute golden retriever cartoon character tilting head with curious brown eyes, gray tabby cat imitating the pose, expressive 2D animation, cozy living room.",
+      "shot": "Closeup on dog, reaction shot on cat",
+      "animation_complexity": "low",
+      "assets_required": [
+        "dog",
+        "cat",
+        "living_room_background"
+      ]
+    },
+    {
+      "scene_id": "SC004",
+      "duration_seconds": 65,
+      "location": "Salón, mesa",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El gato empuja lentamente un vaso de una mesa mientras el perro intenta detenerlo.",
+      "visual_prompt": "Gray tabby cartoon cat pushing a drinking glass near the edge of a coffee table, golden retriever reacting with surprise, humorous polished 2D cartoon animation.",
+      "shot": "Closeup on paw, slow reaction, wide shot",
+      "animation_complexity": "medium",
+      "assets_required": [
+        "dog",
+        "cat",
+        "living_room_background",
+        "glass_prop"
+      ]
+    },
+    {
+      "scene_id": "SC005",
+      "duration_seconds": 65,
+      "location": "Entrada de casa",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El perro recibe a su humano con un juguete en la boca.",
+      "visual_prompt": "Happy golden retriever cartoon running toward the entrance holding a colorful toy in its mouth, gray tabby cat watching sarcastically, cozy 2D cartoon house.",
+      "shot": "Wide entrance shot and character closeups",
+      "animation_complexity": "medium",
+      "assets_required": [
+        "dog",
+        "cat",
+        "entrance_background",
+        "dog_toy"
+      ]
+    },
+    {
+      "scene_id": "SC006",
+      "duration_seconds": 65,
+      "location": "Salón, sofá",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El gato amasa una manta con sus patas delanteras mientras el perro observa.",
+      "visual_prompt": "Gray tabby cartoon cat comfortably kneading a soft blanket on a sofa, golden retriever watching with a puzzled expression, warm cozy 2D animation.",
+      "shot": "Closeup on cat paws and reaction shot",
+      "animation_complexity": "medium",
+      "assets_required": [
+        "dog",
+        "cat",
+        "sofa_background",
+        "blanket_prop"
+      ]
+    },
+    {
+      "scene_id": "SC007",
+      "duration_seconds": 65,
+      "location": "Salón",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El gato mira al perro y cierra lentamente los ojos. El perro intenta imitarlo.",
+      "visual_prompt": "Closeup of expressive gray tabby cat with green eyes slowly blinking, golden retriever cartoon character closing eyes and falling asleep, gentle humorous 2D animation.",
+      "shot": "Extreme closeup, reaction shot",
+      "animation_complexity": "low",
+      "assets_required": [
+        "dog",
+        "cat",
+        "living_room_background"
+      ]
+    },
+    {
+      "scene_id": "SC008",
+      "duration_seconds": 55,
+      "location": "Salón",
+      "characters": [
+        "dog",
+        "cat"
+      ],
+      "action": "El perro y el gato se sientan juntos mirando a cámara.",
+      "visual_prompt": "Golden retriever and gray tabby cat sitting side by side looking directly at the camera, warm friendly expressions, polished consistent 2D cartoon characters, cozy living room.",
+      "shot": "Medium two-shot followed by final wide shot",
+      "animation_complexity": "low",
+      "assets_required": [
+        "duo",
+        "living_room_background"
+      ]
+    }
+  ]
+}
