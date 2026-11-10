@@ -1,12 +1,7 @@
 import json
-import re
 from pathlib import Path
 
 from .localization_engine import load_episode_bundle
-
-
-def _safe_component(value):
-    return re.sub(r"[^a-zA-Z0-9_-]+", "_", str(value)).strip("_") or "item"
 
 
 def build_voice_manifest(
