@@ -11,7 +11,10 @@ ROOT = Path(__file__).resolve().parents[1]
 def find_background(episode_dir, scene_id):
     metadata_path = episode_dir / "metadata" / f"{scene_id}_background.json"
     if metadata_path.is_file():
-        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        try:
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            metadata = {}
         for value in reversed(metadata.get("images", [])):
             candidate = Path(value).expanduser()
             if candidate.is_file():
@@ -64,33 +67,49 @@ def main():
     if not scenes:
         raise ValueError("El episodio no contiene escenas para componer")
 
-    print("\nHUELLAS STUDIO - EPISODE COMPOSER")
-    print("=" * 48)
-    print("Episodio:", episode["episode_id"])
-    print("Escenas:", len(scenes))
+    assets_dir = Path(args.assets_dir).expanduser()
+    missing_assets = [
+        assets_dir / name
+        for name in ("dog_master_rgba.png", "cat_master_rgba.png")
+        if not (assets_dir / name).is_file()
+    ]
+    if missing_assets:
+        raise FileNotFoundError(
+            "Faltan recortes de personajes: "
+            + ", ".join(str(path) for path in missing_assets)
+        )
 
-    completed = []
-    for index, scene in enumerate(scenes, 1):
+    # Resolve every input first so missing backgrounds never leave a
+    # partially composed episode.
+    tasks = []
+    for scene in scenes:
         scene_id = scene["scene_id"]
         background = find_background(episode_dir, scene_id)
         output = (
             episode_dir / "scenes" / scene_id / "composed"
             / f"{scene_id}_composed.png"
         )
-        print(f"\n[{index}/{len(scenes)}] {scene_id}")
+        tasks.append((scene_id, background, output))
+
+    print("\nHUELLAS STUDIO - EPISODE COMPOSER")
+    print("=" * 48)
+    print("Episodio:", episode["episode_id"])
+    print("Escenas:", len(tasks))
+
+    for index, (scene_id, background, output) in enumerate(tasks, 1):
+        print(f"\n[{index}/{len(tasks)}] {scene_id}")
         compose_scene(
             background_path=background,
             output_path=output,
             scene_id=scene_id,
-            assets_dir=args.assets_dir,
+            assets_dir=assets_dir,
             width=args.width,
             height=args.height
         )
-        completed.append(output)
 
     print("\nCOMPOSICIÓN DEL EPISODIO COMPLETADA")
-    for path in completed:
-        print(path)
+    for _, _, output in tasks:
+        print(output)
 
 
 if __name__ == "__main__":
