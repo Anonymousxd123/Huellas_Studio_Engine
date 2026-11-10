@@ -38,6 +38,7 @@ def main():
     generate.add_argument("--ip-weight", type=float, default=0.6)
     generate.add_argument("--prefix", default="huellas")
     generate.add_argument("--output", default=str(ROOT / "projects/quick_test/images"))
+    generate.add_argument("--url", default="http://127.0.0.1:8188")
 
     args = parser.parse_args()
 
@@ -60,7 +61,7 @@ def main():
         if args.width % 8 or args.height % 8:
             parser.error("La resolución debe ser múltiplo de 8")
 
-        client = ComfyClient()
+        client = ComfyClient(args.url)
         source = load_workflow(args.workflow)
 
         # Sube la referencia una sola vez.
