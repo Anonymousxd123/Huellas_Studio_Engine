@@ -59,7 +59,7 @@ def synthesize_episode_audio(
     manifest_path, manifest = build_voice_manifest(episode_dir, language)
     voice = production["narration"]["voices"][language]
     narration_model = production["narration"]["model_id"]
-    manifest["provider"] = "local_cos yvoice_kokoro".replace(" ", "")
+    manifest["provider"] = "local_cosyvoice_kokoro"
     manifest["voice_selection"] = (
         "CosyVoice 3 local narrator cloning; Kokoro local character dialogue"
     )
@@ -113,6 +113,7 @@ def synthesize_episode_audio(
                             info.frames / info.samplerate, 3
                         )
                         job["status"] = "reused"
+                        job.update(cache_signature)
                         reused += 1
                         continue
                 except (ImportError, RuntimeError, OSError, ZeroDivisionError):
