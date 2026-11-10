@@ -1,8 +1,7 @@
-import json
-
 from PIL import Image
 
 from huellas_engine.asset_manager import normalize_manifest
+from huellas_engine.episode_paths import resolve_episode_dir
 from huellas_engine.scene_composer import load_character
 from huellas_engine.scene_engine import validate_episode
 
@@ -40,22 +39,32 @@ def test_validate_episode_reports_duplicate_scene_ids():
         "target_duration_seconds": 120,
         "scenes": [
             {
-                "scene_id": "SC001",
-                "duration_seconds": 30,
-                "location": "room",
-                "characters": ["dog"],
-                "action": "sits",
-                "visual_prompt": "cartoon dog"
+                "scene_id": "SC001", "duration_seconds": 30,
+                "location": "room", "characters": ["dog"],
+                "action": "sits", "visual_prompt": "cartoon dog"
             },
             {
-                "scene_id": "SC001",
-                "duration_seconds": 30,
-                "location": "room",
-                "characters": ["cat"],
-                "action": "sits",
-                "visual_prompt": "cartoon cat"
+                "scene_id": "SC001", "duration_seconds": 30,
+                "location": "room", "characters": ["cat"],
+                "action": "sits", "visual_prompt": "cartoon cat"
             }
         ]
     }
     errors = validate_episode(episode)
     assert any("duplicado" in error for error in errors)
+
+
+def test_resolve_episode_dir_accepts_project_id(tmp_path):
+    episode_dir = tmp_path / "projects" / "episode_002"
+    episode_dir.mkdir(parents=True)
+    (episode_dir / "episode.json").write_text("{}", encoding="utf-8")
+
+    assert resolve_episode_dir("episode_002", tmp_path) == episode_dir.resolve()
+
+
+def test_resolve_episode_dir_accepts_relative_path(tmp_path):
+    episode_dir = tmp_path / "projects" / "episode_003"
+    episode_dir.mkdir(parents=True)
+    (episode_dir / "episode.json").write_text("{}", encoding="utf-8")
+
+    assert resolve_episode_dir("projects/episode_003", tmp_path) == episode_dir.resolve()
