@@ -106,6 +106,7 @@ def synthesize_narration_batch(
     language,
     profile,
     work_dir,
+    episode_dir,
     root=None
 ):
     if not jobs:
@@ -115,6 +116,7 @@ def synthesize_narration_batch(
     voice = profile["narration"]["voices"][language]
     runtime = resolve_cosyvoice_runtime(profile, root)
     work_dir = Path(work_dir)
+    episode_dir = Path(episode_dir)
     work_dir.mkdir(parents=True, exist_ok=True)
 
     reference = _resolve_path(voice["reference_audio"], root)
@@ -140,7 +142,7 @@ def synthesize_narration_batch(
             "text": job["text"],
             "reference_audio": str(prepared_reference),
             "reference_text": reference_text,
-            "output_path": str((root / job["output"]).resolve())
+            "output_path": str((episode_dir / job["output"]).resolve())
         })
 
     with tempfile.TemporaryDirectory(prefix="huellas-cosyvoice-") as temp:
