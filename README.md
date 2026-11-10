@@ -44,7 +44,19 @@ Los recortes se guardan en `~/Huellas_Studio_Assets/characters/cutouts_v2`. El c
 
 ## Producción visual de un episodio
 
-El siguiente comando genera los fondos que falten y compone todas las escenas:
+El siguiente comando ejecuta el paquete completo de previsualización bilingüe: genera los fondos que falten, compone las escenas, prepara manifiestos de voz y subtítulos, y renderiza los MP4 de revisión:
+
+```bash
+python scripts/produce_episode_preview.py --episode episode_001
+```
+
+Para reutilizar las escenas ya compuestas y regenerar solo manifiestos, subtítulos y MP4:
+
+```bash
+python scripts/produce_episode_preview.py --episode episode_001 --skip-visuals
+```
+
+Si prefieres ejecutar únicamente la etapa visual:
 
 ```bash
 python scripts/run_episode_composite.py --episode episode_001
