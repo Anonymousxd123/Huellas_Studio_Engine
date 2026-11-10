@@ -122,12 +122,13 @@ def build_animatic_command(
 
     if has_audio:
         command.extend(["-af", "apad"])
+    language_tag = {"es": "spa", "en": "eng"}.get(language, language[:3])
     command.extend([
         "-t", f"{total_duration:.3f}",
         "-c:a", "aac",
         "-b:a", "192k",
         "-metadata:s:s:0",
-        f"language={{'es': 'spa', 'en': 'eng'}.get(language, language[:3])}",
+        f"language={language_tag}",
         "-c:v", "libx264",
         "-preset", "medium",
         "-crf", "18",
