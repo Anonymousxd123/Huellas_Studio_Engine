@@ -299,7 +299,7 @@ def test_kokoro_voice_profiles_map_daniela_and_akira_references():
 
     assert profiles["languages"]["es"]["narrator"]["voice_id"] == "ef_dora"
     assert profiles["languages"]["es"]["narrator"]["reference"] == "Daniela"
-    assert profiles["languages"]["en"]["narrator"]["voice_id"] == "af_bella"
+    assert profiles["languages"]["en"]["narrator"]["voice_id"] == "am_adam"
     assert profiles["languages"]["en"]["narrator"]["reference"] == "Akira"
     assert profiles["languages"]["en"]["narrator"]["alternatives"][0]["voice_id"] == "af_heart"
 
