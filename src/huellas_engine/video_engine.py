@@ -122,10 +122,11 @@ def build_animatic_command(
 
     subtitle_input = next_input + 1
     command.extend(["-i", str(subtitle_path)])
+    language_tag = {"es": "spa", "en": "eng"}.get(language, language[:3])
     command.extend([
         "-map", f"{subtitle_input}:0",
         "-c:s", "mov_text",
-        "-metadata:s:s:0", f"language={language[:3]}",
+        "-metadata:s:s:0", f"language={language_tag}",
         "-c:v", "libx264",
         "-preset", "medium",
         "-crf", "18",
