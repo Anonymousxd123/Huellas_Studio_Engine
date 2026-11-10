@@ -9,19 +9,22 @@ DEFAULT_ASSETS = (
     Path.home() / "Huellas_Studio_Assets/characters/cutouts_v2"
 )
 
+ALPHA_BBOX_THRESHOLD = 8
+
 # Posiciones relativas al lienzo.
 # center_x y bottom van de 0.0 a 1.0.
+# Mantener el orden y la posición coherentes con SC001 del prompt_builder.
 SCENE_LAYOUTS = {
     "SC001": [
         {
-            "asset": "cat_master_rgba.png",
+            "asset": "dog_master_rgba.png",
             "center_x": 0.34,
             "bottom": 0.96,
             "height": 0.57,
             "shadow_opacity": 65,
         },
         {
-            "asset": "dog_master_rgba.png",
+            "asset": "cat_master_rgba.png",
             "center_x": 0.73,
             "bottom": 0.96,
             "height": 0.57,
@@ -31,16 +34,28 @@ SCENE_LAYOUTS = {
 }
 
 
-def load_character(path):
+def load_character(path, alpha_threshold=ALPHA_BBOX_THRESHOLD):
     image = Image.open(path).convert("RGBA")
+    alpha = image.getchannel("A")
 
-    # Eliminar solamente márgenes totalmente transparentes.
-    bbox = image.getchannel("A").getbbox()
+    # Ignorar residuos de alpha casi transparente al calcular el bbox.
+    bbox = alpha.point(
+        lambda value: 255 if value > alpha_threshold else 0
+    ).getbbox()
 
     if bbox is None:
         raise ValueError(f"Personaje completamente transparente: {path}")
 
-    return image.crop(bbox)
+    image = image.crop(bbox)
+
+    # Eliminar píxeles residuales por debajo del umbral, conservando
+    # los bordes suavizados y la transparencia parcial útil.
+    cropped_alpha = image.getchannel("A").point(
+        lambda value: 0 if value <= alpha_threshold else value
+    )
+    image.putalpha(cropped_alpha)
+
+    return image
 
 
 def resize_character(image, target_height):
@@ -55,10 +70,13 @@ def resize_character(image, target_height):
 
 
 def make_shadow(character, opacity=65):
+    if not 0 <= opacity <= 100:
+        raise ValueError("La opacidad de sombra debe estar entre 0 y 100")
+
     alpha = character.getchannel("A")
 
     alpha = alpha.point(
-        lambda value: int(value * opacity / 255)
+        lambda value: round(value * opacity / 100)
     )
 
     alpha = alpha.filter(ImageFilter.GaussianBlur(12))
@@ -85,6 +103,9 @@ def compose_scene(
     background_path = Path(background_path).expanduser()
     output_path = Path(output_path).expanduser()
     assets_dir = Path(assets_dir).expanduser()
+
+    if width <= 0 or height <= 0:
+        raise ValueError("La resolución debe ser positiva")
 
     if not background_path.is_file():
         raise FileNotFoundError(background_path)
