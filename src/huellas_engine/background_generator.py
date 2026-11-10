@@ -227,11 +227,14 @@ def save_background_metadata(
         "status": "completed"
     }
 
-    output = metadata_dir / f"{scene_id}_background.json"
-
-    output.write_text(
-        json.dumps(data, indent=2, ensure_ascii=False),
-        encoding="utf-8"
+    serialized = json.dumps(data, indent=2, ensure_ascii=False)
+    history_path = (
+        metadata_dir / "runs" / scene_id / f"background_{seed}.json"
     )
+    history_path.parent.mkdir(parents=True, exist_ok=True)
+    history_path.write_text(serialized, encoding="utf-8")
 
-    return output
+    # Stable pointer consumed by the automatic episode compositor.
+    latest_path = metadata_dir / f"{scene_id}_background.json"
+    latest_path.write_text(serialized, encoding="utf-8")
+    return latest_path
