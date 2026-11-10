@@ -1,29 +1,33 @@
 {
-  "provider": "hybrid",
+  "provider": "local_hybrid",
   "narration": {
-    "provider": "elevenlabs",
-    "model_id": "eleven_multilingual_v2",
-    "output_format": "pcm_24000",
+    "provider": "cosyvoice3_mps",
+    "model_id": "FunAudioLLM/Fun-CosyVoice3-0.5B-2512",
+    "engine_dir": "engines/CosyVoice-MPS",
+    "python": "engines/CosyVoice-MPS/.venv/bin/python",
+    "model_dir": "engines/CosyVoice-MPS/pretrained_models/Fun-CosyVoice3-0.5B",
+    "fp16": false,
     "voices": {
       "en": {
         "name": "Akira",
-        "voice_id": "aHYS10erl9IGphnXtDeD",
-        "gender": "male",
-        "language": "English"
+        "reference_audio": "~/Huellas_Studio_Assets/voice_references/akira_reference.wav",
+        "reference_text": "",
+        "language": "English",
+        "gender": "male"
       },
       "es": {
         "name": "Daniela",
-        "voice_id": "8tm9IYjg8ybDoxe8w6Rk",
+        "reference_audio": "~/Huellas_Studio_Assets/voice_references/daniela_reference.wav",
+        "reference_text": "",
         "language": "Spanish"
       }
     },
-    "use_saved_voice_settings": true,
-    "note": "No se envían voice_settings para respetar los ajustes guardados en ElevenLabs."
+    "note": "Local zero-shot voice cloning. No ElevenLabs API calls or credits are required."
   },
   "dialogue": {
     "provider": "kokoro",
     "profile": "config/tts/voice_profiles.json",
-    "note": "Las voces de perro y gato permanecen locales; no usan los Voice IDs de narración."
+    "note": "Kokoro remains local for dog and cat dialogue."
   },
   "mix": {
     "sample_rate": 24000,
