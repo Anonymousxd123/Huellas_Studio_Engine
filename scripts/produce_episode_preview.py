@@ -30,7 +30,7 @@ def main():
                         help="Reuse existing composed scene images")
     parser.add_argument("--ffmpeg", default="ffmpeg")
     parser.add_argument("--with-voice", action="store_true",
-                        help="Genera narración ElevenLabs y diálogos Kokoro antes del MP4")
+                        help="Genera narración CosyVoice local y diálogos Kokoro antes del MP4")
     parser.add_argument("--tts-profile", default=str(ROOT / "config" / "tts" / "production_profiles.json"))
     parser.add_argument("--kokoro-profile", default=str(ROOT / "config" / "tts" / "voice_profiles.json"))
     parser.add_argument("--tts-device", choices=["auto", "cpu", "mps", "cuda"],
@@ -123,7 +123,7 @@ def main():
     print("Episodio:", episode["episode_id"])
     print("Idiomas:", ", ".join(languages))
     if args.with_voice:
-        print("Audio: narración ElevenLabs + diálogos Kokoro en final_mix.wav.")
+        print("Audio: narración CosyVoice local + diálogos Kokoro en final_mix.wav.")
     else:
         print("Audio: pista silenciosa; usa --with-voice para generar voces.")
 
