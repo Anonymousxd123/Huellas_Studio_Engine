@@ -1,0 +1,33 @@
+{
+  "provider": "hybrid",
+  "narration": {
+    "provider": "elevenlabs",
+    "model_id": "eleven_multilingual_v2",
+    "output_format": "pcm_24000",
+    "voices": {
+      "en": {
+        "name": "Akira",
+        "voice_id": "aHYS10erl9IGphnXtDeD",
+        "gender": "male",
+        "language": "English"
+      },
+      "es": {
+        "name": "Daniela",
+        "voice_id": "8tm9IYjg8ybDoxe8w6Rk",
+        "language": "Spanish"
+      }
+    },
+    "use_saved_voice_settings": true,
+    "note": "No se envían voice_settings para respetar los ajustes guardados en ElevenLabs."
+  },
+  "dialogue": {
+    "provider": "kokoro",
+    "profile": "config/tts/voice_profiles.json",
+    "note": "Las voces de perro y gato permanecen locales; no usan los Voice IDs de narración."
+  },
+  "mix": {
+    "sample_rate": 24000,
+    "line_gap_seconds": 0.28,
+    "do_not_trim_overflow": true
+  }
+}
