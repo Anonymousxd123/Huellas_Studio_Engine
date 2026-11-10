@@ -14,7 +14,7 @@ from huellas_engine.kokoro_engine import (
 from huellas_engine.scene_composer import SCENE_LAYOUTS, load_character
 from huellas_engine.scene_engine import validate_episode
 from huellas_engine.video_engine import build_animatic_command
-from huellas_engine.subtitle_engine import (
+from huellas_engine.tts_engine import load_production_profile\nfrom huellas_engine.subtitle_engine import (
     build_subtitle_timeline, build_subtitle_timeline_from_audio,
     format_srt_timestamp, render_srt, split_subtitle_text
 )
@@ -389,3 +389,25 @@ def test_subtitles_use_measured_audio_timeline_when_available(tmp_path):
         timeline["cues"][i]["end"] <= timeline["cues"][i + 1]["start"]
         for i in range(len(timeline["cues"]) - 1)
     )
+
+
+
+def test_production_profile_uses_original_elevenlabs_voice_ids():
+    profile_path = (
+        Path(__file__).resolve().parents[1]
+        / "config" / "tts" / "production_profiles.json"
+    )
+    profile = load_production_profile(profile_path)
+
+    assert profile["provider"] == "hybrid"
+    assert profile["narration"]["provider"] == "elevenlabs"
+    assert (
+        profile["narration"]["voices"]["en"]["voice_id"]
+        == "aHYS10erl9IGphnXtDeD"
+    )
+    assert profile["narration"]["voices"]["en"]["gender"] == "male"
+    assert (
+        profile["narration"]["voices"]["es"]["voice_id"]
+        == "8tm9IYjg8ybDoxe8w6Rk"
+    )
+    assert profile["dialogue"]["provider"] == "kokoro"
