@@ -9,6 +9,7 @@ from huellas_engine.image_utils import prepare_reference_image
 from huellas_engine.localization_engine import validate_locales
 from huellas_engine.scene_composer import SCENE_LAYOUTS, load_character
 from huellas_engine.scene_engine import validate_episode
+from huellas_engine.video_engine import build_animatic_command
 from huellas_engine.subtitle_engine import (
     build_subtitle_timeline, format_srt_timestamp, render_srt, split_subtitle_text
 )
@@ -229,3 +230,52 @@ def test_voice_manifest_preserves_speaker_and_language_assignments(tmp_path):
         "narrator", "dog", "cat"
     ]
     assert all(job["language"] == "es" for job in manifest["jobs"])
+
+
+
+def test_animatic_command_adds_silent_audio_and_soft_subtitles(tmp_path, monkeypatch):
+    episode_dir = tmp_path / "episode"
+    scene_dir = episode_dir / "scenes" / "SC001" / "composed"
+    locale_dir = episode_dir / "locales"
+    scene_dir.mkdir(parents=True)
+    locale_dir.mkdir(parents=True)
+    Image.new("RGB", (320, 180), "white").save(
+        scene_dir / "SC001_composed.png"
+    )
+    (episode_dir / "episode.json").write_text(
+        json.dumps({
+            "episode_id": "episode_test",
+            "supported_languages": ["es"],
+            "scenes": [{
+                "scene_id": "SC001",
+                "duration_seconds": 5,
+                "location": "sala",
+                "characters": ["dog"],
+                "action": "habla",
+                "visual_prompt": "perro"
+            }]
+        }),
+        encoding="utf-8"
+    )
+    locale = {
+        "language": "es",
+        "episode": {"title": "Prueba", "description": "Prueba"},
+        "scenes": {
+            "SC001": {
+                "title": "Prueba",
+                "narration": "Hola mundo.",
+                "dialogue": []
+            }
+        }
+    }
+    (locale_dir / "es.json").write_text(json.dumps(locale), encoding="utf-8")
+    monkeypatch.setattr(
+        "huellas_engine.video_engine.shutil.which",
+        lambda binary: "/usr/bin/ffmpeg"
+    )
+
+    command = build_animatic_command(episode_dir, "es")
+    assert "anullsrc=channel_layout=stereo:sample_rate=48000" in command
+    assert str(episode_dir / "subtitles" / "es.srt") in command
+    assert "libx264" in command
+    assert "mov_text" in command
