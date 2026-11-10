@@ -393,22 +393,17 @@ def test_subtitles_use_measured_audio_timeline_when_available(tmp_path):
 
 
 
-def test_production_profile_uses_original_elevenlabs_voice_ids():
+def test_production_profile_uses_local_cosyvoice_and_kokoro():
     profile_path = (
         Path(__file__).resolve().parents[1]
         / "config" / "tts" / "production_profiles.json"
     )
     profile = load_production_profile(profile_path)
 
-    assert profile["provider"] == "hybrid"
-    assert profile["narration"]["provider"] == "elevenlabs"
-    assert (
-        profile["narration"]["voices"]["en"]["voice_id"]
-        == "aHYS10erl9IGphnXtDeD"
-    )
-    assert profile["narration"]["voices"]["en"]["gender"] == "male"
-    assert (
-        profile["narration"]["voices"]["es"]["voice_id"]
-        == "8tm9IYjg8ybDoxe8w6Rk"
-    )
+    assert profile["provider"] == "local_hybrid"
+    assert profile["narration"]["provider"] == "cosyvoice3_mps"
+    assert profile["narration"]["model_id"] == "FunAudioLLM/Fun-CosyVoice3-0.5B-2512"
+    assert profile["narration"]["voices"]["en"]["name"] == "Akira"
+    assert profile["narration"]["voices"]["es"]["name"] == "Daniela"
     assert profile["dialogue"]["provider"] == "kokoro"
+    assert "voice_id" not in profile["narration"]["voices"]["en"]
