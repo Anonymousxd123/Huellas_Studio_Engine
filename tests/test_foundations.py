@@ -314,8 +314,12 @@ def test_kokoro_resolves_character_voices_by_language():
     cat_job = {"kind": "dialogue", "character": "cat"}
     narration_job = {"kind": "narration"}
 
-    assert resolve_voice_settings(profiles, "es", narration_job)["voice_id"] == "ef_dora"
-    assert resolve_voice_settings(profiles, "en", narration_job)["voice_id"] == "am_adam"
+    try:
+        resolve_voice_settings(profiles, "es", narration_job)
+    except ValueError as exc:
+        assert "CosyVoice local" in str(exc)
+    else:
+        raise AssertionError("Kokoro must not provide the narrator")
     assert resolve_voice_settings(profiles, "es", dog_job)["voice_id"] == "em_alex"
     assert resolve_voice_settings(profiles, "en", cat_job)["voice_id"] == "af_sarah"
 
