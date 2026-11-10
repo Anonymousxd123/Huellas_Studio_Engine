@@ -203,4 +203,4 @@ python scripts/validate_bilingual.py --episode episode_001
 
 ## Alcance actual
 
-La etapa automatizada cubre preparación del episodio, validación bilingüe, generación de fondos, composición **estática** de las ocho escenas, narración con las voces originales de ElevenLabs (Akira y Daniela), diálogos locales de personajes con Kokoro, mezcla de audio y exportación de animatics con subtítulos. La composición usa recortes maestros, por lo que no sustituye la animación de personajes. La sincronización labial, animación, mezcla musical/efectos, control de calidad final y publicación siguen siendo etapas separadas.
+La etapa automatizada cubre preparación del episodio, validación bilingüe, generación de fondos, composición **estática** de las ocho escenas, narración local con CosyVoice 3 a partir de las referencias autorizadas de Akira y Daniela, diálogos locales de personajes con Kokoro, mezcla de audio y exportación de animatics con subtítulos. La composición usa recortes maestros, por lo que no sustituye la animación de personajes. La sincronización labial, animación, mezcla musical/efectos, control de calidad final y publicación siguen siendo etapas separadas.
