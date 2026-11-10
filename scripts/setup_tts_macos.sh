@@ -28,11 +28,12 @@ else
   echo "[2/3] Reutilizando entorno .venv existente."
 fi
 
-echo "[3/3] Instalando Huellas Studio con Kokoro TTS..."
+echo "[3/3] Instalando dependencias de voz local y carga segura de .env..."
 .venv/bin/python -m pip install --upgrade pip
 .venv/bin/python -m pip install -e ".[tts]"
 
 echo ""
-echo "INSTALACIÓN TTS COMPLETADA"
-echo "Prueba las voces con:"
+echo "DEPENDENCIAS TTS INSTALADAS"
+echo "Añade ELEVENLABS_API_KEY a .env (usa .env.example como plantilla)."
+echo "Después prueba las voces con:"
 echo ".venv/bin/python scripts/preview_voice_profiles.py --episode episode_001"
