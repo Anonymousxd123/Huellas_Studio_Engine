@@ -28,7 +28,7 @@ else
   echo "[2/3] Reutilizando entorno .venv existente."
 fi
 
-echo "[3/3] Instalando dependencias de voz local y carga segura de .env..."
+echo "[3/3] Instalando dependencias de Kokoro para diálogos locales..."
 .venv/bin/python -m pip install --upgrade pip
 .venv/bin/python -m pip install -e ".[tts]"
 
