@@ -147,7 +147,7 @@ def main():
             encoding="utf-8"
         )
 
-        print(f"[{index + 1}/{len(episode['scenes'])}] {scene_id}: generando fondo | seed={seed}")
+        print(f"[{index + 1}/{len(scenes)}] {scene_id}: generando fondo | seed={seed}")
         prompt_id = client.submit(workflow)
         history = client.wait(prompt_id)
         images = client.download_images(
