@@ -305,7 +305,7 @@ def test_kokoro_voice_profiles_map_daniela_and_akira_references():
 
 def test_kokoro_resolves_character_voices_by_language():
     profiles = load_voice_profiles(
-        __import__("pathlib").Path(__file__).resolve().parents[1]
+        Path(__file__).resolve().parents[1]
         / "config" / "tts" / "voice_profiles.json"
     )
     dog_job = {"kind": "dialogue", "character": "dog"}
