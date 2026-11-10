@@ -279,3 +279,6 @@ def test_animatic_command_adds_silent_audio_and_soft_subtitles(tmp_path, monkeyp
     assert str(episode_dir / "subtitles" / "es.srt") in command
     assert "libx264" in command
     assert "mov_text" in command
+    assert command.index("-filter_complex") > max(
+        index for index, value in enumerate(command) if value == "-i"
+    )
