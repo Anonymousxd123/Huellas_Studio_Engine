@@ -12,3 +12,6 @@ logs/
 # Generated local TTS audio (keep manifests and timelines)
 projects/*/audio/**/*.wav
 projects/*/audio/**/*.mp3
+
+# External CosyVoice runtime, model weights and local voice references
+/engines/CosyVoice-MPS/
