@@ -1,3 +1,5 @@
+import json
+
 from PIL import Image
 
 from huellas_engine.asset_manager import normalize_manifest
@@ -113,7 +115,7 @@ def test_locale_validator_reports_incomplete_dialogue_without_crashing(tmp_path)
         }
     }
     (episode_dir / "locales" / "es.json").write_text(
-        __import__("json").dumps(locale),
+        json.dumps(locale),
         encoding="utf-8"
     )
 
