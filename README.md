@@ -20,6 +20,16 @@ pip install -e ".[dev,background-removal]"
 
 En Windows, activa el entorno con `.venv\\Scripts\\activate`.
 
+### Instalar síntesis de voz local (macOS)
+
+Kokoro es opcional: no se instala ni descarga el modelo hasta que decidas activar esta etapa. En macOS, ejecuta:
+
+```bash
+bash scripts/setup_tts_macos.sh
+```
+
+El instalador configura `espeak-ng` con Homebrew y añade el extra `tts` al entorno virtual existente. Los pesos de Kokoro y las voces se descargan automáticamente la primera vez que generes audio.
+
 ## Comprobación inicial
 
 ```bash
@@ -102,13 +112,37 @@ Generar subtítulos SRT y sus líneas de tiempo estimadas en todos los idiomas:
 python scripts/build_subtitles.py --episode episode_001
 ```
 
-Preparar el manifiesto de trabajos de voz para TTS:
+Preparar el manifiesto de trabajos de voz sin generar audio:
 
 ```bash
 python scripts/build_voice_manifest.py --episode episode_001
 ```
 
-El manifiesto separa narración y diálogos por personaje y deja la integración con el proveedor TTS desacoplada.
+Generar audiciones cortas para comparar las voces locales con las referencias de Daniela y Akira:
+
+```bash
+.venv/bin/python scripts/preview_voice_profiles.py --episode episode_001
+```
+
+Las audiciones se guardan en `projects/<episode>/audio/voice_previews/`. El perfil inicial usa `ef_dora` para Daniela y `af_bella` para Akira, con `af_heart` como alternativa inglesa. La voz femenina española `ef_dora` es la única voz femenina española del paquete oficial base de Kokoro; por eso debe validarse escuchando el resultado antes de fijarla como voz definitiva.
+
+Generar narración y diálogos reales en español e inglés:
+
+```bash
+.venv/bin/python scripts/generate_voice.py --episode episode_001
+```
+
+El generador reutiliza WAV existentes. Añade `--force` para regenerarlos. En Apple Silicon, el dispositivo se detecta automáticamente y se utiliza MPS cuando está disponible; también puedes indicar `--device cpu`.
+
+Para ejecutar el pipeline de previsualización con voz real:
+
+```bash
+.venv/bin/python scripts/produce_episode_preview.py --episode episode_001 --with-voice
+```
+
+La mezcla final se escribe en `audio/<language>/final_mix.wav` y se incorpora al MP4. Si una escena no tiene tiempo suficiente para su narración y diálogos, la síntesis falla de forma explícita: no se recorta la voz automáticamente.
+
+Los perfiles editables están en `config/tts/voice_profiles.json`. Los audios de referencia de ElevenLabs sirven como guía auditiva; Kokoro usa voces predefinidas y no clona ni replica exactamente a Daniela o Akira.
 
 Renderizar un animatic MP4 con las composiciones estáticas y subtítulos:
 
@@ -132,8 +166,11 @@ python scripts/validate_bilingual.py --episode episode_001
 - `projects/<episode>/metadata/`: workflow y último resultado por escena.
 - `projects/<episode>/metadata/runs/<scene>/`: historial por semilla.
 - `projects/<episode>/subtitles/`: subtítulos SRT y líneas de tiempo JSON por idioma.
-- `projects/<episode>/audio/<language>/voice_manifest.json`: trabajos de voz pendientes de proveedor TTS.
+- `projects/<episode>/audio/<language>/voice_manifest.json`: manifiesto y estado de cada trabajo TTS.
+- `projects/<episode>/audio/<language>/final_mix.wav`: mezcla de voz por idioma.
+- `projects/<episode>/audio/<language>/audio_timeline.json`: tiempos reales de los clips sintetizados.
+- `projects/<episode>/audio/voice_previews/`: audiciones de selección de voces.
 
 ## Alcance actual
 
-La etapa automatizada cubre preparación del episodio, validación bilingüe, generación de fondos y composición **estática** de las ocho escenas. La composición usa recortes maestros, por lo que no sustituye la animación de personajes. El pipeline de voz, sincronización labial, animación, montaje de vídeo y publicación se desarrollará como etapas separadas.
+La etapa automatizada cubre preparación del episodio, validación bilingüe, generación de fondos, composición **estática** de las ocho escenas, síntesis local de narración y diálogos con Kokoro, mezcla de audio y exportación de animatics con subtítulos. La composición usa recortes maestros, por lo que no sustituye la animación de personajes. La sincronización labial, animación, mezcla musical/efectos, control de calidad final y publicación siguen siendo etapas separadas.
