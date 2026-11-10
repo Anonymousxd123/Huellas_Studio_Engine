@@ -44,7 +44,7 @@ def build_subtitle_timeline(
     max_chars=42,
     max_lines=2,
     cue_gap=0.12,
-    scene_gap=0.25
+    scene_gap=0.0
 ):
     if chars_per_second <= 0:
         raise ValueError("chars_per_second debe ser mayor que cero")
