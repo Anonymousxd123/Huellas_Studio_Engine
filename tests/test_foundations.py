@@ -3,6 +3,7 @@ import json
 from PIL import Image
 
 from huellas_engine.asset_manager import normalize_manifest
+from huellas_engine.audio_engine import build_voice_manifest
 from huellas_engine.episode_paths import resolve_episode_dir
 from huellas_engine.image_utils import prepare_reference_image
 from huellas_engine.localization_engine import validate_locales
@@ -180,3 +181,51 @@ def test_subtitle_timeline_stays_within_scene_duration(tmp_path):
     assert timeline["cues"]
     assert all(cue["start"] < cue["end"] <= 10 for cue in timeline["cues"])
     assert "00:00:" in render_srt(timeline)
+
+
+
+def test_voice_manifest_preserves_speaker_and_language_assignments(tmp_path):
+    episode_dir = tmp_path / "episode"
+    (episode_dir / "locales").mkdir(parents=True)
+    (episode_dir / "episode.json").write_text(
+        json.dumps({
+            "episode_id": "episode_test",
+            "supported_languages": ["es"],
+            "scenes": [{
+                "scene_id": "SC001",
+                "duration_seconds": 10,
+                "location": "sala",
+                "characters": ["dog", "cat"],
+                "action": "hablan",
+                "visual_prompt": "dos personajes"
+            }]
+        }),
+        encoding="utf-8"
+    )
+    locale = {
+        "language": "es",
+        "episode": {"title": "Prueba", "description": "Prueba"},
+        "scenes": {
+            "SC001": {
+                "title": "Prueba",
+                "narration": "Narración de prueba.",
+                "dialogue": [
+                    {"character": "dog", "text": "Hola."},
+                    {"character": "cat", "text": "Adiós."}
+                ]
+            }
+        }
+    }
+    (episode_dir / "locales" / "es.json").write_text(
+        json.dumps(locale),
+        encoding="utf-8"
+    )
+
+    path, manifest = build_voice_manifest(episode_dir, "es")
+    assert path.is_file()
+    assert manifest["provider"] is None
+    assert manifest["total_jobs"] == 3
+    assert [job["speaker_id"] for job in manifest["jobs"]] == [
+        "narrator", "dog", "cat"
+    ]
+    assert all(job["language"] == "es" for job in manifest["jobs"])
