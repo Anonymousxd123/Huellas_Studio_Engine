@@ -14,7 +14,8 @@ from huellas_engine.kokoro_engine import (
 from huellas_engine.scene_composer import SCENE_LAYOUTS, load_character
 from huellas_engine.scene_engine import validate_episode
 from huellas_engine.video_engine import build_animatic_command
-from huellas_engine.tts_engine import load_production_profile\nfrom huellas_engine.subtitle_engine import (
+from huellas_engine.tts_engine import load_production_profile
+from huellas_engine.subtitle_engine import (
     build_subtitle_timeline, build_subtitle_timeline_from_audio,
     format_srt_timestamp, render_srt, split_subtitle_text
 )
