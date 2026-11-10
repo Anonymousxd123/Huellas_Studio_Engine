@@ -84,6 +84,20 @@ Componer todas las escenas usando fondos ya generados:
 python scripts/compose_episode.py --episode episode_001
 ```
 
+Generar subtítulos SRT y sus líneas de tiempo estimadas en todos los idiomas:
+
+```bash
+python scripts/build_subtitles.py --episode episode_001
+```
+
+Preparar el manifiesto de trabajos de voz para TTS:
+
+```bash
+python scripts/build_voice_manifest.py --episode episode_001
+```
+
+El manifiesto separa narración y diálogos por personaje y deja la integración con el proveedor TTS desacoplada.
+
 Validar traducciones:
 
 ```bash
@@ -97,6 +111,8 @@ python scripts/validate_bilingual.py --episode episode_001
 - `projects/<episode>/scenes/<scene>/composed/`: composición estática final de cada escena.
 - `projects/<episode>/metadata/`: workflow y último resultado por escena.
 - `projects/<episode>/metadata/runs/<scene>/`: historial por semilla.
+- `projects/<episode>/subtitles/`: subtítulos SRT y líneas de tiempo JSON por idioma.
+- `projects/<episode>/audio/<language>/voice_manifest.json`: trabajos de voz pendientes de proveedor TTS.
 
 ## Alcance actual
 
