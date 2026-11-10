@@ -47,37 +47,28 @@ def synthesize_episode_audio(
     kokoro_profiles = load_voice_profiles(kokoro_profile_path)
     try:
         narrator = production["narration"]["voices"][language]
-        kokoro_language = kokoro_profiles["languages"][language]
     except KeyError as exc:
         raise ValueError(f"No hay configuración TTS para {language}") from exc
 
-    manifest_path, manifest = build_voice_manifest(episode_dir, language)
+    audio_root = episode_dir / "audio" / language
+    manifest_path = audio_root / "voice_manifest.json"
+    cache_path = audio_root / "tts_cache.json"
     previous_manifest = {}
-    if manifest_path.is_file():
+    cache_source = cache_path if cache_path.is_file() else manifest_path
+    if cache_source.is_file():
         try:
             previous_manifest = json.loads(
-                manifest_path.read_text(encoding="utf-8")
+                cache_source.read_text(encoding="utf-8")
             )
         except (OSError, json.JSONDecodeError):
             previous_manifest = {}
-
-    # build_voice_manifest writes a fresh manifest, so read the prior cache
-    # from the saved file before replacing it on disk.
     previous_jobs = {
         job.get("job_id"): job
         for job in previous_manifest.get("jobs", [])
     }
-    # If the just-created manifest overwrote the previous one, recover cache
-    # metadata from the dedicated cache snapshot when available.
-    cache_path = episode_dir / "audio" / language / "tts_cache.json"
-    if cache_path.is_file():
-        try:
-            cache = json.loads(cache_path.read_text(encoding="utf-8"))
-            previous_jobs = {
-                job.get("job_id"): job for job in cache.get("jobs", [])
-            }
-        except (OSError, json.JSONDecodeError):
-            pass
+
+    # Generate the new provider-neutral manifest only after reading the cache.
+    manifest_path, manifest = build_voice_manifest(episode_dir, language)
 
     manifest["provider"] = "hybrid_elevenlabs_kokoro"
     manifest["voice_selection"] = "ElevenLabs narrator; Kokoro characters"
