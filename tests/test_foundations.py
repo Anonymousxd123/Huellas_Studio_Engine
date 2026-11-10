@@ -315,7 +315,7 @@ def test_kokoro_resolves_character_voices_by_language():
     narration_job = {"kind": "narration"}
 
     assert resolve_voice_settings(profiles, "es", narration_job)["voice_id"] == "ef_dora"
-    assert resolve_voice_settings(profiles, "en", narration_job)["voice_id"] == "af_bella"
+    assert resolve_voice_settings(profiles, "en", narration_job)["voice_id"] == "am_adam"
     assert resolve_voice_settings(profiles, "es", dog_job)["voice_id"] == "em_alex"
     assert resolve_voice_settings(profiles, "en", cat_job)["voice_id"] == "af_sarah"
 
