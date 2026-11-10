@@ -19,13 +19,16 @@ def load_voice_profiles(path):
 
     for language, profile in data.get("languages", {}).items():
         lang_code = profile.get("lang_code")
-        narrator = profile.get("narrator", {})
-        voice_id = narrator.get("voice_id", "")
-        if not lang_code or not voice_id.startswith(lang_code):
-            raise ValueError(
-                f"Perfil de narrador inválido para {language}: "
-                "lang_code y voice_id no coinciden"
-            )
+        narrator = profile.get("narrator")
+        if narrator is not None:
+            voice_id = narrator.get("voice_id", "")
+            if not voice_id.startswith(lang_code):
+                raise ValueError(
+                    f"Perfil de narrador inválido para {language}: "
+                    "lang_code y voice_id no coinciden"
+                )
+        if not lang_code:
+            raise ValueError(f"Falta lang_code para {language}")
         for character, settings in profile.get("characters", {}).items():
             character_voice = settings.get("voice_id", "")
             if not character_voice.startswith(lang_code):
@@ -45,7 +48,12 @@ def resolve_voice_settings(profiles, language, job):
         ) from exc
 
     if job.get("kind") == "narration":
-        settings = language_profile["narrator"]
+        settings = language_profile.get("narrator")
+        if settings is None:
+            raise ValueError(
+                "Kokoro está configurado solo para diálogos de personajes; "
+                "la narración utiliza CosyVoice local."
+            )
     else:
         character = job.get("character")
         try:
