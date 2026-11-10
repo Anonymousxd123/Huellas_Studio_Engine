@@ -13,7 +13,7 @@ from huellas_engine.comfy_client import ComfyClient
 from huellas_engine.episode_paths import resolve_episode_dir
 from huellas_engine.localization_engine import validate_locales
 from huellas_engine.prompt_builder import build_production_plan
-from huellas_engine.scene_composer import DEFAULT_ASSETS, compose_scene
+from huellas_engine.scene_composer import DEFAULT_ASSETS, SCENE_LAYOUTS, compose_scene
 from huellas_engine.scene_engine import load_episode, validate_episode
 from huellas_engine.workflow_manager import load_workflow
 
@@ -47,6 +47,7 @@ def main():
     parser.add_argument("--height", type=int, default=576)
     parser.add_argument("--steps", type=int, default=28)
     parser.add_argument("--cfg", type=float, default=5.0)
+    parser.add_argument("--scenes", nargs="*", help="IDs opcionales; por defecto todas las escenas")
     parser.add_argument("--force", action="store_true",
                         help="Regenerate backgrounds even when valid outputs exist")
     args = parser.parse_args()
@@ -66,6 +67,23 @@ def main():
     errors = episode_errors + locale_errors
     if errors:
         raise RuntimeError("\n".join(errors))
+
+    requested = set(args.scenes or [])
+    scenes = [
+        scene for scene in episode["scenes"]
+        if not requested or scene["scene_id"] in requested
+    ]
+    found_ids = {scene["scene_id"] for scene in scenes}
+    if requested - found_ids:
+        raise ValueError(f"Escenas desconocidas: {sorted(requested - found_ids)}")
+    if not scenes:
+        raise ValueError("No hay escenas seleccionadas")
+    missing_layouts = [
+        scene["scene_id"] for scene in scenes
+        if scene["scene_id"] not in SCENE_LAYOUTS
+    ]
+    if missing_layouts:
+        raise ValueError(f"Faltan layouts de composición: {missing_layouts}")
 
     # This also verifies that all character references can be resolved.
     plan_path, plan = build_production_plan(episode_dir)
@@ -96,15 +114,15 @@ def main():
     print("\nHUELLAS STUDIO - AUTOMATED EPISODE COMPOSITOR")
     print("=" * 54)
     print("Episodio:", episode["episode_id"])
-    print("Escenas:", len(episode["scenes"]))
+    print("Escenas:", len(scenes))
     print("Seed base:", base_seed)
 
-    for index, scene in enumerate(episode["scenes"]):
+    for index, scene in enumerate(scenes):
         scene_id = scene["scene_id"]
         existing = None if args.force else existing_background(episode_dir, scene_id)
 
         if existing:
-            print(f"[{index + 1}/{len(episode['scenes'])}] {scene_id}: fondo existente, se reutiliza")
+            print(f"[{index + 1}/{len(scenes)}] {scene_id}: fondo existente, se reutiliza")
             backgrounds.append((scene_id, existing))
             continue
 
