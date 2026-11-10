@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from PIL import Image
 
@@ -290,7 +291,7 @@ def test_animatic_command_adds_silent_audio_and_soft_subtitles(tmp_path, monkeyp
 
 def test_kokoro_voice_profiles_map_daniela_and_akira_references():
     profile_path = (
-        __import__("pathlib").Path(__file__).resolve().parents[1]
+        Path(__file__).resolve().parents[1]
         / "config" / "tts" / "voice_profiles.json"
     )
     profiles = load_voice_profiles(profile_path)
