@@ -33,7 +33,7 @@ def build_animatic_command(
     if not scenes:
         raise ValueError("El episodio no contiene escenas")
 
-    inputs = []
+    images = []
     durations = []
     for scene in scenes:
         scene_id = scene["scene_id"]
@@ -49,7 +49,7 @@ def build_animatic_command(
             raise FileNotFoundError(
                 f"Falta la composición estática de {scene_id}: {image}"
             )
-        inputs.append(image)
+        images.append(image)
         durations.append(duration)
 
     total_duration = sum(durations)
@@ -73,8 +73,9 @@ def build_animatic_command(
             f"No existe mezcla de voz: {audio_path}"
         )
 
+    # All inputs must precede output-scoped FFmpeg options.
     command = [ffmpeg_path, "-y"]
-    for image, duration in zip(inputs, durations):
+    for image, duration in zip(images, durations):
         command.extend([
             "-loop", "1",
             "-framerate", str(fps),
@@ -82,9 +83,21 @@ def build_animatic_command(
             "-i", str(image)
         ])
 
+    audio_input = len(images)
+    if has_audio:
+        command.extend(["-i", str(audio_path)])
+    elif allow_silent:
+        command.extend([
+            "-f", "lavfi",
+            "-i", "anullsrc=channel_layout=stereo:sample_rate=48000"
+        ])
+
+    subtitle_input = audio_input + 1
+    command.extend(["-i", str(subtitle_path)])
+
     filters = []
     video_labels = []
-    for index in range(len(inputs)):
+    for index in range(len(images)):
         label = f"v{index}"
         filters.append(
             f"[{index}:v]"
@@ -96,37 +109,25 @@ def build_animatic_command(
 
     filters.append(
         "".join(video_labels)
-        + f"concat=n={len(inputs)}:v=1:a=0[vout]"
+        + f"concat=n={len(images)}:v=1:a=0[vout]"
     )
-    command.extend(["-filter_complex", ";".join(filters), "-map", "[vout]"])
 
-    next_input = len(inputs)
-    if has_audio:
-        command.extend(["-i", str(audio_path)])
-        command.extend([
-            "-map", f"{next_input}:a:0",
-            "-af", "apad",
-            "-t", f"{total_duration:.3f}",
-            "-c:a", "aac",
-            "-b:a", "192k"
-        ])
-    elif allow_silent:
-        command.extend([
-            "-f", "lavfi",
-            "-i", "anullsrc=channel_layout=stereo:sample_rate=48000",
-            "-map", f"{next_input}:a:0",
-            "-t", f"{total_duration:.3f}",
-            "-c:a", "aac",
-            "-b:a", "192k"
-        ])
-
-    subtitle_input = next_input + 1
-    command.extend(["-i", str(subtitle_path)])
-    language_tag = {"es": "spa", "en": "eng"}.get(language, language[:3])
     command.extend([
+        "-filter_complex", ";".join(filters),
+        "-map", "[vout]",
+        "-map", f"{audio_input}:a:0",
         "-map", f"{subtitle_input}:0",
         "-c:s", "mov_text",
-        "-metadata:s:s:0", f"language={language_tag}",
+    ])
+
+    if has_audio:
+        command.extend(["-af", "apad"])
+    command.extend([
+        "-t", f"{total_duration:.3f}",
+        "-c:a", "aac",
+        "-b:a", "192k",
+        "-metadata:s:s:0",
+        f"language={{'es': 'spa', 'en': 'eng'}.get(language, language[:3])}",
         "-c:v", "libx264",
         "-preset", "medium",
         "-crf", "18",
