@@ -8,6 +8,7 @@ from pathlib import Path
 from huellas_engine.audio_engine import build_voice_manifest
 from huellas_engine.episode_paths import resolve_episode_dir
 from huellas_engine.localization_engine import get_languages
+from huellas_engine.kokoro_engine import synthesize_episode_audio
 from huellas_engine.subtitle_engine import write_subtitles
 from huellas_engine.video_engine import render_animatic
 
@@ -28,6 +29,12 @@ def main():
     parser.add_argument("--skip-visuals", action="store_true",
                         help="Reuse existing composed scene images")
     parser.add_argument("--ffmpeg", default="ffmpeg")
+    parser.add_argument("--with-voice", action="store_true",
+                        help="Genera voces reales con Kokoro local antes del MP4")
+    parser.add_argument("--tts-device", choices=["auto", "cpu", "mps", "cuda"],
+                        default="auto")
+    parser.add_argument("--force-voice", action="store_true",
+                        help="Regenera los WAV aunque ya existan")
     args = parser.parse_args()
 
     ffmpeg = shutil.which(args.ffmpeg)
@@ -74,15 +81,31 @@ def main():
 
     print("\nPREPARANDO VOZ Y SUBTÍTULOS")
     for language in languages:
-        voice_path, manifest = build_voice_manifest(episode_dir, language)
+        if args.with_voice:
+            voice_result = synthesize_episode_audio(
+                episode_dir=episode_dir,
+                language=language,
+                profile_path=ROOT / "config" / "tts" / "voice_profiles.json",
+                force=args.force_voice,
+                device=args.tts_device
+            )
+            print(
+                f"[OK] {language}: {voice_result['generated_jobs']} audios "
+                f"generados, {voice_result['reused_jobs']} reutilizados"
+            )
+            print("Mezcla de voz:", voice_result["mix_path"])
+        else:
+            voice_path, manifest = build_voice_manifest(episode_dir, language)
+            print(
+                f"[OK] {language}: {manifest['total_jobs']} trabajos de voz "
+                "preparados (sin síntesis)"
+            )
+            print("Manifiesto:", voice_path)
+
         subtitle_paths = write_subtitles(
             episode_dir, languages=[language]
         )
-        print(
-            f"[OK] {language}: {manifest['total_jobs']} trabajos de voz, "
-            f"{len(subtitle_paths)} archivos de subtítulos"
-        )
-        print("Voz:", voice_path)
+        print("Archivos de subtítulos:", len(subtitle_paths))
 
     print("\nRENDERIZANDO ANIMATICS")
     for language in languages:
@@ -96,7 +119,10 @@ def main():
     print("\nPAQUETE DE PREVISUALIZACIÓN COMPLETADO")
     print("Episodio:", episode["episode_id"])
     print("Idiomas:", ", ".join(languages))
-    print("Nota: si no hay final_mix.wav, el MP4 tendrá audio silencioso.")
+    if args.with_voice:
+        print("Audio: voces Kokoro locales incorporadas en final_mix.wav.")
+    else:
+        print("Audio: pista silenciosa; usa --with-voice para sintetizar Kokoro.")
 
 
 if __name__ == "__main__":
