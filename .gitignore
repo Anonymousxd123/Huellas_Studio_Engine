@@ -8,3 +8,7 @@ logs/
 .mypy_cache/
 .ruff_cache/
 .coverage
+
+# Generated local TTS audio (keep manifests and timelines)
+projects/*/audio/**/*.wav
+projects/*/audio/**/*.mp3
