@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""One-shot CosyVoice MPS worker. Loads the model once for a batch of jobs."""
+import argparse
+import json
+import os
+import sys
+from pathlib import Path
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--engine-dir", required=True)
+    parser.add_argument("--model-dir", required=True)
+    parser.add_argument("--request", required=True)
+    parser.add_argument("--response", required=True)
+    parser.add_argument("--fp16", action="store_true")
+    args = parser.parse_args()
+
+    engine_dir = Path(args.engine_dir).expanduser().resolve()
+    model_dir = Path(args.model_dir).expanduser().resolve()
+    sys.path.insert(0, str(engine_dir))
+    sys.path.insert(0, str(engine_dir / "third_party" / "Matcha-TTS"))
+    os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
+
+    request_path = Path(args.request)
+    response_path = Path(args.response)
+    payload = json.loads(request_path.read_text(encoding="utf-8"))
+
+    import torch
+    import torchaudio
+    from cosyvoice.cli.cosyvoice import AutoModel
+
+    if not torch.backends.mps.is_available():
+        raise RuntimeError(
+            "PyTorch MPS no está disponible. Comprueba la instalación "
+            "de PyTorch en el entorno de CosyVoice."
+        )
+
+    # Keep one model instance alive for every narration clip in this batch.
+    model = AutoModel(model_dir=str(model_dir), fp16=args.fp16)
+    results = []
+
+    for job in payload["jobs"]:
+        reference = Path(job["reference_audio"]).expanduser().resolve()
+        output = Path(job["output_path"]).expanduser().resolve()
+        if not reference.is_file():
+            raise FileNotFoundError(f"Falta referencia vocal: {reference}")
+        if not job.get("reference_text", "").strip():
+            raise ValueError(
+                f"Falta la transcripción exacta de la referencia: {job['job_id']}"
+            )
+
+        output.parent.mkdir(parents=True, exist_ok=True)
+        prompt_text = (
+            "You are a helpful assistant.<|endofprompt|>"
+            + job["reference_text"].strip()
+        )
+        chunks = []
+        for item in model.inference_zero_shot(
+            job["text"],
+            prompt_text,
+            str(reference),
+            stream=False
+        ):
+            speech = item.get("tts_speech")
+            if speech is not None and speech.numel():
+                chunks.append(speech)
+
+        if not chunks:
+            raise RuntimeError(
+                f"CosyVoice no generó audio para {job['job_id']}"
+            )
+
+        waveform = torch.cat(chunks, dim=1).cpu()
+        temporary = output.with_name(output.stem + ".tmp.wav")
+        torchaudio.save(str(temporary), waveform, model.sample_rate)
+        temporary.replace(output)
+
+        results.append({
+            "job_id": job["job_id"],
+            "output_path": str(output),
+            "duration_seconds": round(
+                waveform.shape[1] / model.sample_rate, 3
+            ),
+            "sample_rate": model.sample_rate,
+            "device": str(model.model.device)
+        })
+
+    response_path.parent.mkdir(parents=True, exist_ok=True)
+    response_path.write_text(
+        json.dumps({"results": results}, indent=2, ensure_ascii=False),
+        encoding="utf-8"
+    )
+
+
+if __name__ == "__main__":
+    main()
