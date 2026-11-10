@@ -10,13 +10,12 @@ from huellas_engine.tts_engine import (
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PROFILE = ROOT / "config" / "tts" / "production_profiles.json"
-KOKORO_PROFILE = ROOT / "config" / "tts" / "voice_profiles.json"
 
 
 def main():
     parser = argparse.ArgumentParser(
         description=(
-            "Generate narration with original ElevenLabs voices and "
+            "Generate bilingual narration with local CosyVoice 3 and "
             "character dialogue with local Kokoro"
         )
     )
@@ -24,10 +23,11 @@ def main():
     parser.add_argument("--languages", nargs="*",
                         help="Idiomas; por defecto todos los habilitados")
     parser.add_argument("--profile", default=str(DEFAULT_PROFILE))
-    parser.add_argument("--kokoro-profile", default=str(KOKORO_PROFILE))
+    parser.add_argument("--kokoro-profile",
+                        help="Sobrescribe el perfil local de voces Kokoro")
     parser.add_argument("--device", choices=["auto", "cpu", "mps", "cuda"],
                         default="auto",
-                        help="Dispositivo local para diálogos Kokoro")
+                        help="Dispositivo para diálogos Kokoro")
     parser.add_argument("--line-gap", type=float, default=0.28)
     parser.add_argument("--force", action="store_true",
                         help="Regenera los WAV aunque exista una caché válida")
@@ -40,15 +40,15 @@ def main():
     profile = load_production_profile(args.profile)
     languages = args.languages or get_languages(episode_dir)
 
-    print("\nHUELLAS STUDIO - HYBRID TTS")
+    print("\nHUELLAS STUDIO - LOCAL TTS")
     print("=" * 52)
     print("Episodio:", args.episode)
-    print("Narración: ElevenLabs")
-    print("Akira:", profile["narration"]["voices"]["en"]["voice_id"])
-    print("Daniela:", profile["narration"]["voices"]["es"]["voice_id"])
+    print("Narración: CosyVoice 3 local (MPS)")
+    print("Modelo:", profile["narration"]["model_id"])
+    print("Akira: referencia local en inglés")
+    print("Daniela: referencia local en español")
     print("Diálogos: Kokoro local")
-    print("Dispositivo local:", args.device)
-    print("Nota: las solicitudes de ElevenLabs consumen créditos de tu cuenta.")
+    print("Sin API externa ni créditos por generación.")
 
     for language in languages:
         result = synthesize_episode_audio(
@@ -67,7 +67,7 @@ def main():
         print("Timeline:", result["timeline_path"])
         print("Manifiesto:", result["manifest_path"])
 
-    print("\nGENERACIÓN TTS COMPLETADA")
+    print("\nGENERACIÓN TTS LOCAL COMPLETADA")
 
 
 if __name__ == "__main__":
