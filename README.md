@@ -98,6 +98,14 @@ python scripts/build_voice_manifest.py --episode episode_001
 
 El manifiesto separa narración y diálogos por personaje y deja la integración con el proveedor TTS desacoplada.
 
+Renderizar un animatic MP4 con las composiciones estáticas y subtítulos:
+
+```bash
+python scripts/render_animatic.py --episode episode_001 --language es
+```
+
+Si existe `audio/<language>/final_mix.wav`, se incorpora. Si todavía no existe, el animatic lleva una pista silenciosa para revisión visual. No es todavía el vídeo animado final.
+
 Validar traducciones:
 
 ```bash
