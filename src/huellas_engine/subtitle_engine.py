@@ -149,7 +149,7 @@ def build_subtitle_timeline_from_audio(
         end = float(audio_cue["end"])
         duration = max(0.0, end - start)
         weights = [
-            max(1, len(segment.replace("\\n", " ")))
+            max(1, len(segment.replace("\n", " ")))
             for segment in segments
         ]
         total_weight = sum(weights)
