@@ -11,7 +11,7 @@
     "en": {
       "label": "Akira (ElevenLabs reference)",
       "file": "user-supplied audio; not copied into repository",
-      "goal": "Female English narrator; clear, warm, measured and natural"
+      "goal": "Male English narrator; Akira is supplied as the official ElevenLabs narrator. This Kokoro voice profile is only for local fallback."
     }
   },
   "languages": {
@@ -21,7 +21,7 @@
         "voice_id": "ef_dora",
         "speed": 0.98,
         "reference": "Daniela",
-        "selection_note": "Only built-in female Spanish preset in the official Kokoro-82M voice pack; first candidate, not a clone."
+        "selection_note": "Local Kokoro fallback only. Official production narration uses Daniela from ElevenLabs via production_profiles.json."
       },
       "characters": {
         "dog": {
@@ -48,7 +48,7 @@
             "note": "Alternative to compare for a warmer, friendlier delivery."
           }
         ],
-        "selection_note": "Primary candidate selected for warm, even long-form narration. Compare af_heart in the preview before locking the channel voice."
+        "selection_note": "Local Kokoro fallback only. Official production narration uses Akira from ElevenLabs via production_profiles.json."
       },
       "characters": {
         "dog": {
