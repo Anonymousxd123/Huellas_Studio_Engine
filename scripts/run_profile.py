@@ -4,6 +4,7 @@ import random
 from pathlib import Path
 
 from huellas_engine.comfy_client import ComfyClient
+from huellas_engine.image_utils import prepare_reference_image
 from huellas_engine.workflow_manager import load_workflow, prepare_workflow
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,10 +62,19 @@ def main():
     if profile["steps"] < 1 or profile["cfg"] <= 0:
         raise ValueError("Steps debe ser positivo y CFG mayor que cero")
 
+    output_dir.mkdir(parents=True, exist_ok=True)
+    prepared_reference = (
+        output_dir / ".references"
+        / f"{profile['name']}_{width}x{height}.png"
+    )
+    prepare_reference_image(
+        reference_path, prepared_reference, width, height
+    )
+
     client = ComfyClient(args.url)
     client.check()
     workflow_source = load_workflow(workflow_path)
-    uploaded_reference = client.upload_image(reference_path)
+    uploaded_reference = client.upload_image(prepared_reference)
 
     base_seed = (
         args.seed if args.seed is not None
