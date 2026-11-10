@@ -114,6 +114,75 @@ def build_subtitle_timeline(
     }
 
 
+
+def build_subtitle_timeline_from_audio(
+    episode_dir,
+    language,
+    max_chars=42,
+    max_lines=2
+):
+    """Align subtitle chunks to measured TTS clip durations."""
+    episode_dir = Path(episode_dir)
+    timeline_path = (
+        episode_dir / "audio" / language / "audio_timeline.json"
+    )
+    if not timeline_path.is_file():
+        raise FileNotFoundError(timeline_path)
+
+    bundle = load_episode_bundle(episode_dir, language)
+    audio_timeline = json.loads(
+        timeline_path.read_text(encoding="utf-8")
+    )
+    cues = []
+    cue_index = 1
+
+    for audio_cue in audio_timeline.get("cues", []):
+        segments = split_subtitle_text(
+            audio_cue.get("text", ""),
+            max_chars=max_chars,
+            max_lines=max_lines
+        )
+        if not segments:
+            continue
+
+        start = float(audio_cue["start"])
+        end = float(audio_cue["end"])
+        duration = max(0.0, end - start)
+        weights = [
+            max(1, len(segment.replace("\\n", " ")))
+            for segment in segments
+        ]
+        total_weight = sum(weights)
+        cursor = start
+
+        for index, (segment, weight) in enumerate(zip(segments, weights)):
+            segment_duration = (
+                duration - (cursor - start)
+                if index == len(segments) - 1
+                else duration * weight / total_weight
+            )
+            segment_end = min(end, cursor + segment_duration)
+            if segment_end > cursor:
+                cues.append({
+                    "index": cue_index,
+                    "scene_id": audio_cue["scene_id"],
+                    "start": round(cursor, 3),
+                    "end": round(segment_end, 3),
+                    "text": segment
+                })
+                cue_index += 1
+            cursor = segment_end
+
+    return {
+        "episode_id": bundle["episode_id"],
+        "language": language,
+        "title": bundle["title"],
+        "duration_seconds": audio_timeline["duration_seconds"],
+        "timing_basis": "measured_tts_clip_durations",
+        "cues": cues
+    }
+
+
 def render_srt(timeline):
     blocks = []
     for cue in timeline["cues"]:
@@ -137,9 +206,20 @@ def write_subtitles(episode_dir, languages=None, **options):
 
     outputs = []
     for language in languages:
-        timeline = build_subtitle_timeline(
-            episode_dir, language, **options
+        audio_timeline_path = (
+            episode_dir / "audio" / language / "audio_timeline.json"
         )
+        if audio_timeline_path.is_file():
+            timeline = build_subtitle_timeline_from_audio(
+                episode_dir,
+                language,
+                max_chars=options.get("max_chars", 42),
+                max_lines=options.get("max_lines", 2)
+            )
+        else:
+            timeline = build_subtitle_timeline(
+                episode_dir, language, **options
+            )
         srt_path = output_dir / f"{language}.srt"
         json_path = output_dir / f"{language}_timeline.json"
 
