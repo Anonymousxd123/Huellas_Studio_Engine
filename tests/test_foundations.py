@@ -291,19 +291,17 @@ def test_animatic_command_adds_silent_audio_and_soft_subtitles(tmp_path, monkeyp
 
 
 
-def test_kokoro_voice_profiles_map_daniela_and_akira_references():
+def test_kokoro_profiles_are_reserved_for_character_voices():
     profile_path = (
         Path(__file__).resolve().parents[1]
         / "config" / "tts" / "voice_profiles.json"
     )
     profiles = load_voice_profiles(profile_path)
 
-    assert profiles["languages"]["es"]["narrator"]["voice_id"] == "ef_dora"
-    assert profiles["languages"]["es"]["narrator"]["reference"] == "Daniela"
-    assert profiles["languages"]["en"]["narrator"]["voice_id"] == "am_adam"
-    assert profiles["languages"]["en"]["narrator"]["reference"] == "Akira"
-    assert profiles["languages"]["en"]["narrator"]["alternatives"][0]["voice_id"] == "af_heart"
-
+    assert "narrator" not in profiles["languages"]["es"]
+    assert "narrator" not in profiles["languages"]["en"]
+    assert set(profiles["languages"]["es"]["characters"]) == {"dog", "cat"}
+    assert set(profiles["languages"]["en"]["characters"]) == {"dog", "cat"}
 
 def test_kokoro_resolves_character_voices_by_language():
     profiles = load_voice_profiles(
