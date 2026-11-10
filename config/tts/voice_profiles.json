@@ -2,27 +2,9 @@
   "provider": "kokoro",
   "model": "hexgrad/Kokoro-82M",
   "sample_rate": 24000,
-  "reference_samples": {
-    "es": {
-      "label": "Daniela (ElevenLabs reference)",
-      "file": "user-supplied audio; not copied into repository",
-      "goal": "Female Spanish narrator; clear, warm, expressive and conversational"
-    },
-    "en": {
-      "label": "Akira (ElevenLabs reference)",
-      "file": "user-supplied audio; not copied into repository",
-      "goal": "Male English narrator; Akira is supplied as the official ElevenLabs narrator. This Kokoro voice profile is only for local fallback."
-    }
-  },
   "languages": {
     "es": {
       "lang_code": "e",
-      "narrator": {
-        "voice_id": "ef_dora",
-        "speed": 0.98,
-        "reference": "Daniela",
-        "selection_note": "Local Kokoro fallback only. Official production narration uses Daniela from ElevenLabs via production_profiles.json."
-      },
       "characters": {
         "dog": {
           "voice_id": "em_alex",
@@ -32,24 +14,10 @@
           "voice_id": "em_santa",
           "speed": 1.0
         }
-      },
-      "preview_text": "Hola. Hoy vamos a descubrir algunos comportamientos de perros y gatos que quizá has interpretado mal. Quédate hasta el final, porque entender mejor a nuestras mascotas puede cambiar la forma en que las cuidamos."
+      }
     },
     "en": {
       "lang_code": "a",
-      "narrator": {
-        "voice_id": "am_adam",
-        "speed": 0.98,
-        "reference": "Akira",
-        "alternatives": [
-          {
-            "voice_id": "af_heart",
-            "speed": 1.0,
-            "note": "Alternative to compare for a warmer, friendlier delivery."
-          }
-        ],
-        "selection_note": "Local Kokoro fallback only. Official production narration uses Akira from ElevenLabs via production_profiles.json."
-      },
       "characters": {
         "dog": {
           "voice_id": "am_michael",
@@ -59,8 +27,7 @@
           "voice_id": "af_sarah",
           "speed": 1.02
         }
-      },
-      "preview_text": "Hello. Today we're going to discover some dog and cat behaviors you may have misunderstood. Stay until the end, because understanding our pets better can change the way we care for them."
+      }
     }
   },
   "mix": {
