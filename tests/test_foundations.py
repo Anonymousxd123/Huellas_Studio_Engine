@@ -7,6 +7,9 @@ from huellas_engine.audio_engine import build_voice_manifest
 from huellas_engine.episode_paths import resolve_episode_dir
 from huellas_engine.image_utils import prepare_reference_image
 from huellas_engine.localization_engine import validate_locales
+from huellas_engine.kokoro_engine import (
+    load_voice_profiles, resolve_voice_settings, split_text_for_tts
+)
 from huellas_engine.scene_composer import SCENE_LAYOUTS, load_character
 from huellas_engine.scene_engine import validate_episode
 from huellas_engine.video_engine import build_animatic_command
@@ -282,3 +285,45 @@ def test_animatic_command_adds_silent_audio_and_soft_subtitles(tmp_path, monkeyp
     assert command.index("-filter_complex") > max(
         index for index, value in enumerate(command) if value == "-i"
     )
+
+
+
+def test_kokoro_voice_profiles_map_daniela_and_akira_references():
+    profile_path = (
+        __import__("pathlib").Path(__file__).resolve().parents[1]
+        / "config" / "tts" / "voice_profiles.json"
+    )
+    profiles = load_voice_profiles(profile_path)
+
+    assert profiles["languages"]["es"]["narrator"]["voice_id"] == "ef_dora"
+    assert profiles["languages"]["es"]["narrator"]["reference"] == "Daniela"
+    assert profiles["languages"]["en"]["narrator"]["voice_id"] == "af_bella"
+    assert profiles["languages"]["en"]["narrator"]["reference"] == "Akira"
+    assert profiles["languages"]["en"]["narrator"]["alternatives"][0]["voice_id"] == "af_heart"
+
+
+def test_kokoro_resolves_character_voices_by_language():
+    profiles = load_voice_profiles(
+        __import__("pathlib").Path(__file__).resolve().parents[1]
+        / "config" / "tts" / "voice_profiles.json"
+    )
+    dog_job = {"kind": "dialogue", "character": "dog"}
+    cat_job = {"kind": "dialogue", "character": "cat"}
+    narration_job = {"kind": "narration"}
+
+    assert resolve_voice_settings(profiles, "es", narration_job)["voice_id"] == "ef_dora"
+    assert resolve_voice_settings(profiles, "en", narration_job)["voice_id"] == "af_bella"
+    assert resolve_voice_settings(profiles, "es", dog_job)["voice_id"] == "em_alex"
+    assert resolve_voice_settings(profiles, "en", cat_job)["voice_id"] == "af_sarah"
+
+
+def test_kokoro_splits_long_text_without_losing_words():
+    source = (
+        "Primera oración de prueba. "
+        + " ".join(f"palabra{i}" for i in range(80))
+        + " Última oración."
+    )
+    chunks = split_text_for_tts(source, max_chars=80)
+    assert len(chunks) > 2
+    assert " ".join(chunks).replace("  ", " ") == source
+    assert all(len(chunk) <= 80 for chunk in chunks)
