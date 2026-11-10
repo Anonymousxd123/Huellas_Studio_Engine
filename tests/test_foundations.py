@@ -8,6 +8,9 @@ from huellas_engine.image_utils import prepare_reference_image
 from huellas_engine.localization_engine import validate_locales
 from huellas_engine.scene_composer import SCENE_LAYOUTS, load_character
 from huellas_engine.scene_engine import validate_episode
+from huellas_engine.subtitle_engine import (
+    build_subtitle_timeline, format_srt_timestamp, render_srt, split_subtitle_text
+)
 
 
 def test_normalize_manifest_accepts_list():
@@ -121,3 +124,59 @@ def test_locale_validator_reports_incomplete_dialogue_without_crashing(tmp_path)
 
     errors = validate_locales(episode_dir)
     assert any("diálogo 1 incompleto" in error for error in errors)
+
+
+
+def test_srt_timestamp_formats_milliseconds():
+    assert format_srt_timestamp(65.432) == "00:01:05,432"
+
+
+def test_subtitle_text_splits_into_two_lines_per_cue():
+    segments = split_subtitle_text(
+        "uno dos tres cuatro cinco seis siete ocho nueve diez",
+        max_chars=12,
+        max_lines=2
+    )
+    assert segments
+    assert all(len(segment.splitlines()) <= 2 for segment in segments)
+    assert all(len(line) <= 12 for segment in segments for line in segment.splitlines())
+
+
+def test_subtitle_timeline_stays_within_scene_duration(tmp_path):
+    episode_dir = tmp_path / "episode"
+    (episode_dir / "locales").mkdir(parents=True)
+    (episode_dir / "episode.json").write_text(
+        json.dumps({
+            "episode_id": "episode_test",
+            "supported_languages": ["es"],
+            "scenes": [{
+                "scene_id": "SC001",
+                "duration_seconds": 10,
+                "location": "sala",
+                "characters": ["dog"],
+                "action": "habla",
+                "visual_prompt": "perro"
+            }]
+        }),
+        encoding="utf-8"
+    )
+    locale = {
+        "language": "es",
+        "episode": {"title": "Prueba", "description": "Prueba"},
+        "scenes": {
+            "SC001": {
+                "title": "Prueba",
+                "narration": "Este es un texto breve para probar los subtítulos.",
+                "dialogue": [{"character": "dog", "text": "Hola, mundo."}]
+            }
+        }
+    }
+    (episode_dir / "locales" / "es.json").write_text(
+        json.dumps(locale),
+        encoding="utf-8"
+    )
+
+    timeline = build_subtitle_timeline(episode_dir, "es")
+    assert timeline["cues"]
+    assert all(cue["start"] < cue["end"] <= 10 for cue in timeline["cues"])
+    assert "00:00:" in render_srt(timeline)
