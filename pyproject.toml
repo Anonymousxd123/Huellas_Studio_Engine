@@ -6,7 +6,6 @@ build-backend = "setuptools.build_meta"
 name = "huellas-studio-engine"
 version = "0.1.1"
 description = "Automated production engine for Huellas Studio"
-readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
   "requests>=2.31.0",
