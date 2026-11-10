@@ -120,12 +120,11 @@ def synthesize_narration_batch(
     work_dir.mkdir(parents=True, exist_ok=True)
 
     reference = _resolve_path(voice["reference_audio"], root)
-    prepared_reference = work_dir / "references" / f"{language}_reference_16k.wav"
-    if (
-        not prepared_reference.is_file()
-        or prepared_reference.stat().st_mtime < reference.stat().st_mtime
-    ):
-        _prepare_reference(reference, prepared_reference)
+    if not reference.is_file():
+        raise FileNotFoundError(
+            f"No existe el audio de referencia de {voice.get('name', language)}: "
+            f"{reference}"
+        )
 
     reference_text = voice.get("reference_text", "").strip()
     if not reference_text or "REPLACE_WITH" in reference_text:
@@ -134,6 +133,13 @@ def synthesize_narration_batch(
             f"{voice.get('name', language)} en "
             "config/tts/production_profiles.json"
         )
+
+    prepared_reference = work_dir / "references" / f"{language}_reference_16k.wav"
+    if (
+        not prepared_reference.is_file()
+        or prepared_reference.stat().st_mtime < reference.stat().st_mtime
+    ):
+        _prepare_reference(reference, prepared_reference)
 
     payload_jobs = []
     for job in jobs:
