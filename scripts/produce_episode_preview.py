@@ -8,7 +8,7 @@ from pathlib import Path
 from huellas_engine.audio_engine import build_voice_manifest
 from huellas_engine.episode_paths import resolve_episode_dir
 from huellas_engine.localization_engine import get_languages
-from huellas_engine.kokoro_engine import synthesize_episode_audio
+from huellas_engine.tts_engine import synthesize_episode_audio
 from huellas_engine.subtitle_engine import write_subtitles
 from huellas_engine.video_engine import render_animatic
 
@@ -30,7 +30,9 @@ def main():
                         help="Reuse existing composed scene images")
     parser.add_argument("--ffmpeg", default="ffmpeg")
     parser.add_argument("--with-voice", action="store_true",
-                        help="Genera voces reales con Kokoro local antes del MP4")
+                        help="Genera narración ElevenLabs y diálogos Kokoro antes del MP4")
+    parser.add_argument("--tts-profile", default=str(ROOT / "config" / "tts" / "production_profiles.json"))
+    parser.add_argument("--kokoro-profile", default=str(ROOT / "config" / "tts" / "voice_profiles.json"))
     parser.add_argument("--tts-device", choices=["auto", "cpu", "mps", "cuda"],
                         default="auto")
     parser.add_argument("--force-voice", action="store_true",
@@ -85,7 +87,8 @@ def main():
             voice_result = synthesize_episode_audio(
                 episode_dir=episode_dir,
                 language=language,
-                profile_path=ROOT / "config" / "tts" / "voice_profiles.json",
+                profile_path=args.tts_profile,
+                kokoro_profile_path=args.kokoro_profile,
                 force=args.force_voice,
                 device=args.tts_device
             )
@@ -120,9 +123,9 @@ def main():
     print("Episodio:", episode["episode_id"])
     print("Idiomas:", ", ".join(languages))
     if args.with_voice:
-        print("Audio: voces Kokoro locales incorporadas en final_mix.wav.")
+        print("Audio: narración ElevenLabs + diálogos Kokoro en final_mix.wav.")
     else:
-        print("Audio: pista silenciosa; usa --with-voice para sintetizar Kokoro.")
+        print("Audio: pista silenciosa; usa --with-voice para generar voces.")
 
 
 if __name__ == "__main__":
