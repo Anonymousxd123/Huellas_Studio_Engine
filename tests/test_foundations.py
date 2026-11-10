@@ -2,7 +2,7 @@ from PIL import Image
 
 from huellas_engine.asset_manager import normalize_manifest
 from huellas_engine.episode_paths import resolve_episode_dir
-from huellas_engine.scene_composer import load_character
+from huellas_engine.scene_composer import SCENE_LAYOUTS, load_character
 from huellas_engine.scene_engine import validate_episode
 
 
@@ -52,6 +52,16 @@ def test_validate_episode_reports_duplicate_scene_ids():
     }
     errors = validate_episode(episode)
     assert any("duplicado" in error for error in errors)
+
+
+def test_composer_has_layout_for_all_eight_episode_scenes():
+    expected = {f"SC{index:03d}" for index in range(1, 9)}
+    assert set(SCENE_LAYOUTS) == expected
+    for placements in SCENE_LAYOUTS.values():
+        assert len(placements) == 2
+        assert {item["asset"] for item in placements} == {
+            "dog_master_rgba.png", "cat_master_rgba.png"
+        }
 
 
 def test_resolve_episode_dir_accepts_project_id(tmp_path):
