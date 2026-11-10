@@ -118,52 +118,61 @@ Preparar el manifiesto de trabajos de voz sin generar audio:
 python scripts/build_voice_manifest.py --episode episode_001
 ```
 
-### Configurar las voces originales de ElevenLabs
+### Configurar las voces locales de Huellas Studio
 
-La narración oficial usa los Voice IDs originales:
+La narración utiliza **CosyVoice 3.0 (0.5B) con Apple Silicon MPS**, mediante el fork comunitario CosyVoice-MPS. No necesita API Key, conexión a ElevenLabs ni créditos por generación. Los diálogos del perro y el gato siguen utilizando Kokoro local.
 
-- Akira (inglés, masculino): `aHYS10erl9IGphnXtDeD`.
-- Daniela (español): `8tm9IYjg8ybDoxe8w6Rk`.
-
-El archivo `config/tts/production_profiles.json` guarda los Voice IDs y el modelo `eleven_multilingual_v2`. La API Key nunca se guarda en el repositorio.
-
-Crea tu archivo local `.env` a partir de la plantilla:
+Instala el runtime aislado de CosyVoice (no modifica el entorno `.venv` principal de Huellas):
 
 ```bash
-cp .env.example .env
+brew install uv
+bash scripts/setup_cosyvoice_mps_macos.sh
 ```
 
-Edita `.env` y configura `ELEVENLABS_API_KEY` con tu clave privada de ElevenLabs. El archivo `.env` está excluido de Git. No pegues la clave en el chat ni la subas a GitHub.
+El instalador crea `engines/CosyVoice-MPS/.venv` con Python 3.10 y ofrece descargar una sola vez el modelo `Fun-CosyVoice3-0.5B-2512` (aproximadamente 9.75 GB). El código, el entorno y los pesos quedan fuera del control de versiones.
 
-Las voces de narración se generan con ElevenLabs usando sus ajustes de voz guardados: el motor no envía sobrescrituras de estabilidad, similitud ni estilo. Los diálogos del perro y el gato siguen utilizando voces Kokoro locales.
+Instala Kokoro para las voces locales de los personajes, si aún no está instalado:
 
-**Aviso de coste:** cada generación de narración llama a ElevenLabs y consume créditos/cuota de tu cuenta. La caché evita volver a pagar por clips cuyo texto, voz y modelo no hayan cambiado. `--force` vuelve a generarlos y consume créditos nuevamente.
+```bash
+bash scripts/setup_tts_macos.sh
+```
 
-Generar audiciones cortas con las voces originales:
+#### Referencias vocales de Akira y Daniela
+
+Coloca los audios originales, con permiso para clonarlos, en:
+
+- `~/Huellas_Studio_Assets/voice_references/akira_reference.wav`
+- `~/Huellas_Studio_Assets/voice_references/daniela_reference.wav`
+
+La referencia debe contener aproximadamente 5–10 segundos de una sola voz, sin música, ruido ni reverberación. El motor la convierte automáticamente a WAV mono de 16 kHz. En `config/tts/production_profiles.json`, completa `reference_text` con la transcripción exacta de cada grabación. La transcripción debe coincidir palabra por palabra con el audio.
+
+#### Generar audiciones locales
 
 ```bash
 .venv/bin/python scripts/preview_voice_profiles.py --episode episode_001
 ```
 
-Las audiciones se guardan en `projects/<episode>/audio/voice_previews/`. Esta prueba consume créditos de ElevenLabs.
+Las audiciones se guardan en `projects/<episode>/audio/voice_previews/`. No consumen créditos externos.
 
-Generar narración y diálogos reales en español e inglés:
+#### Generar las voces del episodio en ambos idiomas
 
 ```bash
 .venv/bin/python scripts/generate_voice.py --episode episode_001
 ```
 
-El generador reutiliza WAV existentes cuando coinciden texto, proveedor, modelo y Voice ID. Añade `--force` para regenerarlos. En Apple Silicon, Kokoro detecta MPS automáticamente para los diálogos locales; también puedes indicar `--device cpu`.
+El generador utiliza CosyVoice para Akira/Daniela y Kokoro para los diálogos del perro/gato. Reutiliza WAV existentes cuando coinciden texto, modelo y referencia vocal. Añade `--force` para regenerarlos. Kokoro utiliza MPS automáticamente en Apple Silicon; también puedes indicar `--device cpu`.
 
-Para ejecutar el pipeline de previsualización con voz real:
+Para ejecutar el pipeline de previsualización con voces locales:
 
 ```bash
 .venv/bin/python scripts/produce_episode_preview.py --episode episode_001 --with-voice
 ```
 
-La mezcla final se escribe en `audio/<language>/final_mix.wav`, la línea de tiempo real en `audio/<language>/audio_timeline.json` y ambas se utilizan en el MP4. Si una escena no tiene tiempo suficiente para su narración y diálogos, la síntesis falla explícitamente: no se recorta la voz automáticamente.
+La mezcla final se escribe en `audio/<language>/final_mix.wav` y la línea de tiempo real en `audio/<language>/audio_timeline.json`. Si el audio no cabe en la duración de una escena, la síntesis falla explícitamente: no se recorta la voz automáticamente.
 
-Los perfiles de producción están en `config/tts/production_profiles.json`; las voces locales de personajes, en `config/tts/voice_profiles.json`.
+**Limitaciones conocidas:** CosyVoice-MPS es un fork comunitario, no el runtime oficial de upstream. El núcleo de inferencia funciona con MPS, pero algunos módulos ONNX se ejecutan en CPU y la generación puede ser más lenta que tiempo real. Es adecuado para producción por lotes, sujeto a la prueba de rendimiento en este Mac.
+
+**Licencias:** el repositorio y la ficha de los pesos indican Apache-2.0. Conserva los avisos de licencia y revisa las condiciones aplicables al uso comercial antes de publicar contenido monetizado. Solo clona voces propias o voces cuyo titular haya autorizado expresamente su uso.
 
 Renderizar un animatic MP4 con las composiciones estáticas y subtítulos:
 
