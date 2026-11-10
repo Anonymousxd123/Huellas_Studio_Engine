@@ -3,48 +3,13 @@ import json
 import random
 from pathlib import Path
 
-from PIL import Image, ImageFilter
-
 from huellas_engine.comfy_client import ComfyClient
 from huellas_engine.episode_paths import resolve_episode_dir
+from huellas_engine.image_utils import prepare_reference_image
 from huellas_engine.workflow_manager import load_workflow, prepare_workflow
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / "workflows/image/character_generator_api.json"
-
-
-def prepare_reference(source, destination, width, height):
-    with Image.open(source) as original:
-        image = original.convert("RGB")
-
-        scale = min(width / image.width, height / image.height)
-        new_width = round(image.width * scale)
-        new_height = round(image.height * scale)
-
-        resized = image.resize(
-            (new_width, new_height),
-            Image.Resampling.LANCZOS
-        )
-
-        background = image.resize(
-            (width, height),
-            Image.Resampling.LANCZOS
-        ).filter(ImageFilter.GaussianBlur(radius=24))
-
-        x = (width - new_width) // 2
-        y = (height - new_height) // 2
-        background.paste(resized, (x, y))
-
-        destination = Path(destination)
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        background.save(destination, format="PNG")
-
-        print(
-            f"[OK] Referencia adaptada: "
-            f"{image.width}x{image.height} -> {width}x{height}"
-        )
-
-    return destination
 
 
 def main():
@@ -110,7 +75,7 @@ def main():
     print("Denoise:", args.denoise)
 
     prepared_reference = metadata_dir / f"{args.scene}_reference_{width}x{height}.png"
-    prepare_reference(reference, prepared_reference, width, height)
+    prepare_reference_image(reference, prepared_reference, width, height)
 
     client = ComfyClient(args.url)
     client.check()
