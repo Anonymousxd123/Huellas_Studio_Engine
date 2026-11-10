@@ -1,9 +1,11 @@
 import argparse
 from pathlib import Path
 
+from huellas_engine.cosyvoice_engine import (
+    load_cosyvoice_profile,
+    synthesize_narration_batch
+)
 from huellas_engine.episode_paths import resolve_episode_dir
-from huellas_engine.tts_engine import load_production_profile
-from huellas_engine.elevenlabs_engine import synthesize_text_to_file
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PROFILE = ROOT / "config" / "tts" / "production_profiles.json"
@@ -11,18 +13,15 @@ DEFAULT_PROFILE = ROOT / "config" / "tts" / "production_profiles.json"
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate short auditions using the original ElevenLabs narrators"
+        description="Generate local voice-cloning auditions for Akira and Daniela"
     )
     parser.add_argument("--episode", default="episode_001")
-    parser.add_argument("--languages", nargs="*",
-                        help="Idiomas; por defecto español e inglés")
+    parser.add_argument("--languages", nargs="*", default=["es", "en"])
     parser.add_argument("--profile", default=str(DEFAULT_PROFILE))
     args = parser.parse_args()
 
-    profile = load_production_profile(args.profile)
-    languages = args.languages or ["es", "en"]
+    profile = load_cosyvoice_profile(args.profile)
     episode_dir = resolve_episode_dir(args.episode, ROOT)
-    output_root = episode_dir / "audio" / "voice_previews"
 
     preview_text = {
         "es": (
@@ -38,29 +37,40 @@ def main():
         )
     }
 
-    print("\nHUELLAS STUDIO - ELEVENLABS VOICE AUDITIONS")
+    print("\nHUELLAS STUDIO - LOCAL VOICE AUDITIONS")
     print("=" * 52)
-    print("Estas pruebas consumen créditos de ElevenLabs.")
+    print("Motor: CosyVoice 3.0 local")
+    print("No consume créditos de ElevenLabs.")
 
-    for language in languages:
-        narrator = profile["narration"]["voices"][language]
+    for language in args.languages:
+        if language not in preview_text:
+            raise ValueError(f"Idioma de audición no soportado: {language}")
+        voice = profile["narration"]["voices"][language]
         output = (
-            output_root / language
-            / f"{narrator['name'].lower()}_elevenlabs_audition.wav"
+            f"audio/voice_previews/{language}/"
+            f"{voice['name'].lower()}_cosyvoice_audition.wav"
         )
-        result = synthesize_text_to_file(
-            text=preview_text[language],
-            output_path=output,
-            voice_id=narrator["voice_id"],
-            model_id=profile["narration"]["model_id"]
+        job = {
+            "job_id": f"preview_{language}",
+            "text": preview_text[language],
+            "output": output
+        }
+        results = synthesize_narration_batch(
+            jobs=[job],
+            language=language,
+            profile=profile,
+            work_dir=episode_dir / "audio" / "voice_previews" / language,
+            episode_dir=episode_dir,
+            root=ROOT
         )
+        result = results[job["job_id"]]
         print(
-            f"[OK] {language} | {narrator['name']} | "
-            f"{result['duration_seconds']}s | {output}"
+            f"[OK] {language} | {voice['name']} | "
+            f"{result['duration_seconds']}s | "
+            f"{episode_dir / output}"
         )
 
-    print("\nAUDICIONES ORIGINALES GENERADAS")
-    print("Escucha los WAV para confirmar las voces antes de producir el episodio.")
+    print("\nAUDICIONES LOCALES GENERADAS")
 
 
 if __name__ == "__main__":
