@@ -73,7 +73,7 @@ def split_text_for_tts(text, max_chars=280):
     if not text:
         return []
 
-    sentences = re.split(r"(?<=[.!?¡¿…])\\s+", text)
+    sentences = re.split(r"(?<=[.!?¡¿…])\s+", text)
     chunks = []
     for sentence in sentences:
         sentence = sentence.strip()
