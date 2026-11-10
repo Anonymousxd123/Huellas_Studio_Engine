@@ -216,6 +216,9 @@ def _mix_scene_audio(
             "Falta SoundFile. Ejecuta python -m pip install -e '.[tts]'"
         ) from exc
 
+    if line_gap_seconds < 0:
+        raise ValueError("line_gap_seconds no puede ser negativo")
+
     audio_root = Path(episode_dir) / "audio" / language
     timeline = []
     scene_buffers = []
@@ -316,6 +319,21 @@ def synthesize_episode_audio(
 
     episode_dir = Path(episode_dir)
     profiles = load_voice_profiles(profile_path)
+    previous_manifest_path = (
+        episode_dir / "audio" / language / "voice_manifest.json"
+    )
+    previous_manifest = {}
+    if previous_manifest_path.is_file():
+        try:
+            previous_manifest = json.loads(
+                previous_manifest_path.read_text(encoding="utf-8")
+            )
+        except (OSError, json.JSONDecodeError):
+            previous_manifest = {}
+    previous_jobs = {
+        job.get("job_id"): job
+        for job in previous_manifest.get("jobs", [])
+    }
     manifest_path, manifest = build_voice_manifest(episode_dir, language)
     episode = json.loads(
         (episode_dir / "episode.json").read_text(encoding="utf-8")
@@ -338,17 +356,26 @@ def synthesize_episode_audio(
         job["voice_id"] = settings["voice_id"]
         job["speed"] = settings["speed"]
 
-        if output_path.is_file() and not force:
+        previous_job = previous_jobs.get(job["job_id"], {})
+        cache_matches = (
+            previous_manifest.get("provider") == "kokoro_local"
+            and previous_manifest.get("model") == profiles["model"]
+            and previous_job.get("text") == job["text"]
+            and previous_job.get("voice_id") == settings["voice_id"]
+            and float(previous_job.get("speed", -1)) == settings["speed"]
+        )
+        if output_path.is_file() and cache_matches and not force:
             try:
                 import soundfile as sf
                 info = sf.info(output_path)
                 job["audio_duration_seconds"] = round(
                     info.frames / info.samplerate, 3
                 )
+                job["device"] = previous_job.get("device", "cached")
                 job["status"] = "reused"
                 reused += 1
                 continue
-            except (ImportError, RuntimeError, OSError):
+            except (ImportError, RuntimeError, OSError, ZeroDivisionError):
                 pass
 
         result = synthesize_text_to_file(
