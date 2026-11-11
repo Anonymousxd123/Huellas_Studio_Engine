@@ -131,6 +131,8 @@ bash scripts/setup_cosyvoice_mps_macos.sh
 
 El instalador crea `engines/CosyVoice-MPS/.venv` con Python 3.10 y ofrece descargar una sola vez el modelo `Fun-CosyVoice3-0.5B-2512` (aproximadamente 9.75 GB). El código, el entorno y los pesos quedan fuera del control de versiones.
 
+En macOS Apple Silicon, el instalador filtra los índices adicionales de CUDA definidos por el fork upstream y resuelve las dependencias desde PyPI. Esto evita que ONNX Runtime para macOS se busque en el índice de paquetes CUDA de Microsoft.
+
 Instala Kokoro para las voces locales de los personajes, si aún no está instalado:
 
 ```bash
