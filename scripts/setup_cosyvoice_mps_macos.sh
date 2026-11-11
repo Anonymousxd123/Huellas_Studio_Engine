@@ -34,8 +34,21 @@ if [[ ! -x ".venv/bin/python" ]]; then
   uv venv --python 3.10 .venv
 fi
 
-uv pip install --python .venv/bin/python -r requirements.txt
-uv pip install --python .venv/bin/python huggingface_hub
+# The upstream requirements file includes CUDA-specific extra indexes.
+# On Apple Silicon, use PyPI directly and omit those indexes so uv does not
+# resolve macOS onnxruntime from Microsoft's CUDA package feed.
+MAC_REQUIREMENTS="$(mktemp)"
+trap 'rm -f "$MAC_REQUIREMENTS"' EXIT
+grep -vE '^[[:space:]]*--extra-index-url([[:space:]]|=)' requirements.txt > "$MAC_REQUIREMENTS"
+
+uv pip install \
+  --python .venv/bin/python \
+  --index-url https://pypi.org/simple \
+  -r "$MAC_REQUIREMENTS"
+uv pip install \
+  --python .venv/bin/python \
+  --index-url https://pypi.org/simple \
+  huggingface_hub
 
 echo ""
 echo "ENTORNO COSYVOICE MPS INSTALADO"
@@ -74,4 +87,4 @@ echo ""
 echo "CONFIGURACIÓN COSYVOICE FINALIZADA"
 echo "Entorno: $ENGINE_DIR/.venv"
 echo "Modelo:  $MODEL_DIR"
-echo "Próximo paso: colocar las referencias Akira/Daniela y completar sus transcripciones."
+echo "Próximo paso: ejecutar las audiciones locales de Akira y Daniela desde Huellas Studio."
