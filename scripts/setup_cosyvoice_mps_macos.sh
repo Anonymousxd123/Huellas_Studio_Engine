@@ -39,12 +39,31 @@ fi
 # resolve macOS onnxruntime from Microsoft's CUDA package feed.
 MAC_REQUIREMENTS="$(mktemp)"
 trap 'rm -f "$MAC_REQUIREMENTS"' EXIT
-grep -vE '^[[:space:]]*--extra-index-url([[:space:]]|=)' requirements.txt > "$MAC_REQUIREMENTS"
+
+# openai-whisper 20231117 uses pkg_resources from setuptools at build time,
+# but its legacy setup.py does not declare that build dependency. New isolated
+# build environments can therefore fail with "No module named pkg_resources".
+# Install a compatible setuptools in this venv, install the remaining runtime
+# requirements normally, then build this one legacy package without isolation.
+grep -vE '^[[:space:]]*--extra-index-url([[:space:]]|=)|^[[:space:]]*openai-whisper==' \
+  requirements.txt > "$MAC_REQUIREMENTS"
+
+uv pip install \
+  --python .venv/bin/python \
+  --index-url https://pypi.org/simple \
+  "setuptools<81" wheel
 
 uv pip install \
   --python .venv/bin/python \
   --index-url https://pypi.org/simple \
   -r "$MAC_REQUIREMENTS"
+
+uv pip install \
+  --python .venv/bin/python \
+  --index-url https://pypi.org/simple \
+  --no-build-isolation \
+  "openai-whisper==20231117"
+
 uv pip install \
   --python .venv/bin/python \
   --index-url https://pypi.org/simple \
