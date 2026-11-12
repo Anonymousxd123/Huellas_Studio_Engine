@@ -1,0 +1,28 @@
+{
+  "model": "ltxv-2b-0.9.6-distilled-04-25.safetensors",
+  "text_encoder": "t5xxl_fp16.safetensors",
+  "sampler": "euler_ancestral",
+  "cfg": 1,
+  "distilled_sigmas": [
+    1,
+    0.9937,
+    0.9875,
+    0.9812,
+    0.975,
+    0.9094,
+    0.725,
+    0.4219,
+    0
+  ],
+  "negative_prompt": "low quality, worst quality, deformed, distorted, disfigured, motion smear, motion artifacts, extra limbs, extra paws, duplicate animals, changing character design, changing fur color, changing collar or medallion, text, watermark, photorealism, 3D render, camera shake, scene cut, flicker",
+  "scenes": {
+    "SC001": "A polished 2D family cartoon animation using the exact first frame as the visual reference. The gray tabby cat makes a few small confident walking steps toward the open bathroom doorway, with a gentle natural body bounce. The golden retriever stays near the hallway and turns its gaze toward the cat with curious attention. Keep the same two characters, exact fur colors, proportions, blue dog collar and gold medallion, green cat eyes, clean dark outlines, soft cel shading and original background. Locked camera, smooth restrained movement, no new characters and no morphing.",
+    "SC002": "A polished 2D family cartoon animation using the exact first frame as the visual reference. The gray tabby cat walks a short distance down the hallway with small alternating steps and a gentle tail sway. The golden retriever watches from the doorway and makes a subtle curious head turn. Preserve both characters' exact identities, proportions, colors, accessories, line art and the original house background. Smooth restrained movement, locked camera, no new characters, no morphing.",
+    "SC003": "A polished 2D family cartoon animation using the exact first frame as the visual reference. The golden retriever gently tilts its head to one side, pauses with a curious expression, then returns slightly toward center. A beat later, the gray tabby cat imitates the same small head tilt. Add subtle ear and body movement and gentle breathing. Preserve the exact dog and cat designs, fur colors, proportions, blue collar, gold medallion, green cat eyes, clean dark outlines, cel shading and original living-room background. Locked camera, smooth natural timing, no new characters, no morphing.",
+    "SC004": "A polished 2D family cartoon animation using the exact first frame as the visual reference. The gray tabby cat slowly reaches one front paw toward the drinking glass on the coffee table and gives it a gentle nudge. The golden retriever reacts with a small surprised body movement and looks toward the glass. Keep the glass recognizable and on the table. Preserve both characters' exact designs, proportions, fur colors, accessories, line art and original living-room background. Smooth restrained action, no extra paws, no new characters, no morphing.",
+    "SC005": "A polished 2D family cartoon animation using the exact first frame as the visual reference. The golden retriever gives a joyful welcoming bounce and takes a couple of short excited steps toward the entrance, holding its original friendly expression. The gray tabby cat watches with a subtle unimpressed head turn. Preserve the exact dog and cat identities, proportions, fur colors, blue collar, gold medallion, green cat eyes, line art and original entrance background. Smooth natural movement, no new characters, no morphing.",
+    "SC006": "A polished 2D family cartoon animation using the exact first frame as the visual reference. The gray tabby cat gently alternates pressing its front paws into the soft blanket in a slow kneading rhythm. The golden retriever watches with a small puzzled head tilt. Preserve the exact cat and dog designs, proportions, fur colors, accessories, clean line art, cel shading and original sofa background. Smooth subtle paw action, no extra limbs, no new characters, no morphing.",
+    "SC007": "A polished 2D family cartoon animation using the exact first frame as the visual reference. The gray tabby cat slowly closes its eyes in a relaxed blink, pauses briefly, then opens them. The golden retriever notices and gently imitates the slow blink. Add subtle breathing only. Preserve the exact faces, eye colors, fur patterns, proportions, accessories, outlines and original living-room background. Locked close-up camera, smooth gentle motion, no new characters, no morphing.",
+    "SC008": "A polished 2D family cartoon animation using the exact first frame as the visual reference. The golden retriever and gray tabby cat sit side by side, gently breathing and blinking naturally. The dog makes a tiny friendly head movement and the cat gives a relaxed slow blink. Preserve their exact character designs, colors, proportions, blue collar, gold medallion, green eyes, line art and original background. Locked camera, warm calm ending, no new characters, no morphing."
+  }
+}
