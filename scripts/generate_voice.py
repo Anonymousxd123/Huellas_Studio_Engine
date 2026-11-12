@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 
 from huellas_engine.episode_paths import resolve_episode_dir
+from huellas_engine.pacing_engine import analyze_episode_pacing
 from huellas_engine.localization_engine import get_languages
 from huellas_engine.tts_engine import (
     load_production_profile,
@@ -29,6 +30,8 @@ def main():
                         default="auto",
                         help="Dispositivo para diálogos Kokoro")
     parser.add_argument("--line-gap", type=float, default=0.28)
+    parser.add_argument("--pacing-wpm", type=float, default=128.0,
+                        help="Ritmo de referencia para validar la duración del guion")
     parser.add_argument("--force", action="store_true",
                         help="Regenera los WAV aunque exista una caché válida")
     args = parser.parse_args()
@@ -39,6 +42,23 @@ def main():
     episode_dir = resolve_episode_dir(args.episode, ROOT)
     profile = load_production_profile(args.profile)
     languages = args.languages or get_languages(episode_dir)
+    pacing = analyze_episode_pacing(
+        episode_dir,
+        languages=languages,
+        words_per_minute=args.pacing_wpm,
+        line_gap_seconds=args.line_gap
+    )
+    if pacing["errors"]:
+        print("\\nPACING NO VALIDADO")
+        for error in pacing["errors"]:
+            print("[ERROR]", error)
+        raise SystemExit(1)
+    for language, report in pacing["languages"].items():
+        print(
+            f"[PACING] {language}: {report['total_words']} palabras | "
+            f"{report['estimated_voice_seconds']:.1f}s estimados | "
+            f"{report['coverage']:.1%} del episodio"
+        )
 
     print("\nHUELLAS STUDIO - LOCAL TTS")
     print("=" * 52)
