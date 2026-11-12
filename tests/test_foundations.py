@@ -444,6 +444,7 @@ def test_load_prepared_cosyvoice_reference_requires_matching_source(tmp_path):
             "en": {
                 "source_audio": str(source),
                 "source_mtime_ns": source.stat().st_mtime_ns,
+                "source_size_bytes": source.stat().st_size,
                 "prepared_audio": str(prepared),
                 "reference_text": "A short aligned reference."
             }
@@ -480,5 +481,17 @@ def test_production_profile_uses_local_cosyvoice_and_kokoro():
     assert profile["narration"]["model_id"] == "FunAudioLLM/Fun-CosyVoice3-0.5B-2512"
     assert profile["narration"]["voices"]["en"]["name"] == "Akira"
     assert profile["narration"]["voices"]["es"]["name"] == "Daniela"
+    assert profile["narration"]["voices"]["en"]["reference_duration_seconds"] == 27.0
+    assert profile["narration"]["voices"]["es"]["reference_duration_seconds"] == 25.5
+    assert profile["narration"]["voices"]["en"]["reference_text"].endswith(
+        "I'll see you in the next Animal Secret."
+    )
+    assert profile["narration"]["voices"]["es"]["reference_text"].endswith(
+        "¿Tu perro es un gran explorador?"
+    )
+    assert all(
+        voice["reference_duration_seconds"] < 30
+        for voice in profile["narration"]["voices"].values()
+    )
     assert profile["dialogue"]["provider"] == "kokoro"
     assert "voice_id" not in profile["narration"]["voices"]["en"]
