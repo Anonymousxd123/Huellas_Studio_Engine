@@ -71,6 +71,19 @@ def main():
             f"{report['coverage']:.1%} del episodio"
         )
 
+    if args.with_voice:
+        print("\nPREPARANDO REFERENCIAS VOCALES")
+        subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "prepare_voice_references.py"),
+                "--profile", args.tts_profile,
+                "--languages", *languages
+            ],
+            check=True,
+            cwd=ROOT
+        )
+
     if args.skip_visuals:
         missing = [
             episode_dir / "scenes" / scene["scene_id"] / "composed"
