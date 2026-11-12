@@ -36,6 +36,7 @@ El instalador configura `espeak-ng` con Homebrew y añade el extra `tts` al ento
 huellas check
 python scripts/validate_bilingual.py --episode episode_001
 python scripts/prepare_episode.py --episode episode_001
+python scripts/validate_episode_pacing.py --episode episode_001
 python scripts/preflight_production.py --episode episode_001
 ```
 
@@ -157,13 +158,25 @@ Usa una grabación limpia de una sola voz, sin música, ruido ni reverberación,
 
 Las audiciones se guardan en `projects/<episode>/audio/voice_previews/`. No consumen créditos externos.
 
+#### Validar ritmo antes de producir
+
+Cada episodio debe tener guiones dimensionados para sus duraciones de escena. Ejecuta:
+
+```bash
+.venv/bin/python scripts/validate_episode_pacing.py --episode episode_001
+```
+
+La validación estima palabras por minuto, ocupación de cada escena y cobertura hablada del episodio. También se ejecuta automáticamente antes de generar voces o renderizar la previsualización, para detectar guiones demasiado cortos o escenas que no admiten el texto.
+
+El episodio 001 está configurado para 8 minutos: el guion español tiene aproximadamente 966 palabras y el inglés 975. La mezcla final conserva los 480 segundos del episodio; los tiempos de voz son estimaciones y el mezclador valida las duraciones reales de cada WAV.
+
 #### Generar las voces del episodio en ambos idiomas
 
 ```bash
 .venv/bin/python scripts/generate_voice.py --episode episode_001
 ```
 
-El generador utiliza CosyVoice para Akira/Daniela y Kokoro para los diálogos del perro/gato. Reutiliza WAV existentes cuando coinciden texto, modelo y referencia vocal. Añade `--force` para regenerarlos. Kokoro utiliza MPS automáticamente en Apple Silicon; también puedes indicar `--device cpu`.
+El generador utiliza CosyVoice para Akira/Daniela y Kokoro para los diálogos del perro/gato. Antes de sintetizar, prepara automáticamente las referencias vocales mono/16 kHz desde los WAV originales y reutiliza esa preparación mientras no cambien el audio, la transcripción o la duración configurada. Reutiliza también WAV de episodio cuando coinciden texto, modelo y referencia vocal. Añade `--force` para regenerar los audios del episodio. Kokoro utiliza MPS automáticamente en Apple Silicon; también puedes indicar `--device cpu`.
 
 Para ejecutar el pipeline de previsualización con voces locales:
 
