@@ -45,20 +45,31 @@ def main():
             "de PyTorch en el entorno de CosyVoice."
         )
 
-    # Keep one model instance alive for every narration clip in this batch.
-    model = AutoModel(model_dir=str(model_dir), fp16=args.fp16)
     results = []
-
     for job in payload["jobs"]:
         reference = Path(job["reference_audio"]).expanduser().resolve()
-        output = Path(job["output_path"]).expanduser().resolve()
         if not reference.is_file():
             raise FileNotFoundError(f"Falta referencia vocal: {reference}")
         if not job.get("reference_text", "").strip():
             raise ValueError(
                 f"Falta la transcripción exacta de la referencia: {job['job_id']}"
             )
+        audio_info = torchaudio.info(str(reference))
+        reference_duration = audio_info.num_frames / audio_info.sample_rate
+        if reference_duration > 30:
+            raise ValueError(
+                f"La referencia de {job['job_id']} dura "
+                f"{reference_duration:.2f}s; CosyVoice admite máximo 30s. "
+                "Ejecuta scripts/prepare_voice_references.py para crear "
+                "referencias cortas alineadas con Whisper."
+            )
 
+    # Load the model only after every reference passes preflight.
+    model = AutoModel(model_dir=str(model_dir), fp16=args.fp16)
+
+    for job in payload["jobs"]:
+        reference = Path(job["reference_audio"]).expanduser().resolve()
+        output = Path(job["output_path"]).expanduser().resolve()
         output.parent.mkdir(parents=True, exist_ok=True)
         prompt_text = (
             "You are a helpful assistant.<|endofprompt|>"
