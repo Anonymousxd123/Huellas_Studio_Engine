@@ -9,7 +9,7 @@ from huellas_engine.background_generator import (
     prepare_background_workflow,
     save_background_metadata
 )
-from huellas_engine.comfy_client import ComfyClient
+from huellas_engine.comfy_client import ComfyClient, ComfyUnavailableError
 from huellas_engine.episode_paths import resolve_episode_dir
 from huellas_engine.localization_engine import validate_locales
 from huellas_engine.prompt_builder import build_production_plan
@@ -102,9 +102,29 @@ def main():
             + ", ".join(str(path) for path in missing_assets)
         )
 
-    client = ComfyClient(args.url)
-    client.check()
-    workflow_source = load_workflow(WORKFLOW_PATH)
+    background_cache = {
+        scene["scene_id"]: (
+            None if args.force
+            else existing_background(episode_dir, scene["scene_id"])
+        )
+        for scene in scenes
+    }
+    scenes_needing_generation = [
+        scene for scene in scenes
+        if background_cache[scene["scene_id"]] is None
+    ]
+
+    client = None
+    workflow_source = None
+    if scenes_needing_generation:
+        client = ComfyClient(args.url)
+        try:
+            client.check()
+        except ComfyUnavailableError as exc:
+            parser.exit(2, f"\\n[COMFYUI NO DISPONIBLE] {exc}\\n")
+        workflow_source = load_workflow(WORKFLOW_PATH)
+    else:
+        print("[OK] Todos los fondos existen; no se necesita conectar con ComfyUI.")
 
     base_seed = (
         args.seed if args.seed is not None
@@ -119,7 +139,7 @@ def main():
 
     for index, scene in enumerate(scenes):
         scene_id = scene["scene_id"]
-        existing = None if args.force else existing_background(episode_dir, scene_id)
+        existing = background_cache[scene_id]
 
         if existing:
             print(f"[{index + 1}/{len(scenes)}] {scene_id}: fondo existente, se reutiliza")
