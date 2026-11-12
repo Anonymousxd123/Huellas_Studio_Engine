@@ -73,7 +73,9 @@ Si prefieres ejecutar únicamente la etapa visual:
 python scripts/run_episode_composite.py --episode episode_001
 ```
 
-El proceso es reanudable: reutiliza los fondos existentes y continúa con las escenas pendientes. Para regenerar todos los fondos:
+El proceso es reanudable: reutiliza los fondos existentes y continúa con las escenas pendientes. La etapa de voz y subtítulos se ejecuta antes de la composición visual: si ComfyUI no está disponible, los WAV y SRT ya generados se conservan. Inicia ComfyUI en `http://127.0.0.1:8188` y vuelve a ejecutar el mismo comando; los audios válidos se reutilizan automáticamente. Si todos los fondos ya existen, la composición tampoco necesita conectarse a ComfyUI.
+
+Para regenerar todos los fondos:
 
 ```bash
 python scripts/run_episode_composite.py --episode episode_001 --force
