@@ -6,6 +6,7 @@ from pathlib import Path
 from huellas_engine.comfy_client import ComfyClient
 from huellas_engine.episode_paths import resolve_episode_dir
 from huellas_engine.localization_engine import validate_locales
+from huellas_engine.pacing_engine import analyze_episode_pacing
 from huellas_engine.scene_engine import load_episode
 from huellas_engine.workflow_manager import load_workflow, node_by_title
 
@@ -31,6 +32,8 @@ def main():
     parser.add_argument("--url", default="http://127.0.0.1:8188")
     parser.add_argument("--skip-comfyui", action="store_true",
                         help="Validar archivos sin exigir que ComfyUI esté activo")
+    parser.add_argument("--pacing-wpm", type=float, default=128.0)
+    parser.add_argument("--line-gap", type=float, default=0.28)
     args = parser.parse_args()
 
     errors = []
@@ -53,6 +56,21 @@ def main():
 
     locale_errors = validate_locales(episode_dir)
     errors.extend(locale_errors)
+    if not locale_errors:
+        pacing = analyze_episode_pacing(
+            episode_dir,
+            words_per_minute=args.pacing_wpm,
+            line_gap_seconds=args.line_gap
+        )
+        print("\\nSCRIPT PACING")
+        print("-" * 48)
+        for language, report in pacing["languages"].items():
+            print(
+                f"[OK] {language}: {report['total_words']} palabras | "
+                f"{report['estimated_voice_seconds']:.1f}s estimados | "
+                f"{report['coverage']:.1%} del episodio"
+            )
+        errors.extend(pacing["errors"])
 
     workflow = load_workflow(WORKFLOW)
     print("\nWORKFLOW")
