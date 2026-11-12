@@ -2,44 +2,44 @@
   "language": "es",
   "episode": {
     "title": "6 cosas que tu perro y tu gato hacen y tú interpretas MAL",
-    "description": "Descubre seis comportamientos sorprendentes de perros y gatos y aprende a entender mejor a tus mascotas."
+    "description": "Descubre seis comportamientos cotidianos de perros y gatos, qué pueden significar y cómo responder para mejorar la convivencia."
   },
   "scenes": {
     "SC001": {
-      "title": "El misterio de las mascotas",
-      "narration": "¿Tu gato te sigue al baño? ¿Tu perro inclina la cabeza cuando le hablas? Hoy descubriremos seis comportamientos que probablemente has interpretado mal.",
+      "title": "El misterio detrás de sus costumbres",
+      "narration": "¿Tu perro te sigue por toda la casa o tu gato aparece justo cuando cierras la puerta del baño? No siempre es casualidad. Muchos gestos cotidianos tienen una explicación relacionada con la curiosidad, el aprendizaje, la comodidad o la comunicación. Hoy descubriremos seis comportamientos que suelen malinterpretarse y cómo responder sin regañar ni forzar a nuestras mascotas.",
       "dialogue": [
         {
           "character": "dog",
-          "text": "Yo solamente intento entender a los humanos."
+          "text": "Yo solo intento resolver el misterio."
         },
         {
           "character": "cat",
-          "text": "Empieza por entender por qué necesitan cerrar la puerta."
+          "text": "Empieza por respetar la puerta cerrada."
         }
       ]
     },
     "SC002": {
       "title": "El gato que te sigue al baño",
-      "narration": "Los gatos pueden seguirnos porque buscan compañía, atención, comida o simplemente sienten curiosidad. También aprenden nuestras rutinas y aprovechan los momentos en los que estamos quietos para interactuar.",
+      "narration": "Cuando un gato te sigue al baño, puede buscar compañía, atención o sentir curiosidad por lo que haces. Aprende tus rutinas y reconoce sonidos familiares. Una puerta cerrada despierta aún más su interés porque bloquea el acceso a un espacio normalmente disponible. Si espera tranquilo o se sienta cerca, quizá solo quiere estar contigo; eso no significa automáticamente ansiedad por separación. Observa el conjunto: ¿está relajado, come normalmente y se siente cómodo cuando sales? Ofrécele juego diario, escondites y lugares tranquilos para descansar. Si aparecen maullidos intensos, cambios repentinos o angustia cuando se queda solo, consulta con un veterinario. No hace falta regañarlo: acompañarte puede ser simplemente parte de su rutina.",
       "dialogue": [
         {
           "character": "dog",
-          "text": "¡Eso es amistad! Yo también sigo a mi humano."
+          "text": "Eso se llama amistad. Yo acompaño a mi humano a todas partes."
         },
         {
           "character": "cat",
-          "text": "Tú lo sigues porque escuchaste abrir una bolsa de comida."
+          "text": "Tú acompañas a cualquiera que abra la nevera."
         }
       ]
     },
     "SC003": {
       "title": "El perro que inclina la cabeza",
-      "narration": "Los perros pueden inclinar la cabeza al escuchar sonidos o voces. Una explicación posible es que estén intentando procesar mejor la información auditiva o ajustar su perspectiva visual. No existe una explicación única para todos los casos.",
+      "narration": "Un perro puede inclinar la cabeza al escuchar una voz, un sonido nuevo o una palabra familiar. Quizá presta más atención, intenta localizar el sonido o procesa una señal que espera entender. Algunos estudios lo han observado en perros que reconocen palabras, pero no explica todos los casos. El contexto importa: tal vez dijiste paseo, cambiaste el tono o hiciste un ruido nuevo. Háblale con calma y dale tiempo para responder, sin repetir una orden muchas veces. Una inclinación ocasional acompañada de un cuerpo relajado suele ser normal. Pero si persiste o aparece junto con pérdida de equilibrio, movimientos en círculos o dolor, contacta con un veterinario. Un gesto gracioso no debe ocultar un problema de salud.",
       "dialogue": [
         {
           "character": "dog",
-          "text": "Es que hablas veinte minutos y todavía no dices paseo."
+          "text": "Llevas veinte minutos hablando y todavía no dices paseo."
         },
         {
           "character": "cat",
@@ -48,76 +48,76 @@
       ]
     },
     "SC004": {
-      "title": "El gato que tira todo al suelo",
-      "narration": "Los gatos tienen instintos de exploración y caza. Golpear objetos les permite investigar cómo se mueven. También pueden hacerlo por aburrimiento o porque han aprendido que tirar algo provoca atención.",
+      "title": "El gato que tira cosas de la mesa",
+      "narration": "Ese vaso en el suelo quizá no fue un accidente. Los gatos exploran con sus patas, siguen objetos en movimiento y comprueban qué ocurre cuando empujan algo. Es una conducta relacionada con la curiosidad y el juego. La atención también puede reforzarla: si cada golpe hace que corras a mirar, tu gato aprende que tirar cosas provoca una reacción. El aburrimiento y la falta de oportunidades para explorar también influyen. En vez de gritar, aparta objetos frágiles, medicamentos y plantas tóxicas. Ofrécele sesiones cortas de juego, rascadores, cajas y comederos interactivos. Cambia los juguetes para mantener su interés. Premia el juego seguro y los momentos de calma en su espacio favorito. Así proteges tus cosas y le das una alternativa para investigar.",
       "dialogue": [
         {
           "character": "dog",
-          "text": "¡Eso es vandalismo!"
+          "text": "¡Eso se llama vandalismo!"
         },
         {
           "character": "cat",
-          "text": "No. Es investigación científica."
+          "text": "No. Es investigación con resultados en el suelo."
         }
       ]
     },
     "SC005": {
       "title": "El perro que te recibe con un juguete",
-      "narration": "Muchos perros reciben a sus humanos con sus juguetes favoritos. Puede ser una expresión de entusiasmo, una invitación al juego o una forma de compartir un momento de interacción.",
+      "narration": "Tu perro corre a recibirte con un juguete en la boca. Muchas veces expresa entusiasmo o invita a jugar, pero no siempre está entregándote un regalo. Puede haber aprendido que llevarlo forma parte del saludo o le ayuda a canalizar la emoción de tu regreso. Observa todo su cuerpo: los movimientos relajados suelen indicar una interacción amistosa. Si se pone rígido, protege el juguete, gruñe o se aleja, no intentes quitárselo por la fuerza. Dale espacio y practica un intercambio tranquilo con otro juguete o un premio. Espera a que baje la emoción antes de comenzar el juego. Respetar sus señales hace que el reencuentro sea mejor para todos.",
       "dialogue": [
         {
           "character": "dog",
-          "text": "¡Has vuelto! ¡Tengo algo para ti!"
+          "text": "¡Volviste! ¡Traje algo para compartir contigo!"
         },
         {
           "character": "cat",
-          "text": "¿Y dónde está mi regalo?"
+          "text": "Qué detalle. ¿Y quién me trajo algo a mí?"
         },
         {
           "character": "dog",
-          "text": "Tú tienes una caja entera de juguetes y juegas con una factura."
+          "text": "Tú tienes una caja de juguetes y juegas con una factura."
         }
       ]
     },
     "SC006": {
       "title": "El gato que hace galletas",
-      "narration": "Los gatitos realizan el movimiento de amasado durante la lactancia para estimular la salida de leche. Muchos gatos conservan este comportamiento al hacerse adultos. Puede estar relacionado con comodidad, relajación y comportamientos instintivos.",
+      "narration": "Cuando un gato presiona una manta con sus patas delanteras, parece que estuviera amasando. El movimiento comienza cuando es cachorro: durante la lactancia, los gatitos presionan el vientre de su madre mientras se alimentan. Muchos conservan el hábito de adultos y lo repiten cuando están cómodos o se preparan para descansar. Sus patas también tienen glándulas que dejan olor. Si ronronea y tiene el cuerpo relajado, probablemente disfruta el momento. Si sus uñas te molestan, coloca una manta gruesa entre ambos y mantén sus uñas cuidadas. No lo empujes ni lo regañes: es una conducta normal. Si de pronto parece dolorosa o deja de apoyar una pata, consulta al veterinario. Si no, ofrécele una superficie suave donde amasar.",
       "dialogue": [
         {
           "character": "dog",
-          "text": "¿Entonces está preparando galletas?"
+          "text": "¿Entonces está preparando galletas para todos?"
         },
         {
           "character": "cat",
-          "text": "Sí. Y no pienso compartirlas contigo."
+          "text": "Sí, pero la receta dice que no se comparten."
         }
       ]
     },
     "SC007": {
       "title": "El parpadeo lento del gato",
-      "narration": "Los gatos pueden comunicarse mediante el parpadeo lento. La investigación ha encontrado respuestas positivas a esta señal durante las interacciones entre gatos y humanos. Puedes probarlo mirando tranquilamente a tu gato y cerrando despacio los ojos.",
+      "narration": "¿Tu gato te mira y cierra los ojos lentamente? Ese parpadeo puede formar parte de una comunicación tranquila. En estudios sobre la interacción entre gatos y personas, los investigadores observaron respuestas positivas cuando las personas devolvían el parpadeo lento. Puedes probarlo sin invadir su espacio: míralo suavemente, entrecierra los ojos despacio, vuelve a abrirlos y espera. No acerques la cara ni mantengas una mirada fija; una mirada fija puede incomodar a algunos gatos. El gesto no lo explica todo. Las orejas, la postura y la cola también ayudan a entender cómo se siente. Si se aleja, respeta su decisión. Si se relaja o parpadea de vuelta, quizá compartan un momento de confianza. No prueba amor, pero comunica calma.",
       "dialogue": [
         {
           "character": "dog",
-          "text": "¡Yo también puedo hacerlo!"
+          "text": "¡Yo también puedo hacer ese parpadeo!"
         },
         {
           "character": "cat",
-          "text": "Eso no cuenta. Te has quedado dormido."
+          "text": "Eso no cuenta. Te quedaste dormido."
         }
       ]
     },
     "SC008": {
-      "title": "Conclusión y despedida",
-      "narration": "Ahora sabes que muchos comportamientos de nuestras mascotas tienen explicaciones interesantes. Cada animal tiene su personalidad. Cuanto más aprendemos sobre ellos, mejor podemos entenderlos y cuidarlos. Cuéntanos cuál de estos comportamientos hace tu mascota. Esto fue Ah Mira Ese Dato. ¡Nos vemos en el próximo episodio!",
+      "title": "Entenderlos cambia la convivencia",
+      "narration": "Ahora sabes que muchos comportamientos tienen más de una explicación. Seguirte, inclinar la cabeza, explorar con las patas, recibirte con un juguete, amasar una manta o parpadear lentamente son señales que debemos entender en su contexto. Cada mascota es diferente. Observa, ofrece alternativas seguras y busca ayuda profesional si notas cambios repentinos o malestar. Cuanto mejor entendemos sus necesidades, mejor podemos cuidarlas. ¿Cuál de estos comportamientos hace tu mascota? Cuéntanoslo y deja una huellita. Esto fue Ah Mira Ese Dato. ¡Nos vemos pronto!",
       "dialogue": [
         {
           "character": "dog",
-          "text": "Yo solamente quiero pasear, jugar y comer."
+          "text": "Yo voto por más paseos, juegos y premios."
         },
         {
           "character": "cat",
-          "text": "Y yo quiero que respeten mi privacidad."
+          "text": "Y yo por respetar mis momentos de tranquilidad."
         }
       ]
     }

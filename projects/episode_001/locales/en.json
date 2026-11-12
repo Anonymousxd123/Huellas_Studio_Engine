@@ -2,44 +2,44 @@
   "language": "en",
   "episode": {
     "title": "6 Things Your Dog and Cat Do That You Probably Misinterpret",
-    "description": "Discover six surprising behaviors of dogs and cats, what they may mean, and how to understand your pets better."
+    "description": "Discover six everyday dog and cat behaviors, what they may mean, and how to respond to build a better life together."
   },
   "scenes": {
     "SC001": {
-      "title": "The Mystery of Our Pets",
-      "narration": "Does your cat follow you into the bathroom? Does your dog tilt its head when you talk? And why does your cat knock a glass off the table while looking straight at you? They're not necessarily crazy, and they're not always trying to ruin your life. Today we'll discover six pet behaviors you may have misunderstood.",
+      "title": "The Mystery Behind Their Everyday Habits",
+      "narration": "Does your dog follow you around the house, or does your cat appear the moment you close the bathroom door? It may not be random. Everyday behaviors can be connected to curiosity, learning, comfort, and communication. Today, we'll explore six habits people often misunderstand and how to respond without scolding or forcing our pets.",
       "dialogue": [
         {
           "character": "dog",
-          "text": "I'm just trying to understand humans."
+          "text": "I'm just trying to solve the mystery."
         },
         {
           "character": "cat",
-          "text": "Then start by understanding why they need to close the bathroom door."
+          "text": "Then start by respecting a closed door."
         }
       ]
     },
     "SC002": {
       "title": "The Cat Who Follows You to the Bathroom",
-      "narration": "Cats may follow us because they want company, attention, food, or simply because they're curious. They also learn our routines and take advantage of moments when we're still to interact with us.",
+      "narration": "When a cat follows you into the bathroom, it may want company, attention, or simply be curious. Cats learn our routines and recognize familiar sounds. A closed door can make the space more interesting because it blocks access to somewhere usually available. If your cat waits calmly or sits nearby, it may simply want to be close. That does not automatically mean separation anxiety. Look at the whole pattern: is your cat relaxed when you leave? Offer daily play, hiding places, and quiet spots to rest. If intense vocalizing, sudden changes, or distress when alone appear, ask a veterinarian for advice. There is no need to scold your cat; being near you may simply be part of its routine.",
       "dialogue": [
         {
           "character": "dog",
-          "text": "That's friendship! I follow my human everywhere too."
+          "text": "That's called friendship. I follow my human everywhere."
         },
         {
           "character": "cat",
-          "text": "You only follow them because you heard a snack bag opening."
+          "text": "You follow anyone who opens the refrigerator."
         }
       ]
     },
     "SC003": {
       "title": "Why Dogs Tilt Their Heads",
-      "narration": "Dogs may tilt their heads when they hear sounds or voices. One possible explanation is that they're trying to process auditory information or adjust their visual perspective. There isn't one explanation that applies to every dog.",
+      "narration": "A dog may tilt its head after hearing a voice, a sound, or a familiar word. It may be paying closer attention, locating the sound, or processing a signal it expects to understand. Some studies link it to word recognition in certain dogs, but it does not explain every case. Context matters: perhaps you said walk, changed your tone, or made a new noise. Speak calmly and give your dog time to respond instead of repeating a command. An occasional tilt with relaxed body language is usually normal. But if it persists or comes with loss of balance, circling, or pain, contact a veterinarian. A cute gesture should never make us ignore a change in health.",
       "dialogue": [
         {
           "character": "dog",
-          "text": "You talk for twenty minutes and still haven't said the word walk."
+          "text": "You've talked for twenty minutes and still haven't said walk."
         },
         {
           "character": "cat",
@@ -48,8 +48,8 @@
       ]
     },
     "SC004": {
-      "title": "The Cat Who Knocks Everything Off the Table",
-      "narration": "Cats have natural exploration and hunting instincts. Batting objects helps them investigate how things move. They may also do it out of boredom or because they've learned that knocking something over gets attention.",
+      "title": "The Cat Who Knocks Things Off the Table",
+      "narration": "That glass on the floor may not have been an accident. Cats explore with their paws, follow moving objects, and test what happens when they push something. The behavior is connected to curiosity and play. Attention can reinforce it too: if every crash makes you rush over, your cat may learn that knocking things down gets a reaction. Boredom and too few chances to explore can also contribute. Instead of yelling, move breakable items, medication, and toxic plants out of reach. Offer short play sessions, scratching posts, boxes, and food puzzles. Rotate toys to keep them interesting. Reward safe play and calm moments in a favorite spot. This protects your belongings while giving your cat a better way to investigate.",
       "dialogue": [
         {
           "character": "dog",
@@ -57,49 +57,49 @@
         },
         {
           "character": "cat",
-          "text": "No. It's scientific research."
+          "text": "No. It's research with results on the floor."
         }
       ]
     },
     "SC005": {
       "title": "The Dog Who Greets You with a Toy",
-      "narration": "Many dogs greet their humans with their favorite toys. It may be a sign of excitement, an invitation to play, or a way to share a moment of interaction.",
+      "narration": "Your dog runs to greet you with a toy in its mouth. It may show excitement or invite play, not necessarily offer a present. Your dog may have learned that carrying it is part of the greeting or helps manage the excitement of your return. Look at the whole body: relaxed movements usually suggest a friendly interaction. If your dog becomes stiff, guards the toy, growls, or moves away, do not take it by force. Give space and practice a calm trade with another toy or a treat. Wait for the excitement to settle before starting a game. Respecting your dog's signals makes coming home better for everyone.",
       "dialogue": [
         {
           "character": "dog",
-          "text": "You're back! I have something for you!"
+          "text": "You're back! I brought something to share!"
         },
         {
           "character": "cat",
-          "text": "And where is my present?"
+          "text": "How thoughtful. And what did you bring for me?"
         },
         {
           "character": "dog",
-          "text": "You have a whole box of toys and you play with a receipt."
+          "text": "You have a whole toy box and play with a receipt."
         }
       ]
     },
     "SC006": {
       "title": "The Cat Who Makes Biscuits",
-      "narration": "Kittens make this kneading motion while nursing to stimulate milk flow. Many cats keep the behavior as adults. It may be associated with comfort, relaxation, and instinctive behavior.",
+      "narration": "When a cat presses its front paws into a blanket, it looks as if it is kneading dough. The movement begins in kittenhood: kittens press against their mother's belly while nursing. Many cats keep the habit as adults and repeat it when comfortable or ready to rest. Paw scent glands may also leave a scent. If your cat is purring and its body is relaxed, it is probably enjoying the moment. If the claws hurt, use a thick blanket and keep the nails trimmed. Do not push your cat away or scold it; kneading is normal. If it suddenly seems painful or your cat stops using a paw, contact a veterinarian. Offer a soft kneading spot.",
       "dialogue": [
         {
           "character": "dog",
-          "text": "So, is the cat making biscuits?"
+          "text": "So, is the cat making biscuits for everyone?"
         },
         {
           "character": "cat",
-          "text": "Yes. And I'm not sharing them with you."
+          "text": "Yes, but the recipe says not to share."
         }
       ]
     },
     "SC007": {
       "title": "The Cat's Slow Blink",
-      "narration": "Cats can communicate through slow blinking. Research has found positive responses to this signal during cat-human interactions. You can try it by looking calmly at your cat, slowly closing your eyes, and opening them again.",
+      "narration": "Does your cat look at you and slowly close its eyes? That slow blink can be part of calm communication. In studies of cat and human interactions, researchers observed positive responses when people returned a cat's slow blink. Try it without invading your cat's space: look gently, slowly narrow your eyes, open them again, and wait. Do not move closer or hold a fixed stare; intense eye contact can make some cats uncomfortable. One gesture is not the whole story. Also watch the ears, posture, and tail. If it walks away, respect that choice. A relaxed blink back may signal trust. It is not a guaranteed test of love, but a simple way to communicate calm.",
       "dialogue": [
         {
           "character": "dog",
-          "text": "I can do that too!"
+          "text": "I can do that slow blink too!"
         },
         {
           "character": "cat",
@@ -108,16 +108,16 @@
       ]
     },
     "SC008": {
-      "title": "The Takeaway and Goodbye",
-      "narration": "Now you know that many things our pets do have interesting explanations. Every animal has its own personality. The more we learn about them, the better we can understand and care for them. Tell us which of these behaviors your pet does. This was Ah Mira Ese Dato. See you in the next episode!",
+      "title": "Understanding Them Changes Everything",
+      "narration": "Now you know that familiar behaviors can have more than one explanation. Following you, tilting a head, exploring with paws, greeting you with a toy, kneading a blanket, or blinking slowly should all be understood in context. Every pet is different. Observe, offer safe alternatives, and seek professional advice if you notice sudden changes or discomfort. The better we understand their needs, the better we can care for them. Which behavior does your pet show? Tell us below and leave a paw print. This was Ah Mira Ese Dato. See you soon!",
       "dialogue": [
         {
           "character": "dog",
-          "text": "I just want to walk, play, and eat."
+          "text": "My vote is for more walks, games, and treats."
         },
         {
           "character": "cat",
-          "text": "And I want everyone to respect my privacy."
+          "text": "And my vote is for respecting my quiet time."
         }
       ]
     }

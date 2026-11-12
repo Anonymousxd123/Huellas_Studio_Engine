@@ -4,6 +4,7 @@ import random
 from pathlib import Path
 
 from .comfy_client import ComfyClient
+from .image_utils import prepare_reference_image
 from .workflow_manager import (
     load_workflow,
     prepare_workflow,
@@ -38,6 +39,7 @@ def main():
     generate.add_argument("--ip-weight", type=float, default=0.6)
     generate.add_argument("--prefix", default="huellas")
     generate.add_argument("--output", default=str(ROOT / "projects/quick_test/images"))
+    generate.add_argument("--url", default="http://127.0.0.1:8188")
 
     args = parser.parse_args()
 
@@ -57,21 +59,34 @@ def main():
         if args.count < 1:
             parser.error("--count debe ser mayor que cero")
 
-        if args.width % 8 or args.height % 8:
-            parser.error("La resolución debe ser múltiplo de 8")
+        if (
+            args.width <= 0 or args.height <= 0
+            or args.width % 8 or args.height % 8
+        ):
+            parser.error("La resolución debe ser positiva y múltiplo de 8")
 
-        client = ComfyClient()
+        output = Path(args.output).expanduser()
+        output.mkdir(parents=True, exist_ok=True)
+        prepared_reference = (
+            output / ".references"
+            / f"{args.prefix}_{args.width}x{args.height}.png"
+        )
+        prepare_reference_image(
+            args.reference, prepared_reference, args.width, args.height
+        )
+
+        client = ComfyClient(args.url)
+        client.check()
         source = load_workflow(args.workflow)
 
-        # Sube la referencia una sola vez.
-        reference = client.upload_image(args.reference)
+        # Sube la referencia adaptada una sola vez.
+        reference = client.upload_image(prepared_reference)
 
         base_seed = (
             args.seed if args.seed is not None
             else random.randrange(1, 2**32)
         )
 
-        output = Path(args.output).expanduser()
         manifest = []
 
         for index in range(args.count):
@@ -96,6 +111,10 @@ def main():
             prompt_id = client.submit(workflow)
             history = client.wait(prompt_id)
             images = client.download_images(history, output)
+            if not images:
+                raise RuntimeError(
+                    f"ComfyUI no devolvió imágenes para el trabajo {prompt_id}"
+                )
 
             for image in images:
                 print("Guardada:", image)

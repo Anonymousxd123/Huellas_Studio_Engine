@@ -1,0 +1,250 @@
+# Huellas Studio Engine
+
+Motor de preparación y producción visual para episodios de **Huellas Studio**.
+
+## Requisitos
+
+- Python 3.10 o superior.
+- ComfyUI activo y accesible por su API HTTP (por defecto `http://127.0.0.1:8188`).
+- Los checkpoints y nodos personalizados requeridos por `workflows/image/character_generator_api.json`.
+- Los archivos maestros de personajes en `~/Huellas_Studio_Assets/characters`.
+
+## Instalación
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -e ".[dev,background-removal]"
+```
+
+En Windows, activa el entorno con `.venv\\Scripts\\activate`.
+
+### Instalar síntesis de voz local (macOS)
+
+Kokoro es opcional: no se instala ni descarga el modelo hasta que decidas activar esta etapa. En macOS, ejecuta:
+
+```bash
+bash scripts/setup_tts_macos.sh
+```
+
+El instalador configura `espeak-ng` con Homebrew y añade el extra `tts` al entorno virtual existente. Los pesos de Kokoro y las voces se descargan automáticamente la primera vez que generes audio.
+
+## Comprobación inicial
+
+```bash
+huellas check
+python scripts/validate_bilingual.py --episode episode_001
+python scripts/prepare_episode.py --episode episode_001
+python scripts/validate_episode_pacing.py --episode episode_001
+python scripts/preflight_production.py --episode episode_001
+```
+
+El preflight acepta `--skip-comfyui` para validar estructura, referencias, workflow y traducciones sin que ComfyUI esté encendido.
+
+## Preparar recortes de personajes
+
+```bash
+python scripts/build_character_assets.py
+```
+
+Los recortes se guardan en `~/Huellas_Studio_Assets/characters/cutouts_v2`. El compositor necesita:
+
+- `dog_master_rgba.png`
+- `cat_master_rgba.png`
+
+## Producción visual de un episodio
+
+El siguiente comando ejecuta el paquete completo de previsualización bilingüe: genera los fondos que falten, compone las escenas, prepara manifiestos de voz y subtítulos, y renderiza los MP4 de revisión:
+
+```bash
+python scripts/produce_episode_preview.py --episode episode_001
+```
+
+Para reutilizar las escenas ya compuestas y regenerar solo manifiestos, subtítulos y MP4:
+
+```bash
+python scripts/produce_episode_preview.py --episode episode_001 --skip-visuals
+```
+
+Si prefieres ejecutar únicamente la etapa visual:
+
+```bash
+python scripts/run_episode_composite.py --episode episode_001
+```
+
+El proceso es reanudable: reutiliza los fondos existentes y continúa con las escenas pendientes. La etapa de voz y subtítulos se ejecuta antes de la composición visual: si ComfyUI no está disponible, los WAV y SRT ya generados se conservan. Inicia ComfyUI en `http://127.0.0.1:8188` y vuelve a ejecutar el mismo comando; los audios válidos se reutilizan automáticamente. Si todos los fondos ya existen, la composición tampoco necesita conectarse a ComfyUI.
+
+Para regenerar todos los fondos:
+
+```bash
+python scripts/run_episode_composite.py --episode episode_001 --force
+```
+
+Opciones frecuentes:
+
+- `--url http://127.0.0.1:8188`: dirección de ComfyUI.
+- `--seed 20261109`: semilla base reproducible.
+- `--assets-dir /ruta/a/cutouts_v2`: ubicación de los recortes.
+- `--width 1024 --height 576`: resolución de los fondos.
+- `--steps 28 --cfg 5.0`: parámetros de generación.
+
+## Ejecutar etapas por separado
+
+Generar un fondo:
+
+```bash
+python scripts/run_background.py --episode episode_001 --scene SC001
+```
+
+Generar una imagen de escena con referencia:
+
+```bash
+python scripts/run_scene.py --episode episode_001 --scene SC001
+```
+
+Componer todas las escenas usando fondos ya generados:
+
+```bash
+python scripts/compose_episode.py --episode episode_001
+```
+
+Generar subtítulos SRT y sus líneas de tiempo estimadas en todos los idiomas:
+
+```bash
+python scripts/build_subtitles.py --episode episode_001
+```
+
+Preparar el manifiesto de trabajos de voz sin generar audio:
+
+```bash
+python scripts/build_voice_manifest.py --episode episode_001
+```
+
+### Configurar las voces locales de Huellas Studio
+
+La narración utiliza **CosyVoice 3.0 (0.5B) con Apple Silicon MPS**, mediante el fork comunitario CosyVoice-MPS. No necesita API Key, conexión a ElevenLabs ni créditos por generación. Los diálogos del perro y el gato siguen utilizando Kokoro local.
+
+Instala el runtime aislado de CosyVoice (no modifica el entorno `.venv` principal de Huellas):
+
+```bash
+brew install uv
+bash scripts/setup_cosyvoice_mps_macos.sh
+```
+
+El instalador crea `engines/CosyVoice-MPS/.venv` con Python 3.10 y ofrece descargar una sola vez el modelo `Fun-CosyVoice3-0.5B-2512` (aproximadamente 9.75 GB). El código, el entorno y los pesos quedan fuera del control de versiones.
+
+En macOS Apple Silicon, el instalador filtra los índices adicionales de CUDA definidos por el fork upstream y resuelve las dependencias desde PyPI. Esto evita que ONNX Runtime para macOS se busque en el índice de paquetes CUDA de Microsoft.
+La preparación de referencias utiliza la transcripción revisada de la configuración y FFmpeg; no necesita descargar ni ejecutar Whisper.
+
+Instala Kokoro para las voces locales de los personajes, si aún no está instalado:
+
+```bash
+bash scripts/setup_tts_macos.sh
+```
+
+#### Referencias vocales de Akira y Daniela
+
+Coloca los audios originales, con permiso para clonarlos, en:
+
+- `~/Huellas_Studio_Assets/voice_references/akira_reference.wav`
+- `~/Huellas_Studio_Assets/voice_references/daniela_reference.wav`
+
+Usa una grabación limpia de una sola voz, sin música, ruido ni reverberación, con una duración inferior a 30 segundos. Conserva los originales sin modificarlos. En `config/tts/production_profiles.json`, configura `reference_text` con la transcripción revisada que coincide exactamente con el fragmento y `reference_duration_seconds` con la duración seleccionada. Ejecuta `scripts/prepare_voice_references.py` para convertir el fragmento a WAV mono de 16 kHz y generar el manifiesto. Este paso ya no necesita Whisper ni transcripción automática.
+
+#### Generar audiciones locales
+
+```bash
+.venv/bin/python scripts/preview_voice_profiles.py --episode episode_001
+```
+
+Las audiciones se guardan en `projects/<episode>/audio/voice_previews/`. No consumen créditos externos.
+
+#### Validar ritmo antes de producir
+
+Cada episodio debe tener guiones dimensionados para sus duraciones de escena. Ejecuta:
+
+```bash
+.venv/bin/python scripts/validate_episode_pacing.py --episode episode_001
+```
+
+La validación estima palabras por minuto, ocupación de cada escena y cobertura hablada del episodio. También se ejecuta automáticamente antes de generar voces o renderizar la previsualización, para detectar guiones demasiado cortos o escenas que no admiten el texto.
+
+El episodio 001 está configurado para 8 minutos: el guion español tiene aproximadamente 966 palabras y el inglés 975. La mezcla final conserva los 480 segundos del episodio; los tiempos de voz son estimaciones y el mezclador valida las duraciones reales de cada WAV.
+
+#### Generar las voces del episodio en ambos idiomas
+
+```bash
+.venv/bin/python scripts/generate_voice.py --episode episode_001
+```
+
+El generador utiliza CosyVoice para Akira/Daniela y Kokoro para los diálogos del perro/gato. Antes de sintetizar, prepara automáticamente las referencias vocales mono/16 kHz desde los WAV originales y reutiliza esa preparación mientras no cambien el audio, la transcripción o la duración configurada. Reutiliza también WAV de episodio cuando coinciden texto, modelo y referencia vocal. Añade `--force` para regenerar los audios del episodio. Kokoro utiliza MPS automáticamente en Apple Silicon; también puedes indicar `--device cpu`.
+
+Para ejecutar el pipeline de previsualización con voces locales:
+
+```bash
+.venv/bin/python scripts/produce_episode_preview.py --episode episode_001 --with-voice
+```
+
+La mezcla final se escribe en `audio/<language>/final_mix.wav` y la línea de tiempo real en `audio/<language>/audio_timeline.json`. Si el audio no cabe en la duración de una escena, la síntesis falla explícitamente: no se recorta la voz automáticamente.
+
+**Limitaciones conocidas:** CosyVoice-MPS es un fork comunitario, no el runtime oficial de upstream. El núcleo de inferencia funciona con MPS, pero algunos módulos ONNX se ejecutan en CPU y la generación puede ser más lenta que tiempo real. Es adecuado para producción por lotes, sujeto a la prueba de rendimiento en este Mac.
+
+**Licencias:** el repositorio y la ficha de los pesos indican Apache-2.0. Conserva los avisos de licencia y revisa las condiciones aplicables al uso comercial antes de publicar contenido monetizado. Solo clona voces propias o voces cuyo titular haya autorizado expresamente su uso.
+
+Renderizar un animatic MP4 con las composiciones estáticas y subtítulos:
+
+```bash
+python scripts/render_animatic.py --episode episode_001 --language es
+```
+
+Si existe `audio/<language>/final_mix.wav`, se incorpora. Si todavía no existe, el animatic lleva una pista silenciosa para revisión visual. No es todavía el vídeo animado final.
+
+### Fase de animación de personajes (piloto local)
+
+Los animatics anteriores son composiciones estáticas: el compositor coloca los recortes PNG sobre los fondos y el renderizador mantiene cada imagen durante la duración de su escena. La animación es una etapa independiente.
+
+El piloto de movimiento usa **LTX-Video 2B 0.9.6 Distilled** mediante la API local de ComfyUI. Es un modelo image-to-video de 2B parámetros; el checkpoint se ejecuta en MPS y el encoder T5 se carga en CPU para reducir presión sobre el dispositivo. El piloto empieza a 512×288 y 49 frames (2 segundos) para validar identidad y movimiento antes de producir más clips. LTX-Video documenta soporte MPS en macOS y el modelo distilled usa 8 pasos. Los resultados pueden variar: la prueba debe aprobar continuidad de personajes antes de automatizar el episodio completo.
+
+Instala los dos pesos y los nodos auxiliares mínimos (sin instalar KJNodes ni añadir servicios de pago):
+
+```bash
+bash scripts/setup_ltx_animation_macos.sh
+```
+
+El instalador descarga el checkpoint LTX 2B distilled y el encoder T5 XXL FP16, instala los dos nodos de sigmas de Huellas en `~/HuellasStudioAI/ComfyUI/custom_nodes/HuellasLTXNodes` y conserva los modelos dentro de ComfyUI. Requiere aproximadamente 18 GB libres para una instalación limpia. Detén y reinicia ComfyUI después de instalar los nodos.
+
+Genera primero el piloto de la escena SC003 (inclinación de cabeza del perro y respuesta del gato):
+
+```bash
+PYTHONPATH=src .venv/bin/python scripts/animate_scene.py \
+  --episode episode_001 \
+  --scene SC003
+```
+
+El MP4 de prueba y los frames se guardan en `projects/episode_001/motion_tests/SC003/`. No reemplaza los animatics ni vuelve a generar audio. Cuando el piloto confirme que los personajes mantienen su identidad y la acción es natural, se amplía la configuración a las demás escenas y se integra la selección de clips animados en el renderizador final.
+
+**Licencia del modelo:** LTX-Video 0.9.6 tiene una licencia de pesos independiente del código. La licencia permite uso libre de regalías a entidades con ingresos anuales inferiores a US$10 millones; las entidades que alcanzan ese umbral deben obtener una licencia comercial de Lightricks. Conserva el archivo de licencia descargado junto al checkpoint y revisa sus restricciones antes de publicar.
+
+Validar traducciones:
+
+```bash
+python scripts/validate_bilingual.py --episode episode_001
+```
+
+## Estructura de resultados
+
+- `projects/<episode>/backgrounds/`: fondos generados.
+- `projects/<episode>/scenes/<scene>/images/`: imágenes generadas con referencia.
+- `projects/<episode>/scenes/<scene>/composed/`: composición estática final de cada escena.
+- `projects/<episode>/metadata/`: workflow y último resultado por escena.
+- `projects/<episode>/metadata/runs/<scene>/`: historial por semilla.
+- `projects/<episode>/subtitles/`: subtítulos SRT y líneas de tiempo JSON por idioma.
+- `projects/<episode>/audio/<language>/voice_manifest.json`: manifiesto y estado de cada trabajo TTS.
+- `projects/<episode>/audio/<language>/final_mix.wav`: mezcla de voz por idioma.
+- `projects/<episode>/audio/<language>/audio_timeline.json`: tiempos reales de los clips sintetizados.
+- `projects/<episode>/audio/voice_previews/`: audiciones de selección de voces.
+
+## Alcance actual
+
+La etapa automatizada cubre preparación del episodio, validación bilingüe, generación de fondos, composición **estática** de las ocho escenas, narración local con CosyVoice 3 a partir de las referencias autorizadas de Akira y Daniela, diálogos locales de personajes con Kokoro, mezcla de audio y exportación de animatics con subtítulos. La composición usa recortes maestros, por lo que no sustituye la animación de personajes. La sincronización labial, animación, mezcla musical/efectos, control de calidad final y publicación siguen siendo etapas separadas.

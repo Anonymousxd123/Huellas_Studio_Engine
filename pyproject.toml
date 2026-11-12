@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "huellas-studio-engine"
+version = "0.1.1"
+description = "Automated production engine for Huellas Studio"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "requests>=2.31.0",
+  "Pillow>=10.0.0",
+  "numpy>=1.26.0",
+]
+
+[project.optional-dependencies]
+background-removal = ["rembg>=2.0.0"]
+tts = ["kokoro>=0.9.4", "soundfile>=0.12.1"]
+dev = ["pytest>=8.0.0", "ruff>=0.6.0"]
+
+[project.scripts]
+huellas = "huellas_engine.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -5,6 +5,10 @@ from pathlib import Path
 import requests
 
 
+class ComfyUnavailableError(RuntimeError):
+    """Raised when the local ComfyUI HTTP API cannot be reached."""
+
+
 class ComfyClient:
     def __init__(self, url="http://127.0.0.1:8188"):
         self.url = url.rstrip("/")
@@ -12,15 +16,25 @@ class ComfyClient:
         self.client_id = str(uuid.uuid4())
 
     def check(self):
-        stats = self.session.get(
-            f"{self.url}/system_stats", timeout=15
-        )
-        stats.raise_for_status()
+        try:
+            stats = self.session.get(
+                f"{self.url}/system_stats", timeout=5
+            )
+            stats.raise_for_status()
 
-        queue = self.session.get(
-            f"{self.url}/queue", timeout=15
-        )
-        queue.raise_for_status()
+            queue = self.session.get(
+                f"{self.url}/queue", timeout=5
+            )
+            queue.raise_for_status()
+        except requests.exceptions.RequestException as exc:
+            raise ComfyUnavailableError(
+                "No se puede conectar con ComfyUI en "
+                f"{self.url}. Inicia ComfyUI y confirma que su API esté "
+                "activa en ese puerto. Puedes comprobarlo abriendo "
+                f"{self.url}/system_stats en el navegador. "
+                "El audio y los subtítulos pueden producirse sin ComfyUI; "
+                "la composición visual necesita que el servidor esté activo."
+            ) from exc
 
         return {
             "system": stats.json(),

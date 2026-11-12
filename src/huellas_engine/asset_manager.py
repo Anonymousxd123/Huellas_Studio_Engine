@@ -77,7 +77,7 @@ def normalize_manifest(data):
         return data, results
 
     raise ValueError(
-        f"Formato de manifiesto no compatible: {type(data)._name_}"
+        f"Formato de manifiesto no compatible: {type(data).__name__}"
     )
 
 

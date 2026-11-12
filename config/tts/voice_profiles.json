@@ -1,0 +1,38 @@
+{
+  "provider": "kokoro",
+  "model": "hexgrad/Kokoro-82M",
+  "sample_rate": 24000,
+  "languages": {
+    "es": {
+      "lang_code": "e",
+      "characters": {
+        "dog": {
+          "voice_id": "em_alex",
+          "speed": 1.03
+        },
+        "cat": {
+          "voice_id": "em_santa",
+          "speed": 1.0
+        }
+      }
+    },
+    "en": {
+      "lang_code": "a",
+      "characters": {
+        "dog": {
+          "voice_id": "am_michael",
+          "speed": 1.04
+        },
+        "cat": {
+          "voice_id": "af_sarah",
+          "speed": 1.02
+        }
+      }
+    }
+  },
+  "mix": {
+    "line_gap_seconds": 0.28,
+    "sample_rate": 24000,
+    "do_not_trim_overflow": true
+  }
+}
