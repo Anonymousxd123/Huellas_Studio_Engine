@@ -429,6 +429,45 @@ def test_resolve_cosyvoice_python_preserves_virtualenv_symlink(tmp_path):
     assert runtime["python"].resolve() == base_python.resolve()
 
 
+
+def test_load_prepared_cosyvoice_reference_requires_matching_source(tmp_path):
+    from huellas_engine.cosyvoice_engine import _load_prepared_reference
+
+    source = tmp_path / "akira.wav"
+    source.write_bytes(b"original")
+    prepared_dir = tmp_path / "cosyvoice_prepared"
+    prepared_dir.mkdir()
+    prepared = prepared_dir / "akira_reference.wav"
+    prepared.write_bytes(b"short")
+    manifest = {
+        "voices": {
+            "en": {
+                "source_audio": str(source),
+                "source_mtime_ns": source.stat().st_mtime_ns,
+                "prepared_audio": str(prepared),
+                "reference_text": "A short aligned reference."
+            }
+        }
+    }
+    (prepared_dir / "manifest.json").write_text(
+        json.dumps(manifest), encoding="utf-8"
+    )
+
+    selected_audio, selected_text = _load_prepared_reference(
+        source, "en", "Full original transcript."
+    )
+    assert selected_audio == prepared
+    assert selected_text == "A short aligned reference."
+
+    source.write_bytes(b"updated original")
+    selected_audio, selected_text = _load_prepared_reference(
+        source, "en", "Full original transcript."
+    )
+    assert selected_audio == source
+    assert selected_text == "Full original transcript."
+
+
+
 def test_production_profile_uses_local_cosyvoice_and_kokoro():
     profile_path = (
         Path(__file__).resolve().parents[1]
