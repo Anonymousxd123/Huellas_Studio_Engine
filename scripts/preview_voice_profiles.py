@@ -18,6 +18,8 @@ def main():
     parser.add_argument("--episode", default="episode_001")
     parser.add_argument("--languages", nargs="*", default=["es", "en"])
     parser.add_argument("--profile", default=str(DEFAULT_PROFILE))
+    parser.add_argument("--mode", choices=["zero_shot", "instruct2"], default="zero_shot")
+    parser.add_argument("--speeds", type=float, nargs="+", default=[1.0])
     args = parser.parse_args()
 
     profile = load_cosyvoice_profile(args.profile)
@@ -42,33 +44,53 @@ def main():
     print("Motor: CosyVoice 3.0 local")
     print("No consume créditos de ElevenLabs.")
 
+    style_instructions = {
+        "es": (
+            "Habla en español latino natural, con una voz cálida, cercana "
+            "y conversacional. Usa entonación expresiva pero moderada, "
+            "pausas naturales y pronunciación clara. Evita un tono plano."
+        ),
+        "en": (
+            "Speak in natural, warm, friendly conversational English. "
+            "Use expressive but restrained intonation, natural pauses, "
+            "and clear pronunciation. Avoid a flat, monotone delivery."
+        )
+    }
+    if any(not 0.8 <= speed <= 1.2 for speed in args.speeds):
+        raise ValueError("Usa velocidades entre 0.8 y 1.2")
+
     for language in args.languages:
         if language not in preview_text:
             raise ValueError(f"Idioma de audición no soportado: {language}")
         voice = profile["narration"]["voices"][language]
-        output = (
-            f"audio/voice_previews/{language}/"
-            f"{voice['name'].lower()}_cosyvoice_audition.wav"
-        )
-        job = {
-            "job_id": f"preview_{language}",
-            "text": preview_text[language],
-            "output": output
-        }
-        results = synthesize_narration_batch(
-            jobs=[job],
-            language=language,
-            profile=profile,
-            work_dir=episode_dir / "audio" / "voice_previews" / language,
-            episode_dir=episode_dir,
-            root=ROOT
-        )
-        result = results[job["job_id"]]
-        print(
-            f"[OK] {language} | {voice['name']} | "
-            f"{result['duration_seconds']}s | "
-            f"{episode_dir / output}"
-        )
+        for speed in args.speeds:
+            speed_label = f"{speed:.2f}".replace(".", "_")
+            output = (
+                f"audio/voice_previews/{language}/"
+                f"{voice['name'].lower()}_{args.mode}_{speed_label}.wav"
+            )
+            job = {
+                "job_id": f"preview_{language}_{args.mode}_{speed_label}",
+                "text": preview_text[language],
+                "output": output,
+                "mode": args.mode,
+                "speed": speed,
+                "instruct_text": style_instructions[language]
+            }
+            results = synthesize_narration_batch(
+                jobs=[job],
+                language=language,
+                profile=profile,
+                work_dir=episode_dir / "audio" / "voice_previews" / language,
+                episode_dir=episode_dir,
+                root=ROOT
+            )
+            result = results[job["job_id"]]
+            print(
+                f"[OK] {language} | {voice['name']} | "
+                f"modo={args.mode} | speed={speed:.2f} | "
+                f"{result['duration_seconds']}s | {episode_dir / output}"
+            )
 
     print("\nAUDICIONES LOCALES GENERADAS")
 
