@@ -49,7 +49,7 @@ def main():
         line_gap_seconds=args.line_gap
     )
     if pacing["errors"]:
-        print("\\nPACING NO VALIDADO")
+        print("\nPACING NO VALIDADO")
         for error in pacing["errors"]:
             print("[ERROR]", error)
         raise SystemExit(1)
