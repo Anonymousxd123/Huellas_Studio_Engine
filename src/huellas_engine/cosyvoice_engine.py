@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import tempfile
 from pathlib import Path
@@ -16,6 +17,19 @@ def _resolve_path(value, root=None):
     if not path.is_absolute():
         path = (root or _project_root()) / path
     return path.resolve()
+
+
+def _resolve_executable_path(value, root=None):
+    """Make an executable path absolute without dereferencing venv symlinks.
+
+    On macOS, .venv/bin/python is commonly a symlink to the base interpreter.
+    Resolving that symlink bypasses pyvenv.cfg and launches Python without the
+    virtual environment's site-packages.
+    """
+    path = Path(value).expanduser()
+    if not path.is_absolute():
+        path = (root or _project_root()) / path
+    return Path(os.path.abspath(str(path)))
 
 
 def load_cosyvoice_profile(path):
@@ -50,7 +64,7 @@ def resolve_cosyvoice_runtime(profile, root=None):
     narration = profile["narration"]
     engine_dir = _resolve_path(narration["engine_dir"], root)
     model_dir = _resolve_path(narration["model_dir"], root)
-    python_path = _resolve_path(
+    python_path = _resolve_executable_path(
         narration.get("python", str(Path(narration["engine_dir"]) / ".venv/bin/python")),
         root
     )
