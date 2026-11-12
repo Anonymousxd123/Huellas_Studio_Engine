@@ -142,7 +142,13 @@ def _load_prepared_reference(reference, language, fallback_text):
         return reference, fallback_text
     if source.resolve() != reference.resolve():
         return reference, fallback_text
-    if entry.get("source_mtime_ns") != source.stat().st_mtime_ns:
+    source_stat = source.stat()
+    if entry.get("source_mtime_ns") != source_stat.st_mtime_ns:
+        return reference, fallback_text
+    if (
+        entry.get("source_size_bytes") is not None
+        and entry.get("source_size_bytes") != source_stat.st_size
+    ):
         return reference, fallback_text
 
     transcript = entry.get("reference_text", "").strip()
