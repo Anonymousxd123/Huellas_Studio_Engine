@@ -6,7 +6,7 @@ from pathlib import Path
 from .localization_engine import load_episode_bundle
 
 
-_WORD_PATTERN = re.compile(r"\\b[\\w]+(?:['’][\\w]+)*\\b", re.UNICODE)
+_WORD_PATTERN = re.compile(r"\b[\w]+(?:['’][\w]+)*\b", re.UNICODE)
 
 
 def count_spoken_words(text):
