@@ -60,7 +60,7 @@ def main():
         line_gap_seconds=args.line_gap
     )
     if pacing["errors"]:
-        print("\\nPACING NO VALIDADO: se detiene antes de generar imágenes o audio.")
+        print("\nPACING NO VALIDADO: se detiene antes de generar imágenes o audio.")
         for error in pacing["errors"]:
             print("[ERROR]", error)
         raise SystemExit(1)
