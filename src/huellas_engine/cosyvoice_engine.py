@@ -75,6 +75,40 @@ def resolve_cosyvoice_runtime(profile, root=None):
     }
 
 
+def _verify_cosyvoice_python(python_path):
+    """Verify the exact interpreter that will launch the worker."""
+    check = (
+        "import sys, torch, torchaudio; "
+        "print('PYTHON=' + sys.executable); "
+        "print('TORCH=' + torch.__version__); "
+        "print('TORCHAUDIO=' + torchaudio.__version__); "
+        "print('MPS=' + str(torch.backends.mps.is_available()))"
+    )
+    result = subprocess.run(
+        [str(python_path), "-c", check],
+        capture_output=True,
+        text=True
+    )
+    output = "\n".join(
+        part.strip() for part in (result.stdout, result.stderr) if part.strip()
+    )
+    if result.returncode != 0:
+        raise RuntimeError(
+            "El Python configurado para CosyVoice no puede importar "
+            "PyTorch/TorchAudio.\n"
+            f"Intérprete: {python_path}\n"
+            f"Diagnóstico:\n{output}"
+        )
+    if "MPS=True" not in result.stdout:
+        raise RuntimeError(
+            "El Python configurado para CosyVoice importa PyTorch, "
+            "pero MPS no está disponible.\n"
+            f"Intérprete: {python_path}\n"
+            f"Diagnóstico:\n{output}"
+        )
+    return result.stdout.strip()
+
+
 def _prepare_reference(reference, destination):
     reference = Path(reference).expanduser().resolve()
     if not reference.is_file():
@@ -159,6 +193,9 @@ def synthesize_narration_batch(
             json.dumps({"jobs": payload_jobs}, ensure_ascii=False),
             encoding="utf-8"
         )
+        runtime_check = _verify_cosyvoice_python(runtime["python"])
+        print("[COSYVOICE PREFLIGHT] " + runtime_check.replace("\n", " | "))
+
         command = [
             str(runtime["python"]),
             str(runtime["worker"]),
@@ -184,9 +221,13 @@ def synthesize_narration_batch(
             ) from exc
 
         if completed.returncode != 0:
-            details = (completed.stderr or completed.stdout)[-6000:]
+            details = "\n".join(
+                part for part in (completed.stdout, completed.stderr) if part
+            )[-8000:]
             raise RuntimeError(
-                "Falló CosyVoice MPS. Detalle del proceso:\n" + details
+                "Falló CosyVoice MPS.\n"
+                f"Python utilizado: {runtime['python']}\n"
+                "Detalle del proceso:\n" + details
             )
         if not response_path.is_file():
             raise RuntimeError(
