@@ -93,7 +93,7 @@ def _prepare_voice(language, voice):
                     "se reutiliza."
                 )
                 return prepared_dir, cached
-        except (OSError, ValueError, TypeError, json.JSONDecodeError):
+        except (OSError, ValueError, TypeError, json.JSONDecodeError, subprocess.CalledProcessError):
             pass
 
     subprocess.run(
