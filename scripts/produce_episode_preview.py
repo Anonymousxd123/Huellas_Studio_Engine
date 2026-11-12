@@ -99,20 +99,6 @@ def main():
                 "Faltan escenas compuestas: "
                 + ", ".join(str(path) for path in missing)
             )
-    else:
-        command = [
-            sys.executable,
-            str(ROOT / "scripts" / "run_episode_composite.py"),
-            "--episode", args.episode,
-            "--url", args.url
-        ]
-        if args.assets_dir:
-            command.extend(["--assets-dir", args.assets_dir])
-        if args.seed is not None:
-            command.extend(["--seed", str(args.seed)])
-        if args.force_backgrounds:
-            command.append("--force")
-        subprocess.run(command, check=True, cwd=ROOT)
 
     print("\nPREPARANDO VOZ Y SUBTÍTULOS")
     for language in languages:
@@ -143,6 +129,34 @@ def main():
             episode_dir, languages=[language]
         )
         print("Archivos de subtítulos:", len(subtitle_paths))
+
+    if not args.skip_visuals:
+        command = [
+            sys.executable,
+            str(ROOT / "scripts" / "run_episode_composite.py"),
+            "--episode", args.episode,
+            "--url", args.url
+        ]
+        if args.assets_dir:
+            command.extend(["--assets-dir", args.assets_dir])
+        if args.seed is not None:
+            command.extend(["--seed", str(args.seed)])
+        if args.force_backgrounds:
+            command.append("--force")
+
+        print("\nGENERANDO Y COMPONIENDO ESCENAS")
+        try:
+            subprocess.run(command, check=True, cwd=ROOT)
+        except subprocess.CalledProcessError as exc:
+            print(
+                "\n[PRODUCCIÓN PARCIAL] El audio y los subtítulos ya están "
+                "guardados. La etapa visual quedó pendiente."
+            )
+            print(
+                "Inicia ComfyUI y vuelve a ejecutar el mismo comando; "
+                "los WAV válidos se reutilizarán automáticamente."
+            )
+            raise SystemExit(exc.returncode or 2) from None
 
     print("\nRENDERIZANDO ANIMATICS")
     for language in languages:
