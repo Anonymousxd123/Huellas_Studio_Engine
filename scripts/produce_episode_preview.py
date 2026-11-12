@@ -8,6 +8,7 @@ from pathlib import Path
 from huellas_engine.audio_engine import build_voice_manifest
 from huellas_engine.episode_paths import resolve_episode_dir
 from huellas_engine.localization_engine import get_languages
+from huellas_engine.pacing_engine import analyze_episode_pacing
 from huellas_engine.tts_engine import synthesize_episode_audio
 from huellas_engine.subtitle_engine import write_subtitles
 from huellas_engine.video_engine import render_animatic
@@ -35,6 +36,8 @@ def main():
     parser.add_argument("--kokoro-profile", default=str(ROOT / "config" / "tts" / "voice_profiles.json"))
     parser.add_argument("--tts-device", choices=["auto", "cpu", "mps", "cuda"],
                         default="auto")
+    parser.add_argument("--line-gap", type=float, default=0.28)
+    parser.add_argument("--pacing-wpm", type=float, default=128.0)
     parser.add_argument("--force-voice", action="store_true",
                         help="Regenera los WAV aunque ya existan")
     args = parser.parse_args()
@@ -50,6 +53,23 @@ def main():
         (episode_dir / "episode.json").read_text(encoding="utf-8")
     )
     languages = args.languages or get_languages(episode_dir)
+    pacing = analyze_episode_pacing(
+        episode_dir,
+        languages=languages,
+        words_per_minute=args.pacing_wpm,
+        line_gap_seconds=args.line_gap
+    )
+    if pacing["errors"]:
+        print("\\nPACING NO VALIDADO: se detiene antes de generar imágenes o audio.")
+        for error in pacing["errors"]:
+            print("[ERROR]", error)
+        raise SystemExit(1)
+    for language, report in pacing["languages"].items():
+        print(
+            f"[PACING] {language}: {report['total_words']} palabras | "
+            f"{report['estimated_voice_seconds']:.1f}s de voz estimada | "
+            f"{report['coverage']:.1%} del episodio"
+        )
 
     if args.skip_visuals:
         missing = [
@@ -90,7 +110,8 @@ def main():
                 profile_path=args.tts_profile,
                 kokoro_profile_path=args.kokoro_profile,
                 force=args.force_voice,
-                device=args.tts_device
+                device=args.tts_device,
+                line_gap_seconds=args.line_gap
             )
             print(
                 f"[OK] {language}: {voice_result['generated_jobs']} audios "
