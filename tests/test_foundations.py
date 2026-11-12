@@ -15,6 +15,7 @@ from huellas_engine.scene_composer import SCENE_LAYOUTS, load_character
 from huellas_engine.scene_engine import validate_episode
 from huellas_engine.video_engine import build_animatic_command
 from huellas_engine.tts_engine import load_production_profile
+from huellas_engine.cosyvoice_engine import resolve_cosyvoice_runtime
 from huellas_engine.subtitle_engine import (
     build_subtitle_timeline, build_subtitle_timeline_from_audio,
     format_srt_timestamp, render_srt, split_subtitle_text
@@ -393,6 +394,39 @@ def test_subtitles_use_measured_audio_timeline_when_available(tmp_path):
         for i in range(len(timeline["cues"]) - 1)
     )
 
+
+
+
+def test_resolve_cosyvoice_python_preserves_virtualenv_symlink(tmp_path):
+    engine_dir = tmp_path / "engines" / "CosyVoice-MPS"
+    model_dir = engine_dir / "pretrained_models" / "model"
+    bin_dir = engine_dir / ".venv" / "bin"
+    model_dir.mkdir(parents=True)
+    bin_dir.mkdir(parents=True)
+    (engine_dir / "scripts").mkdir()
+    worker = tmp_path / "scripts" / "cosyvoice_worker.py"
+    worker.parent.mkdir(parents=True)
+    worker.write_text("# worker", encoding="utf-8")
+
+    base_python = tmp_path / "base-python"
+    base_python.write_text("#!/bin/sh\\n", encoding="utf-8")
+    venv_python = bin_dir / "python"
+    venv_python.symlink_to(base_python)
+
+    profile = {
+        "narration": {
+            "engine_dir": str(engine_dir),
+            "model_dir": str(model_dir),
+            "python": str(venv_python),
+            "fp16": False
+        }
+    }
+
+    runtime = resolve_cosyvoice_runtime(profile, root=tmp_path)
+
+    assert runtime["python"] == venv_python
+    assert runtime["python"].is_symlink()
+    assert runtime["python"].resolve() == base_python.resolve()
 
 
 def test_production_profile_uses_local_cosyvoice_and_kokoro():
