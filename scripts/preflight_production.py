@@ -62,7 +62,7 @@ def main():
             words_per_minute=args.pacing_wpm,
             line_gap_seconds=args.line_gap
         )
-        print("\\nSCRIPT PACING")
+        print("\nSCRIPT PACING")
         print("-" * 48)
         for language, report in pacing["languages"].items():
             print(
