@@ -200,6 +200,32 @@ python scripts/render_animatic.py --episode episode_001 --language es
 
 Si existe `audio/<language>/final_mix.wav`, se incorpora. Si todavía no existe, el animatic lleva una pista silenciosa para revisión visual. No es todavía el vídeo animado final.
 
+### Fase de animación de personajes (piloto local)
+
+Los animatics anteriores son composiciones estáticas: el compositor coloca los recortes PNG sobre los fondos y el renderizador mantiene cada imagen durante la duración de su escena. La animación es una etapa independiente.
+
+El piloto de movimiento usa **LTX-Video 2B 0.9.6 Distilled** mediante la API local de ComfyUI. Es un modelo image-to-video de 2B parámetros; el checkpoint se ejecuta en MPS y el encoder T5 se carga en CPU para reducir presión sobre el dispositivo. El piloto empieza a 512×288 y 49 frames (2 segundos) para validar identidad y movimiento antes de producir más clips. LTX-Video documenta soporte MPS en macOS y el modelo distilled usa 8 pasos. Los resultados pueden variar: la prueba debe aprobar continuidad de personajes antes de automatizar el episodio completo.
+
+Instala los dos pesos y los nodos auxiliares mínimos (sin instalar KJNodes ni añadir servicios de pago):
+
+```bash
+bash scripts/setup_ltx_animation_macos.sh
+```
+
+El instalador descarga el checkpoint LTX 2B distilled y el encoder T5 XXL FP16, instala los dos nodos de sigmas de Huellas en `~/HuellasStudioAI/ComfyUI/custom_nodes/HuellasLTXNodes` y conserva los modelos dentro de ComfyUI. Requiere aproximadamente 18 GB libres para una instalación limpia. Detén y reinicia ComfyUI después de instalar los nodos.
+
+Genera primero el piloto de la escena SC003 (inclinación de cabeza del perro y respuesta del gato):
+
+```bash
+PYTHONPATH=src .venv/bin/python scripts/animate_scene.py \
+  --episode episode_001 \
+  --scene SC003
+```
+
+El MP4 de prueba y los frames se guardan en `projects/episode_001/motion_tests/SC003/`. No reemplaza los animatics ni vuelve a generar audio. Cuando el piloto confirme que los personajes mantienen su identidad y la acción es natural, se amplía la configuración a las demás escenas y se integra la selección de clips animados en el renderizador final.
+
+**Licencia del modelo:** LTX-Video 0.9.6 tiene una licencia de pesos independiente del código. La licencia permite uso libre de regalías a entidades con ingresos anuales inferiores a US$10 millones; las entidades que alcanzan ese umbral deben obtener una licencia comercial de Lightricks. Conserva el archivo de licencia descargado junto al checkpoint y revisa sus restricciones antes de publicar.
+
 Validar traducciones:
 
 ```bash
