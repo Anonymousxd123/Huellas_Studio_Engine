@@ -1,5 +1,4 @@
 import json
-import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -307,50 +306,59 @@ def animate_scene(
         raise ValueError(f"No hay prompt de movimiento configurado para {scene_id}.")
     negative_prompt = config.get("negative_prompt", "")
 
-    check_ltx_comfyui(url)
-    client = ComfyClient(url)
-    client.check()
-
     run_dir = (
         episode_dir / "motion_tests" / scene_id / f"seed_{int(seed)}"
     )
     frames_dir = run_dir / "frames"
     frames_dir.mkdir(parents=True, exist_ok=True)
-    if any(frames_dir.glob("*.png")):
-        raise FileExistsError(
-            f"Ya existen frames para esta semilla: {frames_dir}. "
-            "Usa otra semilla para conservar la prueba anterior."
+    existing_frames = sorted(frames_dir.glob("*.png"))
+
+    if existing_frames:
+        if len(existing_frames) != frames:
+            raise RuntimeError(
+                f"La carpeta {frames_dir} contiene {len(existing_frames)} "
+                f"frames, pero esta ejecución espera {frames}. "
+                "Conserva esa prueba y usa otra semilla para generar una nueva."
+            )
+        downloaded = existing_frames
+        prompt_id = "reused-existing-frames"
+        print(f"[REUSE] Se reutilizan {len(downloaded)} frames ya generados.")
+    else:
+        check_ltx_comfyui(url)
+        client = ComfyClient(url)
+        client.check()
+
+        uploaded = client.upload_image(inputs["image_path"])
+        workflow = build_ltx_i2v_workflow(
+            uploaded_image=uploaded,
+            positive_prompt=positive_prompt,
+            negative_prompt=negative_prompt,
+            seed=seed,
+            width=width,
+            height=height,
+            frames=frames,
+            fps=fps,
+            filename_prefix=f"huellas_motion/{episode_id}/{scene_id}/{seed}",
         )
 
-    uploaded = client.upload_image(inputs["image_path"])
-    workflow = build_ltx_i2v_workflow(
-        uploaded_image=uploaded,
-        positive_prompt=positive_prompt,
-        negative_prompt=negative_prompt,
-        seed=seed,
-        width=width,
-        height=height,
-        frames=frames,
-        fps=fps,
-        filename_prefix=f"huellas_motion/{episode_id}/{scene_id}/{seed}",
-    )
+        print("\\nHUELLAS STUDIO - LTX IMAGE TO VIDEO")
+        print("=" * 52)
+        print("Episodio:", episode_id)
+        print("Escena:", scene_id)
+        print("Modelo:", CHECKPOINT)
+        print("Resolución:", f"{width}x{height}")
+        print("Frames:", frames, f"({frames / fps:.2f}s a {fps} fps)")
+        print("Seed:", seed)
+        print("Prompt:", positive_prompt)
 
-    print("\nHUELLAS STUDIO - LTX IMAGE TO VIDEO")
-    print("=" * 52)
-    print("Episodio:", episode_id)
-    print("Escena:", scene_id)
-    print("Modelo:", CHECKPOINT)
-    print("Resolución:", f"{width}x{height}")
-    print("Frames:", frames, f"({frames / fps:.2f}s a {fps} fps)")
-    print("Seed:", seed)
-    print("Prompt:", positive_prompt)
-
-    prompt_id = client.submit(workflow)
-    print("ComfyUI Prompt ID:", prompt_id)
-    history = client.wait(prompt_id, timeout=3600)
-    downloaded = client.download_images(history, frames_dir)
-    if not downloaded:
-        raise RuntimeError("LTX terminó sin devolver frames de imagen.")
+        prompt_id = client.submit(workflow)
+        print("ComfyUI Prompt ID:", prompt_id)
+        history = client.wait(prompt_id, timeout=3600)
+        downloaded = client.download_images(history, frames_dir)
+        if len(downloaded) != frames:
+            raise RuntimeError(
+                f"LTX devolvió {len(downloaded)} frames; se esperaban {frames}."
+            )
 
     output_path = run_dir / f"{scene_id}_motion_test.mp4"
     output_path, frame_count = _encode_frames(
