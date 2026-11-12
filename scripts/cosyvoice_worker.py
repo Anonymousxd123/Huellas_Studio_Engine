@@ -61,7 +61,7 @@ def main():
                 f"La referencia de {job['job_id']} dura "
                 f"{reference_duration:.2f}s; CosyVoice admite máximo 30s. "
                 "Ejecuta scripts/prepare_voice_references.py para crear "
-                "referencias cortas alineadas con Whisper."
+                "la referencia configurada con su transcripción revisada."
             )
 
     # Load the model only after every reference passes preflight.
