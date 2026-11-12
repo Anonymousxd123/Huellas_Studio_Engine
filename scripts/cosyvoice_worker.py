@@ -26,9 +26,18 @@ def main():
     response_path = Path(args.response)
     payload = json.loads(request_path.read_text(encoding="utf-8"))
 
+    print(f"[COSYVOICE WORKER] Python: {sys.executable}", flush=True)
+
     import torch
     import torchaudio
     from cosyvoice.cli.cosyvoice import AutoModel
+
+    print(
+        f"[COSYVOICE WORKER] PyTorch: {torch.__version__} | "
+        f"TorchAudio: {torchaudio.__version__} | "
+        f"MPS: {torch.backends.mps.is_available()}",
+        flush=True
+    )
 
     if not torch.backends.mps.is_available():
         raise RuntimeError(
