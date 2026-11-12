@@ -71,17 +71,35 @@ def main():
         reference = Path(job["reference_audio"]).expanduser().resolve()
         output = Path(job["output_path"]).expanduser().resolve()
         output.parent.mkdir(parents=True, exist_ok=True)
-        prompt_text = (
-            "You are a helpful assistant.<|endofprompt|>"
-            + job["reference_text"].strip()
-        )
+        mode = job.get("mode", "zero_shot")
+        speed = float(job.get("speed", 1.0))
+        if not 0.8 <= speed <= 1.2:
+            raise ValueError(f"Velocidad fuera del rango seguro: {speed}")
+
+        if mode == "zero_shot":
+            prompt_text = (
+                "You are a helpful assistant.<|endofprompt|>"
+                + job["reference_text"].strip()
+            )
+            inference = model.inference_zero_shot(
+                job["text"], prompt_text, str(reference),
+                stream=False, speed=speed
+            )
+        elif mode == "instruct2":
+            instruction = job.get("instruct_text", "").strip()
+            if not instruction:
+                raise ValueError(
+                    f"Falta instruct_text para {job['job_id']}"
+                )
+            inference = model.inference_instruct2(
+                job["text"], instruction + "<|endofprompt|>",
+                str(reference), stream=False, speed=speed
+            )
+        else:
+            raise ValueError(f"Modo CosyVoice no soportado: {mode}")
+
         chunks = []
-        for item in model.inference_zero_shot(
-            job["text"],
-            prompt_text,
-            str(reference),
-            stream=False
-        ):
+        for item in inference:
             speech = item.get("tts_speech")
             if speech is not None and speech.numel():
                 chunks.append(speech)
