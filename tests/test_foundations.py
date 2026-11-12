@@ -1,9 +1,11 @@
 import json
+import requests
 from pathlib import Path
 
 from PIL import Image
 
 from huellas_engine.asset_manager import normalize_manifest
+from huellas_engine.comfy_client import ComfyClient, ComfyUnavailableError
 from huellas_engine.audio_engine import build_voice_manifest
 from huellas_engine.episode_paths import resolve_episode_dir
 from huellas_engine.image_utils import prepare_reference_image
@@ -591,3 +593,23 @@ def test_episode_pacing_rejects_underfilled_scene(tmp_path):
     report = analyze_episode_pacing(episode_dir)
     assert not report["ok"]
     assert any("mínimo" in error for error in report["errors"])
+
+
+
+def test_comfy_client_reports_actionable_message_when_server_is_down(monkeypatch):
+    client = ComfyClient("http://127.0.0.1:8188")
+
+    def connection_refused(*args, **kwargs):
+        raise requests.exceptions.ConnectionError("connection refused")
+
+    monkeypatch.setattr(client.session, "get", connection_refused)
+
+    try:
+        client.check()
+    except ComfyUnavailableError as exc:
+        message = str(exc)
+        assert "127.0.0.1:8188" in message
+        assert "Inicia ComfyUI" in message
+        assert "audio y los subtítulos" in message
+    else:
+        raise AssertionError("Expected ComfyUnavailableError")
