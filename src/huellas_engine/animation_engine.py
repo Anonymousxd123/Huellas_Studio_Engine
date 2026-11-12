@@ -132,13 +132,10 @@ def build_ltx_i2v_workflow(
     height=288,
     frames=49,
     fps=24,
-    image_strength=1.0,
     filename_prefix="huellas_motion/episode_001/SC003",
 ):
     if not uploaded_image or not isinstance(uploaded_image, str):
         raise ValueError("ComfyUI no devolvió el nombre de la imagen subida.")
-    if not 0.0 <= image_strength <= 1.0:
-        raise ValueError("image_strength debe estar entre 0 y 1.")
 
     return {
         "1": {
@@ -180,7 +177,6 @@ def build_ltx_i2v_workflow(
                 "height": height,
                 "length": frames,
                 "batch_size": 1,
-                "strength": image_strength,
             },
         },
         "8": {
