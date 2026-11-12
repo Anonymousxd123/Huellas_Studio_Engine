@@ -228,7 +228,10 @@ def synthesize_narration_batch(
             "text": job["text"],
             "reference_audio": str(prepared_reference),
             "reference_text": reference_text,
-            "output_path": str((episode_dir / job["output"]).resolve())
+            "output_path": str((episode_dir / job["output"]).resolve()),
+            "mode": job.get("mode", "zero_shot"),
+            "speed": float(job.get("speed", 1.0)),
+            "instruct_text": job.get("instruct_text", "")
         })
 
     with tempfile.TemporaryDirectory(prefix="huellas-cosyvoice-") as temp:
