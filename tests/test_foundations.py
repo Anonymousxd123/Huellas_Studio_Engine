@@ -8,6 +8,7 @@ from huellas_engine.audio_engine import build_voice_manifest
 from huellas_engine.episode_paths import resolve_episode_dir
 from huellas_engine.image_utils import prepare_reference_image
 from huellas_engine.localization_engine import validate_locales
+from huellas_engine.pacing_engine import analyze_episode_pacing
 from huellas_engine.kokoro_engine import (
     load_voice_profiles, resolve_voice_settings, split_text_for_tts
 )
@@ -495,3 +496,98 @@ def test_production_profile_uses_local_cosyvoice_and_kokoro():
     )
     assert profile["dialogue"]["provider"] == "kokoro"
     assert "voice_id" not in profile["narration"]["voices"]["en"]
+
+
+
+def test_episode_001_bilingual_pacing_is_ready_for_eight_minutes():
+    root = Path(__file__).resolve().parents[1]
+    report = analyze_episode_pacing(root / "projects" / "episode_001")
+
+    assert report["ok"], report["errors"]
+    assert report["target_duration_seconds"] == 480
+    assert set(report["languages"]) == {"es", "en"}
+    for language in ("es", "en"):
+        assert report["languages"][language]["total_words"] >= 900
+        assert report["languages"][language]["coverage"] >= 0.85
+
+
+def test_episode_pacing_rejects_scene_voice_overflow(tmp_path):
+    episode_dir = tmp_path / "episode"
+    locale_dir = episode_dir / "locales"
+    locale_dir.mkdir(parents=True)
+    (episode_dir / "episode.json").write_text(
+        json.dumps({
+            "episode_id": "episode_test",
+            "target_duration_seconds": 30,
+            "supported_languages": ["es"],
+            "scenes": [{
+                "scene_id": "SC001",
+                "duration_seconds": 30,
+                "location": "sala",
+                "characters": ["dog"],
+                "action": "habla",
+                "visual_prompt": "perro"
+            }]
+        }),
+        encoding="utf-8"
+    )
+    locale = {
+        "language": "es",
+        "episode": {"title": "Prueba", "description": "Prueba"},
+        "scenes": {
+            "SC001": {
+                "title": "Prueba",
+                "narration": " ".join(["palabra"] * 70),
+                "dialogue": []
+            }
+        }
+    }
+    (locale_dir / "es.json").write_text(
+        json.dumps(locale), encoding="utf-8"
+    )
+
+    report = analyze_episode_pacing(
+        episode_dir, words_per_minute=120, line_gap_seconds=0
+    )
+    assert not report["ok"]
+    assert any("máximo" in error for error in report["errors"])
+
+
+def test_episode_pacing_rejects_underfilled_scene(tmp_path):
+    episode_dir = tmp_path / "episode"
+    locale_dir = episode_dir / "locales"
+    locale_dir.mkdir(parents=True)
+    (episode_dir / "episode.json").write_text(
+        json.dumps({
+            "episode_id": "episode_test",
+            "target_duration_seconds": 30,
+            "supported_languages": ["es"],
+            "scenes": [{
+                "scene_id": "SC001",
+                "duration_seconds": 30,
+                "location": "sala",
+                "characters": ["dog"],
+                "action": "habla",
+                "visual_prompt": "perro"
+            }]
+        }),
+        encoding="utf-8"
+    )
+    locale = {
+        "language": "es",
+        "episode": {"title": "Prueba", "description": "Prueba"},
+        "scenes": {
+            "SC001": {
+                "title": "Prueba",
+                "narration": "Hola.",
+                "dialogue": []
+            }
+        }
+    }
+    (locale_dir / "es.json").write_text(
+        json.dumps(locale), encoding="utf-8"
+    )
+
+    report = analyze_episode_pacing(episode_dir)
+    assert not report["ok"]
+    assert any("mínimo" in error for error in report["errors"])
