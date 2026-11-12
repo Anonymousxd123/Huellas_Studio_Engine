@@ -1,4 +1,6 @@
 import argparse
+import subprocess
+import sys
 from pathlib import Path
 
 from huellas_engine.episode_paths import resolve_episode_dir
@@ -59,6 +61,18 @@ def main():
             f"{report['estimated_voice_seconds']:.1f}s estimados | "
             f"{report['coverage']:.1%} del episodio"
         )
+
+    print("\nPREPARANDO REFERENCIAS VOCALES")
+    subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "prepare_voice_references.py"),
+            "--profile", args.profile,
+            "--languages", *languages
+        ],
+        check=True,
+        cwd=ROOT
+    )
 
     print("\nHUELLAS STUDIO - LOCAL TTS")
     print("=" * 52)
