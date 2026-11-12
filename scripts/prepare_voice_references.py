@@ -10,16 +10,50 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PROFILE = ROOT / "config" / "tts" / "production_profiles.json"
 
 
-def _transcript_words(result, max_seconds):
-    words = []
-    for segment in result.get("segments", []):
-        for word in segment.get("words", []):
-            start = float(word.get("start", 0))
-            end = float(word.get("end", 0))
-            text = word.get("word", "")
-            if text.strip() and end > start and end <= max_seconds:
-                words.append({"start": start, "end": end, "text": text})
-    return words
+def _select_reference_window(result, max_seconds, min_seconds=4.0):
+    """Choose a complete, contiguous speech span; never cut a phrase at a timer."""
+    segments = [
+        segment for segment in result.get("segments", [])
+        if segment.get("text", "").strip()
+        and float(segment.get("end", 0)) > float(segment.get("start", 0))
+    ]
+    candidates = []
+    for start_index, first in enumerate(segments):
+        start = float(first["start"])
+        for end_index in range(start_index, len(segments)):
+            last = segments[end_index]
+            end = float(last["end"])
+            if end - start > max_seconds:
+                break
+            if end_index > start_index:
+                previous_end = float(segments[end_index - 1]["end"])
+                if float(last["start"]) - previous_end > 1.25:
+                    break
+            duration = end - start
+            if duration < min_seconds:
+                continue
+            text = " ".join(
+                segment["text"].strip()
+                for segment in segments[start_index:end_index + 1]
+            )
+            complete_sentence = text.rstrip().endswith((".", "!", "?", "…"))
+            word_count = len(text.split())
+            score = (
+                -abs(duration - min(8.0, max_seconds - 0.2)) * 2.0
+                + (5.0 if complete_sentence else 0.0)
+                + min(word_count, 30) * 0.05
+            )
+            candidates.append({
+                "start": start, "end": end, "text": text,
+                "duration": duration, "score": score
+            })
+    if not candidates:
+        raise RuntimeError(
+            "Whisper no encontró una frase completa de entre "
+            f"{min_seconds:.0f} y {max_seconds:.0f} segundos. "
+            "Prueba con --max-seconds 12 o revisa el audio original."
+        )
+    return max(candidates, key=lambda candidate: candidate["score"])
 
 
 def main():
@@ -29,7 +63,7 @@ def main():
     parser.add_argument("--profile", default=str(DEFAULT_PROFILE))
     parser.add_argument("--languages", nargs="*", default=["es", "en"])
     parser.add_argument("--max-seconds", type=float, default=10.0)
-    parser.add_argument("--whisper-model", default="tiny")
+    parser.add_argument("--whisper-model", default="small")
     args = parser.parse_args()
 
     if not 3 <= args.max_seconds < 30:
@@ -68,20 +102,16 @@ def main():
             verbose=False,
             condition_on_previous_text=False
         )
-        words = _transcript_words(result, args.max_seconds)
-        if not words:
-            raise RuntimeError(
-                f"Whisper no encontró palabras completas en los primeros "
-                f"{args.max_seconds}s de {source}. Revisa el audio original."
-            )
-
-        clip_start = max(0.0, words[0]["start"] - 0.10)
-        clip_end = min(args.max_seconds, words[-1]["end"] + 0.15)
+        selected = _select_reference_window(result, args.max_seconds)
+        clip_start = max(0.0, selected["start"] - 0.08)
+        clip_end = selected["end"] + 0.12
+        if clip_end - clip_start > args.max_seconds:
+            clip_end = clip_start + args.max_seconds
         duration = clip_end - clip_start
         if duration <= 0 or duration >= 30:
             raise RuntimeError(f"Duración de referencia inválida: {duration:.2f}s")
 
-        transcript = "".join(word["text"] for word in words).strip()
+        transcript = selected["text"].strip()
         if len(transcript.split()) < 5:
             raise RuntimeError(
                 f"Referencia demasiado corta para {voice['name']}: {transcript}"
@@ -108,10 +138,14 @@ def main():
             "prepared_audio": str(prepared_audio),
             "reference_text": transcript,
             "duration_seconds": round(duration, 3),
-            "language": language
+            "language": language,
+            "selected_start_seconds": round(selected["start"], 3),
+            "selected_end_seconds": round(selected["end"], 3),
+            "whisper_model": args.whisper_model
         }
 
         print(f"[OK] Referencia corta: {prepared_audio}")
+        print(f"[OK] Fragmento: {selected['start']:.2f}s–{selected['end']:.2f}s")
         print(f"[OK] Duración: {duration:.2f}s")
         print(f"[OK] Transcripción alineada: {transcript}")
 
