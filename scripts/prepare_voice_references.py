@@ -66,6 +66,36 @@ def _prepare_voice(language, voice):
     prepared_dir.mkdir(parents=True, exist_ok=True)
     prepared = prepared_dir / f"{voice['name'].lower()}_reference.wav"
 
+    manifest_path = prepared_dir / "manifest.json"
+    if manifest_path.is_file():
+        try:
+            previous = json.loads(manifest_path.read_text(encoding="utf-8"))
+            cached = previous.get("voices", {}).get(language, {})
+            cached_audio = Path(cached.get("prepared_audio", "")).expanduser()
+            cache_matches = (
+                cached.get("source_audio") == str(source)
+                and cached.get("source_mtime_ns") == source.stat().st_mtime_ns
+                and cached.get("source_size_bytes") == source.stat().st_size
+                and cached.get("reference_text") == transcript
+                and abs(float(cached.get("duration_seconds", 0)) - duration) <= 0.05
+                and cached_audio.is_file()
+            )
+            if cache_matches:
+                cached_info = _probe_audio(cached_audio)
+                cache_matches = (
+                    cached_info["sample_rate"] == 16000
+                    and cached_info["channels"] == 1
+                    and abs(cached_info["duration_seconds"] - duration) <= 0.05
+                )
+            if cache_matches:
+                print(
+                    f"[OK] {voice['name']}: referencia preparada vigente; "
+                    "se reutiliza."
+                )
+                return prepared_dir, cached
+        except (OSError, ValueError, TypeError, json.JSONDecodeError):
+            pass
+
     subprocess.run(
         [
             "ffmpeg", "-y", "-v", "error",
@@ -136,7 +166,20 @@ def main():
         voice = voices[language]
         print(f"\n========== {voice['name']} ({language}) ==========")
         prepared_dir, entry = _prepare_voice(language, voice)
-        manifest_by_dir.setdefault(prepared_dir, {"version": 2, "voices": {}})
+        if prepared_dir not in manifest_by_dir:
+            manifest_path = prepared_dir / "manifest.json"
+            try:
+                existing = json.loads(
+                    manifest_path.read_text(encoding="utf-8")
+                ) if manifest_path.is_file() else {}
+            except (OSError, json.JSONDecodeError):
+                existing = {}
+            if not isinstance(existing.get("voices"), dict):
+                existing = {}
+            manifest_by_dir[prepared_dir] = {
+                "version": 2,
+                "voices": existing.get("voices", {})
+            }
         manifest_by_dir[prepared_dir]["voices"][language] = entry
 
     for directory, manifest in manifest_by_dir.items():
