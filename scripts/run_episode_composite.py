@@ -121,7 +121,7 @@ def main():
         try:
             client.check()
         except ComfyUnavailableError as exc:
-            parser.exit(2, f"\\n[COMFYUI NO DISPONIBLE] {exc}\\n")
+            parser.exit(2, f"\n[COMFYUI NO DISPONIBLE] {exc}\n")
         workflow_source = load_workflow(WORKFLOW_PATH)
     else:
         print("[OK] Todos los fondos existen; no se necesita conectar con ComfyUI.")
