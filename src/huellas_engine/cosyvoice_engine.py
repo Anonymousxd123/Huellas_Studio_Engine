@@ -123,6 +123,34 @@ def _verify_cosyvoice_python(python_path):
     return result.stdout.strip()
 
 
+def _load_prepared_reference(reference, language, fallback_text):
+    """Use a Whisper-aligned short reference when one was prepared locally."""
+    reference = Path(reference).expanduser()
+    prepared_dir = reference.parent / "cosyvoice_prepared"
+    manifest_path = prepared_dir / "manifest.json"
+    if not manifest_path.is_file():
+        return reference, fallback_text
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    entry = manifest.get("voices", {}).get(language)
+    if not entry:
+        return reference, fallback_text
+
+    source = Path(entry.get("source_audio", "")).expanduser()
+    prepared = Path(entry.get("prepared_audio", "")).expanduser()
+    if not source.is_file() or not prepared.is_file():
+        return reference, fallback_text
+    if source.resolve() != reference.resolve():
+        return reference, fallback_text
+    if entry.get("source_mtime_ns") != source.stat().st_mtime_ns:
+        return reference, fallback_text
+
+    transcript = entry.get("reference_text", "").strip()
+    if not transcript:
+        return reference, fallback_text
+    return prepared, transcript
+
+
 def _prepare_reference(reference, destination):
     reference = Path(reference).expanduser().resolve()
     if not reference.is_file():
@@ -181,6 +209,10 @@ def synthesize_narration_batch(
             f"{voice.get('name', language)} en "
             "config/tts/production_profiles.json"
         )
+
+    reference, reference_text = _load_prepared_reference(
+        reference, language, reference_text
+    )
 
     prepared_reference = work_dir / "references" / f"{language}_reference_16k.wav"
     if (
