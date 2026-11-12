@@ -132,7 +132,7 @@ bash scripts/setup_cosyvoice_mps_macos.sh
 El instalador crea `engines/CosyVoice-MPS/.venv` con Python 3.10 y ofrece descargar una sola vez el modelo `Fun-CosyVoice3-0.5B-2512` (aproximadamente 9.75 GB). El código, el entorno y los pesos quedan fuera del control de versiones.
 
 En macOS Apple Silicon, el instalador filtra los índices adicionales de CUDA definidos por el fork upstream y resuelve las dependencias desde PyPI. Esto evita que ONNX Runtime para macOS se busque en el índice de paquetes CUDA de Microsoft.
-También instala `openai-whisper==20231117` por separado, con `setuptools<81` y sin aislamiento de build, porque esa versión antigua usa `pkg_resources` sin declararlo como dependencia de compilación.
+La preparación de referencias utiliza la transcripción revisada de la configuración y FFmpeg; no necesita descargar ni ejecutar Whisper.
 
 Instala Kokoro para las voces locales de los personajes, si aún no está instalado:
 
@@ -147,7 +147,7 @@ Coloca los audios originales, con permiso para clonarlos, en:
 - `~/Huellas_Studio_Assets/voice_references/akira_reference.wav`
 - `~/Huellas_Studio_Assets/voice_references/daniela_reference.wav`
 
-La referencia debe contener aproximadamente 5–10 segundos de una sola voz, sin música, ruido ni reverberación. El motor la convierte automáticamente a WAV mono de 16 kHz. En `config/tts/production_profiles.json`, completa `reference_text` con la transcripción exacta de cada grabación. La transcripción debe coincidir palabra por palabra con el audio.
+Usa una grabación limpia de una sola voz, sin música, ruido ni reverberación, con una duración inferior a 30 segundos. Conserva los originales sin modificarlos. En `config/tts/production_profiles.json`, configura `reference_text` con la transcripción revisada que coincide exactamente con el fragmento y `reference_duration_seconds` con la duración seleccionada. Ejecuta `scripts/prepare_voice_references.py` para convertir el fragmento a WAV mono de 16 kHz y generar el manifiesto. Este paso ya no necesita Whisper ni transcripción automática.
 
 #### Generar audiciones locales
 
