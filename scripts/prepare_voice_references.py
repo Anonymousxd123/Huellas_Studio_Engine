@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Create short, Whisper-aligned CosyVoice zero-shot voice references."""
+"""Prepare full-length, transcript-verified CosyVoice voice references.
+
+Uses the original ElevenLabs WAVs already configured in production_profiles.json.
+No ASR model or network download is needed: reference_text is the reviewed,
+exact transcript associated with the selected clip.
+"""
 import argparse
 import json
 import subprocess
@@ -10,154 +15,139 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PROFILE = ROOT / "config" / "tts" / "production_profiles.json"
 
 
-def _select_reference_window(result, max_seconds, min_seconds=4.0):
-    """Choose a complete, contiguous speech span; never cut a phrase at a timer."""
-    segments = [
-        segment for segment in result.get("segments", [])
-        if segment.get("text", "").strip()
-        and float(segment.get("end", 0)) > float(segment.get("start", 0))
-    ]
-    candidates = []
-    for start_index, first in enumerate(segments):
-        start = float(first["start"])
-        for end_index in range(start_index, len(segments)):
-            last = segments[end_index]
-            end = float(last["end"])
-            if end - start > max_seconds:
-                break
-            if end_index > start_index:
-                previous_end = float(segments[end_index - 1]["end"])
-                if float(last["start"]) - previous_end > 1.25:
-                    break
-            duration = end - start
-            if duration < min_seconds:
-                continue
-            text = " ".join(
-                segment["text"].strip()
-                for segment in segments[start_index:end_index + 1]
-            )
-            complete_sentence = text.rstrip().endswith((".", "!", "?", "…"))
-            word_count = len(text.split())
-            score = (
-                -abs(duration - min(8.0, max_seconds - 0.2)) * 2.0
-                + (5.0 if complete_sentence else 0.0)
-                + min(word_count, 30) * 0.05
-            )
-            candidates.append({
-                "start": start, "end": end, "text": text,
-                "duration": duration, "score": score
-            })
-    if not candidates:
-        raise RuntimeError(
-            "Whisper no encontró una frase completa de entre "
-            f"{min_seconds:.0f} y {max_seconds:.0f} segundos. "
-            "Prueba con --max-seconds 12 o revisa el audio original."
+def _probe_audio(path):
+    result = subprocess.run(
+        [
+            "ffprobe", "-v", "error",
+            "-select_streams", "a:0",
+            "-show_entries", "stream=sample_rate,channels,duration",
+            "-of", "json", str(path)
+        ],
+        check=True,
+        capture_output=True,
+        text=True
+    )
+    data = json.loads(result.stdout)
+    streams = data.get("streams", [])
+    if not streams:
+        raise ValueError(f"No se encontró una pista de audio en {path}")
+    stream = streams[0]
+    return {
+        "sample_rate": int(stream["sample_rate"]),
+        "channels": int(stream["channels"]),
+        "duration_seconds": float(stream.get("duration") or 0)
+    }
+
+
+def _prepare_voice(language, voice):
+    source = Path(voice["reference_audio"]).expanduser().resolve()
+    if not source.is_file():
+        raise FileNotFoundError(f"Falta la referencia de {voice['name']}: {source}")
+
+    transcript = voice.get("reference_text", "").strip()
+    if not transcript:
+        raise ValueError(f"Falta la transcripción revisada de {voice['name']}")
+
+    duration = float(voice.get("reference_duration_seconds", 0))
+    if not 0 < duration < 30:
+        raise ValueError(
+            f"{voice['name']}: reference_duration_seconds debe ser mayor que 0 "
+            "y menor que 30."
         )
-    return max(candidates, key=lambda candidate: candidate["score"])
+
+    source_info = _probe_audio(source)
+    if source_info["duration_seconds"] < duration:
+        raise ValueError(
+            f"{voice['name']}: el recorte solicitado ({duration:.2f}s) "
+            f"supera la duración del original ({source_info['duration_seconds']:.2f}s)."
+        )
+
+    prepared_dir = source.parent / "cosyvoice_prepared"
+    prepared_dir.mkdir(parents=True, exist_ok=True)
+    prepared = prepared_dir / f"{voice['name'].lower()}_reference.wav"
+
+    subprocess.run(
+        [
+            "ffmpeg", "-y", "-v", "error",
+            "-i", str(source),
+            "-t", f"{duration:.3f}",
+            "-map", "0:a:0",
+            "-vn",
+            "-ar", "16000",
+            "-ac", "1",
+            "-c:a", "pcm_s16le",
+            str(prepared)
+        ],
+        check=True,
+        capture_output=True,
+        text=True
+    )
+
+    prepared_info = _probe_audio(prepared)
+    if prepared_info["sample_rate"] != 16000 or prepared_info["channels"] != 1:
+        raise RuntimeError(
+            f"{voice['name']}: la referencia preparada no quedó en mono/16 kHz."
+        )
+    if not 0 < prepared_info["duration_seconds"] < 30:
+        raise RuntimeError(
+            f"{voice['name']}: duración preparada inválida "
+            f"({prepared_info['duration_seconds']:.2f}s)."
+        )
+
+    entry = {
+        "source_audio": str(source),
+        "source_mtime_ns": source.stat().st_mtime_ns,
+        "source_size_bytes": source.stat().st_size,
+        "prepared_audio": str(prepared),
+        "reference_text": transcript,
+        "duration_seconds": round(prepared_info["duration_seconds"], 3),
+        "language": language,
+        "selected_start_seconds": 0.0,
+        "selected_end_seconds": round(prepared_info["duration_seconds"], 3),
+        "transcript_source": "reviewed production_profiles.json",
+        "source_sample_rate": source_info["sample_rate"],
+        "source_channels": source_info["channels"]
+    }
+
+    print(f"[OK] {voice['name']}: {prepared_info['duration_seconds']:.2f}s")
+    print(f"[OK] Original: {source_info['duration_seconds']:.2f}s")
+    print(f"[OK] Formato preparado: mono / 16000 Hz")
+    print(f"[OK] Texto asociado: {transcript}")
+    return prepared_dir, entry
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Prepare short, transcript-aligned CosyVoice voice references"
+        description="Prepare reviewed, long CosyVoice reference clips without ASR."
     )
     parser.add_argument("--profile", default=str(DEFAULT_PROFILE))
     parser.add_argument("--languages", nargs="*", default=["es", "en"])
-    parser.add_argument("--max-seconds", type=float, default=10.0)
-    parser.add_argument("--whisper-model", default="small")
     args = parser.parse_args()
-
-    if not 3 <= args.max_seconds < 30:
-        raise ValueError("--max-seconds debe estar entre 3 y menos de 30")
 
     profile = json.loads(
         Path(args.profile).expanduser().read_text(encoding="utf-8")
     )
     voices = profile["narration"]["voices"]
 
-    import whisper
-
-    print(f"[WHISPER] Cargando modelo {args.whisper_model} en CPU...")
-    model = whisper.load_model(args.whisper_model, device="cpu")
-    prepared_dir = None
-    manifest = {"version": 1, "voices": {}}
-
+    manifest_by_dir = {}
     for language in args.languages:
         if language not in voices:
             raise ValueError(f"Idioma no configurado: {language}")
         voice = voices[language]
-        source = Path(voice["reference_audio"]).expanduser().resolve()
-        if not source.is_file():
-            raise FileNotFoundError(source)
+        print(f"\n========== {voice['name']} ({language}) ==========")
+        prepared_dir, entry = _prepare_voice(language, voice)
+        manifest_by_dir.setdefault(prepared_dir, {"version": 2, "voices": {}})
+        manifest_by_dir[prepared_dir]["voices"][language] = entry
 
-        language_name = "English" if language == "en" else "Spanish"
-        print(f"\n========== {voice['name']} ({language_name}) ==========")
-        print(f"Referencia original: {source}")
-
-        result = model.transcribe(
-            str(source),
-            language=language,
-            task="transcribe",
-            word_timestamps=True,
-            fp16=False,
-            verbose=False,
-            condition_on_previous_text=False
+    for directory, manifest in manifest_by_dir.items():
+        manifest_path = directory / "manifest.json"
+        manifest_path.write_text(
+            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8"
         )
-        selected = _select_reference_window(result, args.max_seconds)
-        clip_start = max(0.0, selected["start"] - 0.08)
-        clip_end = selected["end"] + 0.12
-        if clip_end - clip_start > args.max_seconds:
-            clip_end = clip_start + args.max_seconds
-        duration = clip_end - clip_start
-        if duration <= 0 or duration >= 30:
-            raise RuntimeError(f"Duración de referencia inválida: {duration:.2f}s")
+        print(f"\n[OK] Manifiesto: {manifest_path}")
 
-        transcript = selected["text"].strip()
-        if len(transcript.split()) < 5:
-            raise RuntimeError(
-                f"Referencia demasiado corta para {voice['name']}: {transcript}"
-            )
-
-        prepared_dir = source.parent / "cosyvoice_prepared"
-        prepared_dir.mkdir(parents=True, exist_ok=True)
-        prepared_audio = prepared_dir / f"{voice['name'].lower()}_reference.wav"
-        command = [
-            "ffmpeg", "-y", "-v", "error",
-            "-ss", f"{clip_start:.3f}",
-            "-i", str(source),
-            "-t", f"{duration:.3f}",
-            "-ar", "16000",
-            "-ac", "1",
-            "-c:a", "pcm_s16le",
-            str(prepared_audio)
-        ]
-        subprocess.run(command, check=True, capture_output=True, text=True)
-
-        manifest["voices"][language] = {
-            "source_audio": str(source),
-            "source_mtime_ns": source.stat().st_mtime_ns,
-            "prepared_audio": str(prepared_audio),
-            "reference_text": transcript,
-            "duration_seconds": round(duration, 3),
-            "language": language,
-            "selected_start_seconds": round(selected["start"], 3),
-            "selected_end_seconds": round(selected["end"], 3),
-            "whisper_model": args.whisper_model
-        }
-
-        print(f"[OK] Referencia corta: {prepared_audio}")
-        print(f"[OK] Fragmento: {selected['start']:.2f}s–{selected['end']:.2f}s")
-        print(f"[OK] Duración: {duration:.2f}s")
-        print(f"[OK] Transcripción alineada: {transcript}")
-
-    if prepared_dir is None:
-        raise RuntimeError("No se preparó ninguna referencia")
-    manifest_path = prepared_dir / "manifest.json"
-    manifest_path.write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2),
-        encoding="utf-8"
-    )
-    print(f"\n[OK] Manifiesto guardado: {manifest_path}")
-    print("REFERENCIAS COSYVOICE PREPARADAS")
+    print("\nREFERENCIAS LARGAS Y TRANSCRIPCIONES REVISADAS PREPARADAS")
 
 
 if __name__ == "__main__":
