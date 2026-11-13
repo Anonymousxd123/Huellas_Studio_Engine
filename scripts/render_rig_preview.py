@@ -42,6 +42,10 @@ def debug_overlay(definition, rig):
     )).convert("RGBA")
     canvas = Image.new("RGBA", base.size, (40, 40, 40, 255))
     canvas.alpha_composite(base)
+    draw = ImageDraw.Draw(canvas)
+    for ld in definition.layers:
+        if ld.region_polygon:
+            draw.line(ld.region_polygon + [ld.region_polygon[0]], fill=(60, 220, 90, 255), width=3)
     for jd, joint in zip(definition.joints, rig.joints):
         heat = np.zeros((*joint.weight.shape, 4), dtype=np.uint8)
         heat[..., 0] = 255

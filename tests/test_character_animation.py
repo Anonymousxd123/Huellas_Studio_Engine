@@ -166,3 +166,61 @@ def test_akira_rig_quality_gates():
         assert metrics["new_interior_holes_px"] <= 10
         assert metrics["protected_max_abs_error"] < 0.02
         assert metrics["head_stretch_max"] < 3.5
+
+
+def _layered_rig(tmp_path):
+    rig_path = _synthetic_character(tmp_path)
+    data = json.loads(rig_path.read_text(encoding="utf-8"))
+    image = Image.open(data["source"])
+    ImageDraw.Draw(image).rectangle((185, 90, 215, 300), fill=(120, 120, 130, 255))  # tail
+    image.save(data["source"])
+    data["layers"] = [
+        {"name": "tail", "region_polygon": [[182, 80], [240, 80], [240, 320], [182, 320]]},
+        {"name": "main", "joints": data.pop("joints")},
+    ]
+    rig_path.write_text(json.dumps(data), encoding="utf-8")
+    return rig_path
+
+
+def test_layers_partition_source_exactly(tmp_path):
+    rig = prepare_rig(load_rig(_layered_rig(tmp_path)))
+    assert [layer.name for layer in rig.layers] == ["tail", "main"]
+    total = sum(layer.rgba for layer in rig.layers)
+    assert np.abs(total - rig.rgba).max() == 0.0
+    source = rig.rgba.copy()
+    source[..., :3] *= source[..., 3:4]
+    assert np.abs(render_pose(rig, {}) - source).max() == 0.0
+
+
+def test_static_tail_layer_does_not_follow_head(tmp_path):
+    rig = prepare_rig(load_rig(_layered_rig(tmp_path)))
+    frame = render_pose(rig, {"head": -12})
+    rest = render_pose(rig, {})
+    tail = (slice(200, 300), slice(186, 214))
+    assert np.abs(frame[tail] - rest[tail]).max() < 1e-6
+
+
+def test_rig_requires_exactly_one_remainder_layer(tmp_path):
+    rig_path = _layered_rig(tmp_path)
+    data = json.loads(rig_path.read_text(encoding="utf-8"))
+    data["layers"][1]["region_polygon"] = [[0, 0], [10, 0], [10, 10]]
+    rig_path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(ValueError):
+        load_rig(rig_path)
+
+
+@pytest.mark.skipif(
+    not (Path.home() / "Huellas_Studio_Assets/characters/rig_prep_v1/daniela/daniela_master_padded.png").is_file(),
+    reason="Asset maestro de Daniela no disponible en este equipo",
+)
+def test_daniela_rig_quality_gates():
+    definition = load_rig(ROOT / "config/rigs/daniela.json")
+    rig = prepare_rig(definition, scale=0.5)
+    anchor = polygon_mask(rig.size, definition.joints[0].anchor_polygon, 0.5)
+    protected = anchor & (rig.rgba[..., 3] > 0.5)
+    for angle in (10.0, -4.0):
+        metrics = evaluate_pose(rig, {"head": angle}, protected_mask=protected)
+        assert metrics["rest_max_abs_error"] == 0.0
+        assert metrics["new_interior_holes_px"] <= 20
+        assert metrics["protected_max_abs_error"] < 0.02
+        assert metrics["head_stretch_max"] < 2.0

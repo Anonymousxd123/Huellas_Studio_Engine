@@ -1,4 +1,8 @@
-"""Weight-field deformation of a single painted character image.
+"""Weight-field deformation of a painted character split into layers.
+
+A rig is a partition of one painted image into layers (e.g. tail behind,
+everything else in front). Each layer bends with its own joints. Because the
+layers partition the image exactly, the rest pose reproduces the source.
 
 Coordinates are (x, y) in image space with y pointing down. A positive joint
 angle rotates counter-clockwise on screen (the top of a head moves to the
@@ -31,11 +35,32 @@ class Joint:
         return cached
 
 
+def _premultiply_planar(rgba):
+    planar = rgba.copy()
+    planar[..., :3] *= planar[..., 3:4]
+    return np.ascontiguousarray(planar.transpose(2, 0, 1))
+
+
+@dataclass
+class Layer:
+    name: str
+    rgba: np.ndarray  # float32 HxWx4 straight alpha; zero outside this layer
+    joints: list = field(default_factory=list)
+
+    @property
+    def premultiplied(self):
+        cached = getattr(self, "_premultiplied", None)
+        if cached is None:
+            cached = _premultiply_planar(self.rgba)
+            self._premultiplied = cached
+        return cached
+
+
 @dataclass
 class PreparedRig:
     name: str
-    rgba: np.ndarray  # float32 HxWx4, straight alpha in [0, 1]
-    joints: list = field(default_factory=list)
+    rgba: np.ndarray  # float32 HxWx4, straight alpha: the full source image
+    layers: list = field(default_factory=list)  # back-to-front
     breath_base_y: float = 0.0  # breathing scales vertically around this row
     breath_top_y: float = 0.0  # rows above this get the full breathing offset
 
@@ -45,14 +70,14 @@ class PreparedRig:
         return width, height
 
     @property
-    def premultiplied(self):
-        cached = getattr(self, "_premultiplied", None)
-        if cached is None:
-            cached = self.rgba.copy()
-            cached[..., :3] *= cached[..., 3:4]
-            cached = np.ascontiguousarray(cached.transpose(2, 0, 1))
-            self._premultiplied = cached
-        return cached
+    def joints(self):
+        return [joint for layer in self.layers for joint in layer.joints]
+
+    def layer_of(self, joint_name):
+        for layer in self.layers:
+            if any(j.name == joint_name for j in layer.joints):
+                return layer
+        raise KeyError(joint_name)
 
 
 def _rotate(xs, ys, pivot, radians):
@@ -152,6 +177,34 @@ def _sample_rgba(premultiplied, xs, ys, order):
     return np.clip(np.stack(channels, axis=-1), 0.0, 1.0)
 
 
+def _render_layer(layer, pose, bx, by, order):
+    src_x, src_y = bx, by
+    for joint in layer.joints:
+        angle = float(pose.get(joint.name, 0.0))
+        if abs(angle) > joint.max_angle:
+            raise ValueError(
+                f"Ángulo {angle} fuera de rango para {joint.name} "
+                f"(máx {joint.max_angle})"
+            )
+        src_x, src_y = invert_joint(joint, angle, src_x, src_y)
+
+    frame = _sample_rgba(layer.premultiplied, src_x, src_y, order)
+
+    for joint in layer.joints:
+        angle = float(pose.get(joint.name, 0.0))
+        if joint.overlay_alpha is None or angle == 0:
+            continue
+        rigid_x, rigid_y = _rotate(bx, by, joint.pivot, -np.deg2rad(angle))
+        top = _sample_rgba(layer.premultiplied, rigid_x, rigid_y, order)
+        coverage = ndi.map_coordinates(
+            joint.overlay_alpha, [rigid_y, rigid_x], order=1,
+            mode="constant", cval=0.0, prefilter=False
+        )[..., None]
+        top *= coverage
+        frame = top + frame * (1.0 - top[..., 3:4])
+    return frame
+
+
 def render_pose(rig, pose=None, order=1):
     """Render the rig in a pose. Returns premultiplied float32 HxWx4.
 
@@ -162,38 +215,18 @@ def render_pose(rig, pose=None, order=1):
     width, height = rig.size
     ys, xs = np.mgrid[0:height, 0:width].astype(np.float32)
 
+    known = {j.name for j in rig.joints}
     for name in pose:
-        if name != "breath" and name not in {j.name for j in rig.joints}:
+        if name != "breath" and name not in known:
             raise KeyError(f"Articulación desconocida en la pose: {name}")
 
     # Forward order is joints first, then breathing; invert in reverse.
     bx, by = _invert_breath(rig, pose.get("breath", 0.0), xs, ys)
-    src_x, src_y = bx, by
-    for joint in rig.joints:
-        angle = float(pose.get(joint.name, 0.0))
-        if abs(angle) > joint.max_angle:
-            raise ValueError(
-                f"Ángulo {angle} fuera de rango para {joint.name} "
-                f"(máx {joint.max_angle})"
-            )
-        src_x, src_y = invert_joint(joint, angle, src_x, src_y)
-
-    frame = _sample_rgba(rig.premultiplied, src_x, src_y, order)
-
-    for joint in rig.joints:
-        angle = float(pose.get(joint.name, 0.0))
-        if joint.overlay_alpha is None or angle == 0:
-            continue
-        rigid_x, rigid_y = _rotate(bx, by, joint.pivot, -np.deg2rad(angle))
-        layer = _sample_rgba(rig.premultiplied, rigid_x, rigid_y, order)
-        coverage = ndi.map_coordinates(
-            joint.overlay_alpha, [rigid_y, rigid_x], order=1,
-            mode="constant", cval=0.0, prefilter=False
-        )[..., None]
-        layer *= coverage
-        frame = layer + frame * (1.0 - layer[..., 3:4])
-
-    return frame
+    result = None
+    for layer in rig.layers:
+        frame = _render_layer(layer, pose, bx, by, order)
+        result = frame if result is None else frame + result * (1.0 - frame[..., 3:4])
+    return result
 
 
 def to_straight_uint8(premultiplied):

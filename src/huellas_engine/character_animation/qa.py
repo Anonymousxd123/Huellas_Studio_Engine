@@ -18,6 +18,7 @@ def local_stretch(rig, joint_name, angle):
     opaque source pixels that are not hidden by the rigid overlay.
     """
     joint = next(j for j in rig.joints if j.name == joint_name)
+    layer_alpha = rig.layer_of(joint_name).rgba[..., 3]
     width, height = rig.size
     ys, xs = np.mgrid[0:height, 0:width].astype(np.float32)
     src_x, src_y = invert_joint(joint, angle, xs, ys)
@@ -26,7 +27,7 @@ def local_stretch(rig, joint_name, angle):
     det_inverse = dsx_dx * dsy_dy - dsx_dy * dsy_dx
     stretch = 1.0 / np.maximum(np.abs(det_inverse), 1e-6)
     sampled_alpha = ndi.map_coordinates(
-        rig.rgba[..., 3], [src_y, src_x], order=1, mode="constant", cval=0.0
+        layer_alpha, [src_y, src_x], order=1, mode="constant", cval=0.0
     )
     weight = ndi.map_coordinates(
         joint.weight, [src_y, src_x], order=1, mode="nearest"
@@ -35,7 +36,7 @@ def local_stretch(rig, joint_name, angle):
     if joint.overlay_alpha is not None:
         rx, ry = _rotate(xs, ys, joint.pivot, -np.deg2rad(angle))
         cover = ndi.map_coordinates(
-            joint.overlay_alpha * rig.rgba[..., 3], [ry, rx], order=1,
+            joint.overlay_alpha * layer_alpha, [ry, rx], order=1,
             mode="constant", cval=0.0
         )
         region &= cover < 0.01  # bent pixels hidden under the rigid layer
@@ -80,8 +81,9 @@ def evaluate_pose(rig, pose, protected_mask=None):
             height, width = protected_mask.shape
             ys, xs = np.mgrid[0:height, 0:width].astype(np.float32)
             rx, ry = _rotate(xs, ys, joint.pivot, -np.deg2rad(angle))
+            layer_alpha = rig.layer_of(joint.name).rgba[..., 3]
             cover = ndi.map_coordinates(
-                joint.overlay_alpha * rig.rgba[..., 3], [ry, rx], order=1,
+                joint.overlay_alpha * layer_alpha, [ry, rx], order=1,
                 mode="constant", cval=0.0
             )
             covered |= cover > 0.01
