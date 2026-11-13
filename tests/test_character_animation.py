@@ -224,3 +224,58 @@ def test_daniela_rig_quality_gates():
         assert metrics["new_interior_holes_px"] <= 20
         assert metrics["protected_max_abs_error"] < 0.02
         assert metrics["head_stretch_max"] < 2.0
+
+
+def test_ease_in_out_back_starts_and_ends_at_rest_with_small_overshoot():
+    track = Track(keys=[(0.0, 0.0), (1.0, 10.0, "ease_in_out_back")])
+    values = [track.value(t / 1000) for t in range(1001)]
+    assert values[1] - values[0] < 1e-6  # no pop when leaving a held key
+    assert 10.2 < max(values) < 10.5
+    assert values[-1] == pytest.approx(10.0)
+    assert abs(values[-1] - values[-2]) < 1e-3
+
+
+def test_scene_compositor_keeps_background_and_placement_stable(tmp_path):
+    from huellas_engine.character_animation.compositor import (
+        SceneSpec, load_background, place_characters, render_frame,
+    )
+    rig_path = _synthetic_character(tmp_path)
+    background = tmp_path / "bg.png"
+    Image.new("RGB", (160, 90), (90, 140, 200)).save(background)
+    spec_path = tmp_path / "scene.json"
+    spec_path.write_text(json.dumps({
+        "scene_id": "T001", "background": "bg.png", "width": 320, "height": 180,
+        "fps": 12, "duration": 1.0,
+        "characters": [{
+            "rig": rig_path.name, "center_x": 0.3, "bottom": 0.95, "height": 0.8,
+            "tracks": {"head": {"keys": [[0.0, 0.0], [1.0, 10.0, "ease_in_out"]]}},
+        }],
+    }), encoding="utf-8")
+    spec = SceneSpec.load(spec_path, tmp_path)
+    placed = place_characters(spec)
+    offsets = {tuple(item.offset) for item in placed}
+    bg = load_background(spec)
+    first, _ = render_frame(bg, placed, 0.0)
+    last, poses = render_frame(bg, placed, 1.0)
+    assert poses[0]["head"] == pytest.approx(10.0)
+    assert {tuple(item.offset) for item in place_characters(spec)} == offsets
+    right_side = (slice(None), slice(200, 320))  # far from the character
+    expected = np.rint(bg[right_side][..., :3] * 255).astype(np.uint8)
+    assert np.array_equal(first[right_side], expected)
+    assert np.array_equal(last[right_side], expected)
+    assert not np.array_equal(first, last)
+
+
+def test_scene_rejects_tracks_for_unknown_joints(tmp_path):
+    from huellas_engine.character_animation.compositor import SceneSpec, place_characters
+    rig_path = _synthetic_character(tmp_path)
+    Image.new("RGB", (32, 18)).save(tmp_path / "bg.png")
+    spec_path = tmp_path / "scene.json"
+    spec_path.write_text(json.dumps({
+        "scene_id": "T002", "background": "bg.png", "width": 320, "height": 180,
+        "fps": 12, "duration": 1.0,
+        "characters": [{"rig": rig_path.name, "center_x": 0.3, "bottom": 0.95,
+                        "height": 0.8, "tracks": {"tail": {"keys": [[0, 0]]}}}],
+    }), encoding="utf-8")
+    with pytest.raises(ValueError):
+        place_characters(SceneSpec.load(spec_path, tmp_path))

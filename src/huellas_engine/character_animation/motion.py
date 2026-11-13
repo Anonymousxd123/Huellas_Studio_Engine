@@ -11,7 +11,12 @@ EASINGS = {
     # Smootherstep: zero velocity and acceleration at both ends.
     "ease_in_out": lambda t: t * t * t * (t * (6.0 * t - 15.0) + 10.0),
     # Ease out with a small overshoot that settles (cartoon follow-through).
+    # Starts at speed; use it only after a key that is already moving.
     "back_out": lambda t: 1.0 + 2.2 * (t - 1.0) ** 3 + 1.2 * (t - 1.0) ** 2,
+    # Starts and ends at rest, overshoots ~3.4% near t=0.86, then settles.
+    "ease_in_out_back": lambda t: (
+        t * t * t * (t * (6.0 * t - 15.0) + 10.0) + 7.0 * t ** 6 * (1.0 - t) ** 2
+    ),
 }
 
 

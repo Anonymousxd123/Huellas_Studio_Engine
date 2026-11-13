@@ -1,0 +1,41 @@
+{
+  "scene_id": "SC003",
+  "description": "Rig pilot: Akira tilts his head with curiosity (anticipation, overshoot, hold, partial return); Daniela watches, then imitates with a smaller tilt toward him. Background static, camera locked.",
+  "background": "projects/episode_001/backgrounds/huellas_bg_SC003_3146254728_00001_.png",
+  "width": 1920,
+  "height": 1080,
+  "fps": 24,
+  "duration": 8.0,
+  "characters": [
+    {
+      "rig": "config/rigs/akira.json",
+      "center_x": 0.195,
+      "bottom": 1.10,
+      "height": 0.80,
+      "tracks": {
+        "head": {"keys": [
+          [0.0, 0.0], [0.6, 0.0, "hold"], [0.9, -1.5, "ease_in_out"],
+          [2.1, 12.0, "ease_in_out_back"], [3.3, 12.0, "hold"], [3.7, 12.8, "ease_in_out"],
+          [4.1, 12.0, "ease_in_out"], [5.2, 2.0, "ease_in_out"], [7.2, 2.0, "hold"],
+          [8.0, 0.0, "ease_in_out"]
+        ]},
+        "breath": {"sine": {"amplitude": 0.004, "period": 2.6, "phase": 0.0}}
+      }
+    },
+    {
+      "rig": "config/rigs/daniela.json",
+      "center_x": 0.70,
+      "bottom": 0.955,
+      "height": 0.52,
+      "contact_shadow": {"opacity": 0.38, "width": 0.78, "height": 0.06, "offset_y": 0.015, "blur": 12},
+      "tracks": {
+        "head": {"keys": [
+          [0.0, 0.0], [3.5, 0.0, "hold"], [3.75, -1.0, "ease_in_out"],
+          [4.8, 9.0, "ease_in_out_back"], [6.0, 9.0, "hold"], [7.0, 1.0, "ease_in_out"],
+          [8.0, 0.0, "ease_in_out"]
+        ]},
+        "breath": {"sine": {"amplitude": 0.005, "period": 2.1, "phase": 1.0}}
+      }
+    }
+  ]
+}
