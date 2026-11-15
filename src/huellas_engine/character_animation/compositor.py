@@ -159,6 +159,38 @@ def render_frame(background, placed, t):
     return rgb, poses
 
 
+def encoder_command(ffmpeg, spec, output_mp4, crf):
+    """Identical encoder settings for every chunk so they concat without re-encoding."""
+    return [
+        ffmpeg, "-y", "-loglevel", "error",
+        "-f", "rawvideo", "-pix_fmt", "rgb24",
+        "-s", f"{spec.width}x{spec.height}", "-r", str(spec.fps), "-i", "-",
+        "-c:v", "libx264", "-preset", "slow", "-crf", str(crf),
+        "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(output_mp4),
+    ]
+
+
+def render_range(spec, placed, background, start_frame, end_frame, output_mp4, crf=16):
+    """Render frames [start_frame, end_frame) of a scene to one MP4 chunk."""
+    ffmpeg = shutil.which("ffmpeg")
+    if ffmpeg is None:
+        raise FileNotFoundError("No se encontró FFmpeg en PATH")
+    output_mp4 = Path(output_mp4)
+    output_mp4.parent.mkdir(parents=True, exist_ok=True)
+    process = subprocess.Popen(encoder_command(ffmpeg, spec, output_mp4, crf),
+                               stdin=subprocess.PIPE)
+    try:
+        for index in range(start_frame, end_frame):
+            rgb, _ = render_frame(background, placed, index / spec.fps)
+            process.stdin.write(rgb.tobytes())
+    finally:
+        process.stdin.close()
+        code = process.wait()
+    if code != 0:
+        raise RuntimeError(f"FFmpeg terminó con código {code}")
+    return output_mp4
+
+
 def render_scene(spec, output_mp4, keyframe_dir=None, keyframe_times=(), crf=16,
                  progress=None):
     """Render the scene to MP4 (H.264, yuv420p) by piping raw frames to ffmpeg."""
@@ -174,14 +206,8 @@ def render_scene(spec, output_mp4, keyframe_dir=None, keyframe_times=(), crf=16,
     if keyframe_dir:
         Path(keyframe_dir).mkdir(parents=True, exist_ok=True)
 
-    command = [
-        ffmpeg, "-y", "-loglevel", "error",
-        "-f", "rawvideo", "-pix_fmt", "rgb24",
-        "-s", f"{spec.width}x{spec.height}", "-r", str(spec.fps), "-i", "-",
-        "-c:v", "libx264", "-preset", "slow", "-crf", str(crf),
-        "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(output_mp4),
-    ]
-    process = subprocess.Popen(command, stdin=subprocess.PIPE)
+    process = subprocess.Popen(encoder_command(ffmpeg, spec, output_mp4, crf),
+                               stdin=subprocess.PIPE)
     pose_log = []
     try:
         for index in range(spec.frame_count):

@@ -279,3 +279,35 @@ def test_scene_rejects_tracks_for_unknown_joints(tmp_path):
     }), encoding="utf-8")
     with pytest.raises(ValueError):
         place_characters(SceneSpec.load(spec_path, tmp_path))
+
+
+def _cues():
+    return [
+        {"scene_id": "S1", "kind": "narration", "speaker_id": "narrator", "start": 10.0, "end": 50.0},
+        {"scene_id": "S1", "kind": "dialogue", "speaker_id": "dog", "start": 50.3, "end": 53.0},
+        {"scene_id": "S1", "kind": "dialogue", "speaker_id": "cat", "start": 53.3, "end": 56.0},
+    ]
+
+
+def test_choreography_is_deterministic_and_within_validated_limits():
+    from huellas_engine.character_animation.choreography import LIMITS, IDLE_SWAY, scene_tracks
+    scene = {"scene_id": "S1", "start": 10.0, "duration_seconds": 50.0}
+    first = scene_tracks(scene, _cues())
+    second = scene_tracks(scene, _cues())
+    for role in ("dog", "cat"):
+        assert first[role]["head"].keys == second[role]["head"].keys
+        values = [first[role]["head"].value(i / 24) for i in range(50 * 24)]
+        low, high = LIMITS[role]
+        sway = IDLE_SWAY[role][0]
+        assert low - sway - 1e-6 <= min(values) and max(values) <= high + sway + 1e-6
+        steps = np.diff(values)
+        assert np.abs(np.diff(steps)).max() < 0.4  # no pops
+        assert len(first[role]["head"].keys) > 6  # gestures were scheduled
+
+
+def test_speaker_moves_while_talking():
+    from huellas_engine.character_animation.choreography import scene_tracks
+    scene = {"scene_id": "S1", "start": 10.0, "duration_seconds": 50.0}
+    tracks = scene_tracks(scene, _cues())
+    dog = [tracks["dog"]["head"].value(40.3 + i / 24) for i in range(48)]
+    assert max(dog) - min(dog) > 2.0
