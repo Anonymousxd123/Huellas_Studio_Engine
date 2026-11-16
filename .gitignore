@@ -15,3 +15,14 @@ projects/*/audio/**/*.mp3
 
 # External CosyVoice runtime, model weights and local voice references
 /engines/CosyVoice-MPS/
+*.egg-info/
+
+# Regenerable renders and caches (episode MP4s are shared outside git)
+projects/*/animation/
+projects/*/motion_tests/
+projects/*/character_rigs/
+projects/*/renders/
+
+# Voice-cloning reference transcripts stay local
+config/tts/transcripts/
+config/animation/*.backup.json
