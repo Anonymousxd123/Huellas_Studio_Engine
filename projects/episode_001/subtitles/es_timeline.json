@@ -1,0 +1,632 @@
+{
+  "episode_id": "episode_001",
+  "language": "es",
+  "title": "6 cosas que tu perro y tu gato hacen y tú interpretas MAL",
+  "duration_seconds": 480.0,
+  "timing_basis": "measured_tts_clip_durations",
+  "cues": [
+    {
+      "index": 1,
+      "scene_id": "SC001",
+      "start": 0.0,
+      "end": 5.203,
+      "text": "¿Tu perro te sigue por toda la casa o tu\ngato aparece justo cuando cierras la"
+    },
+    {
+      "index": 2,
+      "scene_id": "SC001",
+      "start": 5.203,
+      "end": 10.473,
+      "text": "puerta del baño? No siempre es casualidad.\nMuchos gestos cotidianos tienen una"
+    },
+    {
+      "index": 3,
+      "scene_id": "SC001",
+      "start": 10.473,
+      "end": 15.608,
+      "text": "explicación relacionada con la curiosidad,\nel aprendizaje, la comodidad o la"
+    },
+    {
+      "index": 4,
+      "scene_id": "SC001",
+      "start": 15.608,
+      "end": 19.865,
+      "text": "comunicación. Hoy descubriremos seis\ncomportamientos que suelen"
+    },
+    {
+      "index": 5,
+      "scene_id": "SC001",
+      "start": 19.865,
+      "end": 25.0,
+      "text": "malinterpretarse y cómo responder sin\nregañar ni forzar a nuestras mascotas."
+    },
+    {
+      "index": 6,
+      "scene_id": "SC001",
+      "start": 25.28,
+      "end": 27.93,
+      "text": "Yo solo intento resolver el misterio."
+    },
+    {
+      "index": 7,
+      "scene_id": "SC001",
+      "start": 28.21,
+      "end": 31.035,
+      "text": "Empieza por respetar la puerta cerrada."
+    },
+    {
+      "index": 8,
+      "scene_id": "SC002",
+      "start": 35.0,
+      "end": 39.289,
+      "text": "Cuando un gato te sigue al baño, puede\nbuscar compañía, atención o sentir"
+    },
+    {
+      "index": 9,
+      "scene_id": "SC002",
+      "start": 39.289,
+      "end": 44.164,
+      "text": "curiosidad por lo que haces. Aprende tus\nrutinas y reconoce sonidos familiares. Una"
+    },
+    {
+      "index": 10,
+      "scene_id": "SC002",
+      "start": 44.164,
+      "end": 48.453,
+      "text": "puerta cerrada despierta aún más su\ninterés porque bloquea el acceso a un"
+    },
+    {
+      "index": 11,
+      "scene_id": "SC002",
+      "start": 48.453,
+      "end": 53.211,
+      "text": "espacio normalmente disponible. Si espera\ntranquilo o se sienta cerca, quizá solo"
+    },
+    {
+      "index": 12,
+      "scene_id": "SC002",
+      "start": 53.211,
+      "end": 57.852,
+      "text": "quiere estar contigo; eso no significa\nautomáticamente ansiedad por separación."
+    },
+    {
+      "index": 13,
+      "scene_id": "SC002",
+      "start": 57.852,
+      "end": 62.493,
+      "text": "Observa el conjunto: ¿está relajado, come\nnormalmente y se siente cómodo cuando"
+    },
+    {
+      "index": 14,
+      "scene_id": "SC002",
+      "start": 62.493,
+      "end": 67.193,
+      "text": "sales? Ofrécele juego diario, escondites y\nlugares tranquilos para descansar. Si"
+    },
+    {
+      "index": 15,
+      "scene_id": "SC002",
+      "start": 67.193,
+      "end": 71.54,
+      "text": "aparecen maullidos intensos, cambios\nrepentinos o angustia cuando se queda"
+    },
+    {
+      "index": 16,
+      "scene_id": "SC002",
+      "start": 71.54,
+      "end": 76.299,
+      "text": "solo, consulta con un veterinario. No hace\nfalta regañarlo: acompañarte puede ser"
+    },
+    {
+      "index": 17,
+      "scene_id": "SC002",
+      "start": 76.299,
+      "end": 78.12,
+      "text": "simplemente parte de su rutina."
+    },
+    {
+      "index": 18,
+      "scene_id": "SC002",
+      "start": 78.4,
+      "end": 82.925,
+      "text": "Eso se llama amistad. Yo acompaño a mi\nhumano a todas partes."
+    },
+    {
+      "index": 19,
+      "scene_id": "SC002",
+      "start": 83.205,
+      "end": 86.18,
+      "text": "Tú acompañas a cualquiera que abra la\nnevera."
+    },
+    {
+      "index": 20,
+      "scene_id": "SC003",
+      "start": 100.0,
+      "end": 104.858,
+      "text": "Un perro puede inclinar la cabeza al\nescuchar una voz, un sonido nuevo o una"
+    },
+    {
+      "index": 21,
+      "scene_id": "SC003",
+      "start": 104.858,
+      "end": 109.588,
+      "text": "palabra familiar. Quizá presta más\natención, intenta localizar el sonido o"
+    },
+    {
+      "index": 22,
+      "scene_id": "SC003",
+      "start": 109.588,
+      "end": 114.382,
+      "text": "procesa una señal que espera entender.\nAlgunos estudios lo han observado en"
+    },
+    {
+      "index": 23,
+      "scene_id": "SC003",
+      "start": 114.382,
+      "end": 119.176,
+      "text": "perros que reconocen palabras, pero no\nexplica todos los casos. El contexto"
+    },
+    {
+      "index": 24,
+      "scene_id": "SC003",
+      "start": 119.176,
+      "end": 124.482,
+      "text": "importa: tal vez dijiste paseo, cambiaste\nel tono o hiciste un ruido nuevo. Háblale"
+    },
+    {
+      "index": 25,
+      "scene_id": "SC003",
+      "start": 124.482,
+      "end": 129.532,
+      "text": "con calma y dale tiempo para responder,\nsin repetir una orden muchas veces. Una"
+    },
+    {
+      "index": 26,
+      "scene_id": "SC003",
+      "start": 129.532,
+      "end": 134.645,
+      "text": "inclinación ocasional acompañada de un\ncuerpo relajado suele ser normal. Pero si"
+    },
+    {
+      "index": 27,
+      "scene_id": "SC003",
+      "start": 134.645,
+      "end": 139.567,
+      "text": "persiste o aparece junto con pérdida de\nequilibrio, movimientos en círculos o"
+    },
+    {
+      "index": 28,
+      "scene_id": "SC003",
+      "start": 139.567,
+      "end": 144.745,
+      "text": "dolor, contacta con un veterinario. Un\ngesto gracioso no debe ocultar un problema"
+    },
+    {
+      "index": 29,
+      "scene_id": "SC003",
+      "start": 144.745,
+      "end": 145.32,
+      "text": "de salud."
+    },
+    {
+      "index": 30,
+      "scene_id": "SC003",
+      "start": 145.6,
+      "end": 149.3,
+      "text": "Llevas veinte minutos hablando y todavía\nno dices paseo."
+    },
+    {
+      "index": 31,
+      "scene_id": "SC003",
+      "start": 149.58,
+      "end": 152.83,
+      "text": "Yo inclino la cabeza cuando escucho abrir\nuna lata."
+    },
+    {
+      "index": 32,
+      "scene_id": "SC004",
+      "start": 165.0,
+      "end": 170.044,
+      "text": "Ese vaso en el suelo quizá no fue un\naccidente. Los gatos exploran con sus"
+    },
+    {
+      "index": 33,
+      "scene_id": "SC004",
+      "start": 170.044,
+      "end": 175.498,
+      "text": "patas, siguen objetos en movimiento y\ncomprueban qué ocurre cuando empujan algo."
+    },
+    {
+      "index": 34,
+      "scene_id": "SC004",
+      "start": 175.498,
+      "end": 180.746,
+      "text": "Es una conducta relacionada con la\ncuriosidad y el juego. La atención también"
+    },
+    {
+      "index": 35,
+      "scene_id": "SC004",
+      "start": 180.746,
+      "end": 186.336,
+      "text": "puede reforzarla: si cada golpe hace que\ncorras a mirar, tu gato aprende que tirar"
+    },
+    {
+      "index": 36,
+      "scene_id": "SC004",
+      "start": 186.336,
+      "end": 191.176,
+      "text": "cosas provoca una reacción. El\naburrimiento y la falta de oportunidades"
+    },
+    {
+      "index": 37,
+      "scene_id": "SC004",
+      "start": 191.176,
+      "end": 196.22,
+      "text": "para explorar también influyen. En vez de\ngritar, aparta objetos frágiles,"
+    },
+    {
+      "index": 38,
+      "scene_id": "SC004",
+      "start": 196.22,
+      "end": 201.537,
+      "text": "medicamentos y plantas tóxicas. Ofrécele\nsesiones cortas de juego, rascadores,"
+    },
+    {
+      "index": 39,
+      "scene_id": "SC004",
+      "start": 201.537,
+      "end": 207.263,
+      "text": "cajas y comederos interactivos. Cambia los\njuguetes para mantener su interés. Premia"
+    },
+    {
+      "index": 40,
+      "scene_id": "SC004",
+      "start": 207.263,
+      "end": 212.716,
+      "text": "el juego seguro y los momentos de calma en\nsu espacio favorito. Así proteges tus"
+    },
+    {
+      "index": 41,
+      "scene_id": "SC004",
+      "start": 212.716,
+      "end": 215.92,
+      "text": "cosas y le das una alternativa para\ninvestigar."
+    },
+    {
+      "index": 42,
+      "scene_id": "SC004",
+      "start": 216.2,
+      "end": 218.25,
+      "text": "¡Eso se llama vandalismo!"
+    },
+    {
+      "index": 43,
+      "scene_id": "SC004",
+      "start": 218.53,
+      "end": 222.205,
+      "text": "No. Es investigación con resultados en el\nsuelo."
+    },
+    {
+      "index": 44,
+      "scene_id": "SC005",
+      "start": 230.0,
+      "end": 234.184,
+      "text": "Tu perro corre a recibirte con un juguete\nen la boca. Muchas veces expresa"
+    },
+    {
+      "index": 45,
+      "scene_id": "SC005",
+      "start": 234.184,
+      "end": 238.651,
+      "text": "entusiasmo o invita a jugar, pero no\nsiempre está entregándote un regalo. Puede"
+    },
+    {
+      "index": 46,
+      "scene_id": "SC005",
+      "start": 238.651,
+      "end": 243.004,
+      "text": "haber aprendido que llevarlo forma parte\ndel saludo o le ayuda a canalizar la"
+    },
+    {
+      "index": 47,
+      "scene_id": "SC005",
+      "start": 243.004,
+      "end": 247.471,
+      "text": "emoción de tu regreso. Observa todo su\ncuerpo: los movimientos relajados suelen"
+    },
+    {
+      "index": 48,
+      "scene_id": "SC005",
+      "start": 247.471,
+      "end": 251.994,
+      "text": "indicar una interacción amistosa. Si se\npone rígido, protege el juguete, gruñe o"
+    },
+    {
+      "index": 49,
+      "scene_id": "SC005",
+      "start": 251.994,
+      "end": 256.178,
+      "text": "se aleja, no intentes quitárselo por la\nfuerza. Dale espacio y practica un"
+    },
+    {
+      "index": 50,
+      "scene_id": "SC005",
+      "start": 256.178,
+      "end": 260.702,
+      "text": "intercambio tranquilo con otro juguete o\nun premio. Espera a que baje la emoción"
+    },
+    {
+      "index": 51,
+      "scene_id": "SC005",
+      "start": 260.702,
+      "end": 265.338,
+      "text": "antes de comenzar el juego. Respetar sus\nseñales hace que el reencuentro sea mejor"
+    },
+    {
+      "index": 52,
+      "scene_id": "SC005",
+      "start": 265.338,
+      "end": 265.96,
+      "text": "para todos."
+    },
+    {
+      "index": 53,
+      "scene_id": "SC005",
+      "start": 266.24,
+      "end": 269.79,
+      "text": "¡Volviste! ¡Traje algo para compartir\ncontigo!"
+    },
+    {
+      "index": 54,
+      "scene_id": "SC005",
+      "start": 270.07,
+      "end": 273.295,
+      "text": "Qué detalle. ¿Y quién me trajo algo a mí?"
+    },
+    {
+      "index": 55,
+      "scene_id": "SC005",
+      "start": 273.575,
+      "end": 277.075,
+      "text": "Tú tienes una caja de juguetes y juegas\ncon una factura."
+    },
+    {
+      "index": 56,
+      "scene_id": "SC006",
+      "start": 295.0,
+      "end": 300.184,
+      "text": "Cuando un gato presiona una manta con sus\npatas delanteras, parece que estuviera"
+    },
+    {
+      "index": 57,
+      "scene_id": "SC006",
+      "start": 300.184,
+      "end": 305.239,
+      "text": "amasando. El movimiento comienza cuando es\ncachorro: durante la lactancia, los"
+    },
+    {
+      "index": 58,
+      "scene_id": "SC006",
+      "start": 305.239,
+      "end": 310.618,
+      "text": "gatitos presionan el vientre de su madre\nmientras se alimentan. Muchos conservan el"
+    },
+    {
+      "index": 59,
+      "scene_id": "SC006",
+      "start": 310.618,
+      "end": 315.154,
+      "text": "hábito de adultos y lo repiten cuando\nestán cómodos o se preparan para"
+    },
+    {
+      "index": 60,
+      "scene_id": "SC006",
+      "start": 315.154,
+      "end": 320.015,
+      "text": "descansar. Sus patas también tienen\nglándulas que dejan olor. Si ronronea y"
+    },
+    {
+      "index": 61,
+      "scene_id": "SC006",
+      "start": 320.015,
+      "end": 324.875,
+      "text": "tiene el cuerpo relajado, probablemente\ndisfruta el momento. Si sus uñas te"
+    },
+    {
+      "index": 62,
+      "scene_id": "SC006",
+      "start": 324.875,
+      "end": 329.994,
+      "text": "molestan, coloca una manta gruesa entre\nambos y mantén sus uñas cuidadas. No lo"
+    },
+    {
+      "index": 63,
+      "scene_id": "SC006",
+      "start": 329.994,
+      "end": 334.984,
+      "text": "empujes ni lo regañes: es una conducta\nnormal. Si de pronto parece dolorosa o"
+    },
+    {
+      "index": 64,
+      "scene_id": "SC006",
+      "start": 334.984,
+      "end": 339.456,
+      "text": "deja de apoyar una pata, consulta al\nveterinario. Si no, ofrécele una"
+    },
+    {
+      "index": 65,
+      "scene_id": "SC006",
+      "start": 339.456,
+      "end": 341.4,
+      "text": "superficie suave donde amasar."
+    },
+    {
+      "index": 66,
+      "scene_id": "SC006",
+      "start": 341.68,
+      "end": 344.83,
+      "text": "¿Entonces está preparando galletas para\ntodos?"
+    },
+    {
+      "index": 67,
+      "scene_id": "SC006",
+      "start": 345.11,
+      "end": 348.035,
+      "text": "Sí, pero la receta dice que no se\ncomparten."
+    },
+    {
+      "index": 68,
+      "scene_id": "SC007",
+      "start": 360.0,
+      "end": 364.469,
+      "text": "¿Tu gato te mira y cierra los ojos\nlentamente? Ese parpadeo puede formar"
+    },
+    {
+      "index": 69,
+      "scene_id": "SC007",
+      "start": 364.469,
+      "end": 369.497,
+      "text": "parte de una comunicación tranquila. En\nestudios sobre la interacción entre gatos"
+    },
+    {
+      "index": 70,
+      "scene_id": "SC007",
+      "start": 369.497,
+      "end": 374.586,
+      "text": "y personas, los investigadores observaron\nrespuestas positivas cuando las personas"
+    },
+    {
+      "index": 71,
+      "scene_id": "SC007",
+      "start": 374.586,
+      "end": 379.241,
+      "text": "devolvían el parpadeo lento. Puedes\nprobarlo sin invadir su espacio: míralo"
+    },
+    {
+      "index": 72,
+      "scene_id": "SC007",
+      "start": 379.241,
+      "end": 384.517,
+      "text": "suavemente, entrecierra los ojos despacio,\nvuelve a abrirlos y espera. No acerques la"
+    },
+    {
+      "index": 73,
+      "scene_id": "SC007",
+      "start": 384.517,
+      "end": 389.234,
+      "text": "cara ni mantengas una mirada fija; una\nmirada fija puede incomodar a algunos"
+    },
+    {
+      "index": 74,
+      "scene_id": "SC007",
+      "start": 389.234,
+      "end": 393.952,
+      "text": "gatos. El gesto no lo explica todo. Las\norejas, la postura y la cola también"
+    },
+    {
+      "index": 75,
+      "scene_id": "SC007",
+      "start": 393.952,
+      "end": 399.041,
+      "text": "ayudan a entender cómo se siente. Si se\naleja, respeta su decisión. Si se relaja o"
+    },
+    {
+      "index": 76,
+      "scene_id": "SC007",
+      "start": 399.041,
+      "end": 404.069,
+      "text": "parpadea de vuelta, quizá compartan un\nmomento de confianza. No prueba amor, pero"
+    },
+    {
+      "index": 77,
+      "scene_id": "SC007",
+      "start": 404.069,
+      "end": 405.0,
+      "text": "comunica calma."
+    },
+    {
+      "index": 78,
+      "scene_id": "SC007",
+      "start": 405.28,
+      "end": 407.805,
+      "text": "¡Yo también puedo hacer ese parpadeo!"
+    },
+    {
+      "index": 79,
+      "scene_id": "SC007",
+      "start": 408.085,
+      "end": 411.285,
+      "text": "Eso no cuenta. Te quedaste dormido."
+    },
+    {
+      "index": 80,
+      "scene_id": "SC008",
+      "start": 425.0,
+      "end": 430.436,
+      "text": "Ahora sabes que muchos comportamientos\ntienen más de una explicación. Seguirte,"
+    },
+    {
+      "index": 81,
+      "scene_id": "SC008",
+      "start": 430.436,
+      "end": 435.665,
+      "text": "inclinar la cabeza, explorar con las\npatas, recibirte con un juguete, amasar"
+    },
+    {
+      "index": 82,
+      "scene_id": "SC008",
+      "start": 435.665,
+      "end": 440.551,
+      "text": "una manta o parpadear lentamente son\nseñales que debemos entender en su"
+    },
+    {
+      "index": 83,
+      "scene_id": "SC008",
+      "start": 440.551,
+      "end": 445.711,
+      "text": "contexto. Cada mascota es diferente.\nObserva, ofrece alternativas seguras y"
+    },
+    {
+      "index": 84,
+      "scene_id": "SC008",
+      "start": 445.711,
+      "end": 450.941,
+      "text": "busca ayuda profesional si notas cambios\nrepentinos o malestar. Cuanto mejor"
+    },
+    {
+      "index": 85,
+      "scene_id": "SC008",
+      "start": 450.941,
+      "end": 456.652,
+      "text": "entendemos sus necesidades, mejor podemos\ncuidarlas. ¿Cuál de estos comportamientos"
+    },
+    {
+      "index": 86,
+      "scene_id": "SC008",
+      "start": 456.652,
+      "end": 462.225,
+      "text": "hace tu mascota? Cuéntanoslo y deja una\nhuellita. Esto fue Ah Mira Ese Dato. ¡Nos"
+    },
+    {
+      "index": 87,
+      "scene_id": "SC008",
+      "start": 462.225,
+      "end": 463.12,
+      "text": "vemos pronto!"
+    },
+    {
+      "index": 88,
+      "scene_id": "SC008",
+      "start": 463.4,
+      "end": 466.275,
+      "text": "Yo voto por más paseos, juegos y premios."
+    },
+    {
+      "index": 89,
+      "scene_id": "SC008",
+      "start": 466.555,
+      "end": 469.63,
+      "text": "Y yo por respetar mis momentos de\ntranquilidad."
+    }
+  ]
+}

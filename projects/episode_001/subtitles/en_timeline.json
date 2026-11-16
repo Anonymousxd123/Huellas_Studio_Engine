@@ -1,0 +1,576 @@
+{
+  "episode_id": "episode_001",
+  "language": "en",
+  "title": "6 Things Your Dog and Cat Do That You Probably Misinterpret",
+  "duration_seconds": 480.0,
+  "timing_basis": "measured_tts_clip_durations",
+  "cues": [
+    {
+      "index": 1,
+      "scene_id": "SC001",
+      "start": 0.0,
+      "end": 4.82,
+      "text": "Does your dog follow you around the house,\nor does your cat appear the moment you"
+    },
+    {
+      "index": 2,
+      "scene_id": "SC001",
+      "start": 4.82,
+      "end": 9.105,
+      "text": "close the bathroom door? It may not be\nrandom. Everyday behaviors can be"
+    },
+    {
+      "index": 3,
+      "scene_id": "SC001",
+      "start": 9.105,
+      "end": 13.985,
+      "text": "connected to curiosity, learning, comfort,\nand communication. Today, we'll explore"
+    },
+    {
+      "index": 4,
+      "scene_id": "SC001",
+      "start": 13.985,
+      "end": 18.984,
+      "text": "six habits people often misunderstand and\nhow to respond without scolding or forcing"
+    },
+    {
+      "index": 5,
+      "scene_id": "SC001",
+      "start": 18.984,
+      "end": 19.52,
+      "text": "our pets."
+    },
+    {
+      "index": 6,
+      "scene_id": "SC001",
+      "start": 19.8,
+      "end": 22.425,
+      "text": "I'm just trying to solve the mystery."
+    },
+    {
+      "index": 7,
+      "scene_id": "SC001",
+      "start": 22.705,
+      "end": 25.93,
+      "text": "Then start by respecting a closed door."
+    },
+    {
+      "index": 8,
+      "scene_id": "SC002",
+      "start": 35.0,
+      "end": 40.046,
+      "text": "When a cat follows you into the bathroom,\nit may want company, attention, or simply"
+    },
+    {
+      "index": 9,
+      "scene_id": "SC002",
+      "start": 40.046,
+      "end": 44.909,
+      "text": "be curious. Cats learn our routines and\nrecognize familiar sounds. A closed door"
+    },
+    {
+      "index": 10,
+      "scene_id": "SC002",
+      "start": 44.909,
+      "end": 49.347,
+      "text": "can make the space more interesting\nbecause it blocks access to somewhere"
+    },
+    {
+      "index": 11,
+      "scene_id": "SC002",
+      "start": 49.347,
+      "end": 54.088,
+      "text": "usually available. If your cat waits\ncalmly or sits nearby, it may simply want"
+    },
+    {
+      "index": 12,
+      "scene_id": "SC002",
+      "start": 54.088,
+      "end": 59.134,
+      "text": "to be close. That does not automatically\nmean separation anxiety. Look at the whole"
+    },
+    {
+      "index": 13,
+      "scene_id": "SC002",
+      "start": 59.134,
+      "end": 63.815,
+      "text": "pattern: is your cat relaxed when you\nleave? Offer daily play, hiding places,"
+    },
+    {
+      "index": 14,
+      "scene_id": "SC002",
+      "start": 63.815,
+      "end": 68.374,
+      "text": "and quiet spots to rest. If intense\nvocalizing, sudden changes, or distress"
+    },
+    {
+      "index": 15,
+      "scene_id": "SC002",
+      "start": 68.374,
+      "end": 73.237,
+      "text": "when alone appear, ask a veterinarian for\nadvice. There is no need to scold your"
+    },
+    {
+      "index": 16,
+      "scene_id": "SC002",
+      "start": 73.237,
+      "end": 76.52,
+      "text": "cat; being near you may simply be part of\nits routine."
+    },
+    {
+      "index": 17,
+      "scene_id": "SC002",
+      "start": 76.8,
+      "end": 81.45,
+      "text": "That's called friendship. I follow my\nhuman everywhere."
+    },
+    {
+      "index": 18,
+      "scene_id": "SC002",
+      "start": 81.73,
+      "end": 85.33,
+      "text": "You follow anyone who opens the\nrefrigerator."
+    },
+    {
+      "index": 19,
+      "scene_id": "SC003",
+      "start": 100.0,
+      "end": 104.45,
+      "text": "A dog may tilt its head after hearing a\nvoice, a sound, or a familiar word. It may"
+    },
+    {
+      "index": 20,
+      "scene_id": "SC003",
+      "start": 104.45,
+      "end": 108.845,
+      "text": "be paying closer attention, locating the\nsound, or processing a signal it expects"
+    },
+    {
+      "index": 21,
+      "scene_id": "SC003",
+      "start": 108.845,
+      "end": 113.132,
+      "text": "to understand. Some studies link it to\nword recognition in certain dogs, but it"
+    },
+    {
+      "index": 22,
+      "scene_id": "SC003",
+      "start": 113.132,
+      "end": 117.256,
+      "text": "does not explain every case. Context\nmatters: perhaps you said walk, changed"
+    },
+    {
+      "index": 23,
+      "scene_id": "SC003",
+      "start": 117.256,
+      "end": 121.488,
+      "text": "your tone, or made a new noise. Speak\ncalmly and give your dog time to respond"
+    },
+    {
+      "index": 24,
+      "scene_id": "SC003",
+      "start": 121.488,
+      "end": 125.667,
+      "text": "instead of repeating a command. An\noccasional tilt with relaxed body language"
+    },
+    {
+      "index": 25,
+      "scene_id": "SC003",
+      "start": 125.667,
+      "end": 130.062,
+      "text": "is usually normal. But if it persists or\ncomes with loss of balance, circling, or"
+    },
+    {
+      "index": 26,
+      "scene_id": "SC003",
+      "start": 130.062,
+      "end": 134.078,
+      "text": "pain, contact a veterinarian. A cute\ngesture should never make us ignore a"
+    },
+    {
+      "index": 27,
+      "scene_id": "SC003",
+      "start": 134.078,
+      "end": 135.0,
+      "text": "change in health."
+    },
+    {
+      "index": 28,
+      "scene_id": "SC003",
+      "start": 135.28,
+      "end": 138.98,
+      "text": "You've talked for twenty minutes and still\nhaven't said walk."
+    },
+    {
+      "index": 29,
+      "scene_id": "SC003",
+      "start": 139.26,
+      "end": 142.685,
+      "text": "I tilt my head when I hear a can opening."
+    },
+    {
+      "index": 30,
+      "scene_id": "SC004",
+      "start": 165.0,
+      "end": 169.151,
+      "text": "That glass on the floor may not have been\nan accident. Cats explore with their paws,"
+    },
+    {
+      "index": 31,
+      "scene_id": "SC004",
+      "start": 169.151,
+      "end": 172.807,
+      "text": "follow moving objects, and test what\nhappens when they push something. The"
+    },
+    {
+      "index": 32,
+      "scene_id": "SC004",
+      "start": 172.807,
+      "end": 176.711,
+      "text": "behavior is connected to curiosity and\nplay. Attention can reinforce it too: if"
+    },
+    {
+      "index": 33,
+      "scene_id": "SC004",
+      "start": 176.711,
+      "end": 180.861,
+      "text": "every crash makes you rush over, your cat\nmay learn that knocking things down gets a"
+    },
+    {
+      "index": 34,
+      "scene_id": "SC004",
+      "start": 180.861,
+      "end": 184.814,
+      "text": "reaction. Boredom and too few chances to\nexplore can also contribute. Instead of"
+    },
+    {
+      "index": 35,
+      "scene_id": "SC004",
+      "start": 184.814,
+      "end": 189.014,
+      "text": "yelling, move breakable items, medication,\nand toxic plants out of reach. Offer short"
+    },
+    {
+      "index": 36,
+      "scene_id": "SC004",
+      "start": 189.014,
+      "end": 193.066,
+      "text": "play sessions, scratching posts, boxes,\nand food puzzles. Rotate toys to keep them"
+    },
+    {
+      "index": 37,
+      "scene_id": "SC004",
+      "start": 193.066,
+      "end": 197.019,
+      "text": "interesting. Reward safe play and calm\nmoments in a favorite spot. This protects"
+    },
+    {
+      "index": 38,
+      "scene_id": "SC004",
+      "start": 197.019,
+      "end": 200.28,
+      "text": "your belongings while giving your cat a\nbetter way to investigate."
+    },
+    {
+      "index": 39,
+      "scene_id": "SC004",
+      "start": 200.56,
+      "end": 202.585,
+      "text": "That's vandalism!"
+    },
+    {
+      "index": 40,
+      "scene_id": "SC004",
+      "start": 202.865,
+      "end": 207.565,
+      "text": "No. It's research with results on the\nfloor."
+    },
+    {
+      "index": 41,
+      "scene_id": "SC005",
+      "start": 230.0,
+      "end": 233.948,
+      "text": "Your dog runs to greet you with a toy in\nits mouth. It may show excitement or"
+    },
+    {
+      "index": 42,
+      "scene_id": "SC005",
+      "start": 233.948,
+      "end": 237.845,
+      "text": "invite play, not necessarily offer a\npresent. Your dog may have learned that"
+    },
+    {
+      "index": 43,
+      "scene_id": "SC005",
+      "start": 237.845,
+      "end": 241.639,
+      "text": "carrying it is part of the greeting or\nhelps manage the excitement of your"
+    },
+    {
+      "index": 44,
+      "scene_id": "SC005",
+      "start": 241.639,
+      "end": 245.536,
+      "text": "return. Look at the whole body: relaxed\nmovements usually suggest a friendly"
+    },
+    {
+      "index": 45,
+      "scene_id": "SC005",
+      "start": 245.536,
+      "end": 249.69,
+      "text": "interaction. If your dog becomes stiff,\nguards the toy, growls, or moves away, do"
+    },
+    {
+      "index": 46,
+      "scene_id": "SC005",
+      "start": 249.69,
+      "end": 253.689,
+      "text": "not take it by force. Give space and\npractice a calm trade with another toy or"
+    },
+    {
+      "index": 47,
+      "scene_id": "SC005",
+      "start": 253.689,
+      "end": 257.894,
+      "text": "a treat. Wait for the excitement to settle\nbefore starting a game. Respecting your"
+    },
+    {
+      "index": 48,
+      "scene_id": "SC005",
+      "start": 257.894,
+      "end": 260.56,
+      "text": "dog's signals makes coming home better for\neveryone."
+    },
+    {
+      "index": 49,
+      "scene_id": "SC005",
+      "start": 260.84,
+      "end": 264.44,
+      "text": "You're back! I brought something to share!"
+    },
+    {
+      "index": 50,
+      "scene_id": "SC005",
+      "start": 264.72,
+      "end": 268.995,
+      "text": "How thoughtful. And what did you bring for\nme?"
+    },
+    {
+      "index": 51,
+      "scene_id": "SC005",
+      "start": 269.275,
+      "end": 272.65,
+      "text": "You have a whole toy box and play with a\nreceipt."
+    },
+    {
+      "index": 52,
+      "scene_id": "SC006",
+      "start": 295.0,
+      "end": 299.528,
+      "text": "When a cat presses its front paws into a\nblanket, it looks as if it is kneading"
+    },
+    {
+      "index": 53,
+      "scene_id": "SC006",
+      "start": 299.528,
+      "end": 304.343,
+      "text": "dough. The movement begins in kittenhood:\nkittens press against their mother's belly"
+    },
+    {
+      "index": 54,
+      "scene_id": "SC006",
+      "start": 304.343,
+      "end": 309.1,
+      "text": "while nursing. Many cats keep the habit as\nadults and repeat it when comfortable or"
+    },
+    {
+      "index": 55,
+      "scene_id": "SC006",
+      "start": 309.1,
+      "end": 313.8,
+      "text": "ready to rest. Paw scent glands may also\nleave a scent. If your cat is purring and"
+    },
+    {
+      "index": 56,
+      "scene_id": "SC006",
+      "start": 313.8,
+      "end": 318.099,
+      "text": "its body is relaxed, it is probably\nenjoying the moment. If the claws hurt,"
+    },
+    {
+      "index": 57,
+      "scene_id": "SC006",
+      "start": 318.099,
+      "end": 322.455,
+      "text": "use a thick blanket and keep the nails\ntrimmed. Do not push your cat away or"
+    },
+    {
+      "index": 58,
+      "scene_id": "SC006",
+      "start": 322.455,
+      "end": 326.812,
+      "text": "scold it; kneading is normal. If it\nsuddenly seems painful or your cat stops"
+    },
+    {
+      "index": 59,
+      "scene_id": "SC006",
+      "start": 326.812,
+      "end": 330.48,
+      "text": "using a paw, contact a veterinarian. Offer\na soft kneading spot."
+    },
+    {
+      "index": 60,
+      "scene_id": "SC006",
+      "start": 330.76,
+      "end": 334.185,
+      "text": "So, is the cat making biscuits for\neveryone?"
+    },
+    {
+      "index": 61,
+      "scene_id": "SC006",
+      "start": 334.465,
+      "end": 337.665,
+      "text": "Yes, but the recipe says not to share."
+    },
+    {
+      "index": 62,
+      "scene_id": "SC007",
+      "start": 360.0,
+      "end": 364.878,
+      "text": "Does your cat look at you and slowly close\nits eyes? That slow blink can be part of"
+    },
+    {
+      "index": 63,
+      "scene_id": "SC007",
+      "start": 364.878,
+      "end": 369.697,
+      "text": "calm communication. In studies of cat and\nhuman interactions, researchers observed"
+    },
+    {
+      "index": 64,
+      "scene_id": "SC007",
+      "start": 369.697,
+      "end": 374.575,
+      "text": "positive responses when people returned a\ncat's slow blink. Try it without invading"
+    },
+    {
+      "index": 65,
+      "scene_id": "SC007",
+      "start": 374.575,
+      "end": 379.041,
+      "text": "your cat's space: look gently, slowly\nnarrow your eyes, open them again, and"
+    },
+    {
+      "index": 66,
+      "scene_id": "SC007",
+      "start": 379.041,
+      "end": 383.802,
+      "text": "wait. Do not move closer or hold a fixed\nstare; intense eye contact can make some"
+    },
+    {
+      "index": 67,
+      "scene_id": "SC007",
+      "start": 383.802,
+      "end": 388.797,
+      "text": "cats uncomfortable. One gesture is not the\nwhole story. Also watch the ears, posture,"
+    },
+    {
+      "index": 68,
+      "scene_id": "SC007",
+      "start": 388.797,
+      "end": 393.498,
+      "text": "and tail. If it walks away, respect that\nchoice. A relaxed blink back may signal"
+    },
+    {
+      "index": 69,
+      "scene_id": "SC007",
+      "start": 393.498,
+      "end": 397.906,
+      "text": "trust. It is not a guaranteed test of\nlove, but a simple way to communicate"
+    },
+    {
+      "index": 70,
+      "scene_id": "SC007",
+      "start": 397.906,
+      "end": 398.2,
+      "text": "calm."
+    },
+    {
+      "index": 71,
+      "scene_id": "SC007",
+      "start": 398.48,
+      "end": 401.08,
+      "text": "I can do that slow blink too!"
+    },
+    {
+      "index": 72,
+      "scene_id": "SC007",
+      "start": 401.36,
+      "end": 405.46,
+      "text": "That doesn't count. You fell asleep."
+    },
+    {
+      "index": 73,
+      "scene_id": "SC008",
+      "start": 425.0,
+      "end": 429.908,
+      "text": "Now you know that familiar behaviors can\nhave more than one explanation. Following"
+    },
+    {
+      "index": 74,
+      "scene_id": "SC008",
+      "start": 429.908,
+      "end": 434.516,
+      "text": "you, tilting a head, exploring with paws,\ngreeting you with a toy, kneading a"
+    },
+    {
+      "index": 75,
+      "scene_id": "SC008",
+      "start": 434.516,
+      "end": 439.125,
+      "text": "blanket, or blinking slowly should all be\nunderstood in context. Every pet is"
+    },
+    {
+      "index": 76,
+      "scene_id": "SC008",
+      "start": 439.125,
+      "end": 443.494,
+      "text": "different. Observe, offer safe\nalternatives, and seek professional advice"
+    },
+    {
+      "index": 77,
+      "scene_id": "SC008",
+      "start": 443.494,
+      "end": 447.923,
+      "text": "if you notice sudden changes or\ndiscomfort. The better we understand their"
+    },
+    {
+      "index": 78,
+      "scene_id": "SC008",
+      "start": 447.923,
+      "end": 452.83,
+      "text": "needs, the better we can care for them.\nWhich behavior does your pet show? Tell us"
+    },
+    {
+      "index": 79,
+      "scene_id": "SC008",
+      "start": 452.83,
+      "end": 456.96,
+      "text": "below and leave a paw print. This was Ah\nMira Ese Dato. See you soon!"
+    },
+    {
+      "index": 80,
+      "scene_id": "SC008",
+      "start": 457.24,
+      "end": 460.64,
+      "text": "My vote is for more walks, games, and\ntreats."
+    },
+    {
+      "index": 81,
+      "scene_id": "SC008",
+      "start": 460.92,
+      "end": 464.495,
+      "text": "And my vote is for respecting my quiet\ntime."
+    }
+  ]
+}

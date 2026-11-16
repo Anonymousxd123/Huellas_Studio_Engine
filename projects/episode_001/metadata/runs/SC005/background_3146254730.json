@@ -1,0 +1,13 @@
+{
+  "episode_id": "episode_001",
+  "scene_id": "SC005",
+  "prompt_id": "5488c9db-3309-4031-a4df-725f45dc14a5",
+  "seed": 3146254730,
+  "prompt": "Premium 2D animated family cartoon background,\nprofessional animation art direction,\nclean polished illustration,\nsoft cinematic cel shading,\nwarm harmonious colors,\nbeautiful environmental storytelling,\nconsistent animated film aesthetic,\ndetailed cozy interior,\nwide landscape composition,\nnatural perspective,\nsoft ambient lighting,\nno photorealism, no 3D.\n\n\nENVIRONMENT:\n\nWelcoming home entrance and front doorway,\nwooden entrance door, hallway,\ncoat hooks and a small entrance console,\nwarm domestic lighting and inviting atmosphere.\nKeep the floor area near the entrance open.\n\n\nLOCATION FROM EPISODE:\nEntrada de casa\n\nCOMPOSITION:\nSingle wide establishing background.\nLandscape 16:9.\nEye-level camera.\nNo animals or people.\nNo characters.\nKeep important environmental details visible.\nLeave clear foreground space for character compositing.\nNo written text.",
+  "width": 1024,
+  "height": 576,
+  "images": [
+    "/Users/christianblasacosta/Huellas_Studio_Engine/projects/episode_001/backgrounds/huellas_bg_SC005_3146254730_00001_.png"
+  ],
+  "status": "completed"
+}

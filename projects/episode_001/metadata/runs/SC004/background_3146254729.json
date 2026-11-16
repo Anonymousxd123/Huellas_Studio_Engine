@@ -1,0 +1,13 @@
+{
+  "episode_id": "episode_001",
+  "scene_id": "SC004",
+  "prompt_id": "277c2735-8cb9-41fa-bc8f-db2dd0c00b69",
+  "seed": 3146254729,
+  "prompt": "Premium 2D animated family cartoon background,\nprofessional animation art direction,\nclean polished illustration,\nsoft cinematic cel shading,\nwarm harmonious colors,\nbeautiful environmental storytelling,\nconsistent animated film aesthetic,\ndetailed cozy interior,\nwide landscape composition,\nnatural perspective,\nsoft ambient lighting,\nno photorealism, no 3D.\n\n\nENVIRONMENT:\n\nCozy living room with a wooden coffee table,\na single clear drinking glass placed on the table,\ncomfortable sofa in the background,\nwarm interior lighting and polished wooden details.\nKeep the tabletop clearly visible.\n\n\nLOCATION FROM EPISODE:\nSalón, mesa\n\nCOMPOSITION:\nSingle wide establishing background.\nLandscape 16:9.\nEye-level camera.\nNo animals or people.\nNo characters.\nKeep important environmental details visible.\nLeave clear foreground space for character compositing.\nNo written text.",
+  "width": 1024,
+  "height": 576,
+  "images": [
+    "/Users/christianblasacosta/Huellas_Studio_Engine/projects/episode_001/backgrounds/huellas_bg_SC004_3146254729_00001_.png"
+  ],
+  "status": "completed"
+}
