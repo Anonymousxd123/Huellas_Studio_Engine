@@ -176,6 +176,7 @@ def build_ltx_i2v_workflow(
                 "height": height,
                 "length": frames,
                 "batch_size": 1,
+                "strength": 1.0,
             },
         },
         "8": {
