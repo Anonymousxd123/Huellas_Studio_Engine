@@ -1,0 +1,282 @@
+{
+  "language": "es",
+  "sample_rate": 24000,
+  "duration_seconds": 480.0,
+  "cues": [
+    {
+      "job_id": "SC001_narration",
+      "scene_id": "SC001",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "daniela_reference_clone",
+      "start": 0.0,
+      "end": 25.0,
+      "duration_seconds": 25.0,
+      "text": "¿Tu perro te sigue por toda la casa o tu gato aparece justo cuando cierras la puerta del baño? No siempre es casualidad. Muchos gestos cotidianos tienen una explicación relacionada con la curiosidad, el aprendizaje, la comodidad o la comunicación. Hoy descubriremos seis comportamientos que suelen malinterpretarse y cómo responder sin regañar ni forzar a nuestras mascotas."
+    },
+    {
+      "job_id": "SC001_dialogue_01",
+      "scene_id": "SC001",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "em_alex",
+      "start": 25.28,
+      "end": 27.93,
+      "duration_seconds": 2.65,
+      "text": "Yo solo intento resolver el misterio."
+    },
+    {
+      "job_id": "SC001_dialogue_02",
+      "scene_id": "SC001",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "em_santa",
+      "start": 28.21,
+      "end": 31.035,
+      "duration_seconds": 2.825,
+      "text": "Empieza por respetar la puerta cerrada."
+    },
+    {
+      "job_id": "SC002_narration",
+      "scene_id": "SC002",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "daniela_reference_clone",
+      "start": 35.0,
+      "end": 78.12,
+      "duration_seconds": 43.12,
+      "text": "Cuando un gato te sigue al baño, puede buscar compañía, atención o sentir curiosidad por lo que haces. Aprende tus rutinas y reconoce sonidos familiares. Una puerta cerrada despierta aún más su interés porque bloquea el acceso a un espacio normalmente disponible. Si espera tranquilo o se sienta cerca, quizá solo quiere estar contigo; eso no significa automáticamente ansiedad por separación. Observa el conjunto: ¿está relajado, come normalmente y se siente cómodo cuando sales? Ofrécele juego diario, escondites y lugares tranquilos para descansar. Si aparecen maullidos intensos, cambios repentinos o angustia cuando se queda solo, consulta con un veterinario. No hace falta regañarlo: acompañarte puede ser simplemente parte de su rutina."
+    },
+    {
+      "job_id": "SC002_dialogue_01",
+      "scene_id": "SC002",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "em_alex",
+      "start": 78.4,
+      "end": 82.925,
+      "duration_seconds": 4.525,
+      "text": "Eso se llama amistad. Yo acompaño a mi humano a todas partes."
+    },
+    {
+      "job_id": "SC002_dialogue_02",
+      "scene_id": "SC002",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "em_santa",
+      "start": 83.205,
+      "end": 86.18,
+      "duration_seconds": 2.975,
+      "text": "Tú acompañas a cualquiera que abra la nevera."
+    },
+    {
+      "job_id": "SC003_narration",
+      "scene_id": "SC003",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "daniela_reference_clone",
+      "start": 100.0,
+      "end": 145.32,
+      "duration_seconds": 45.32,
+      "text": "Un perro puede inclinar la cabeza al escuchar una voz, un sonido nuevo o una palabra familiar. Quizá presta más atención, intenta localizar el sonido o procesa una señal que espera entender. Algunos estudios lo han observado en perros que reconocen palabras, pero no explica todos los casos. El contexto importa: tal vez dijiste paseo, cambiaste el tono o hiciste un ruido nuevo. Háblale con calma y dale tiempo para responder, sin repetir una orden muchas veces. Una inclinación ocasional acompañada de un cuerpo relajado suele ser normal. Pero si persiste o aparece junto con pérdida de equilibrio, movimientos en círculos o dolor, contacta con un veterinario. Un gesto gracioso no debe ocultar un problema de salud."
+    },
+    {
+      "job_id": "SC003_dialogue_01",
+      "scene_id": "SC003",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "em_alex",
+      "start": 145.6,
+      "end": 149.3,
+      "duration_seconds": 3.7,
+      "text": "Llevas veinte minutos hablando y todavía no dices paseo."
+    },
+    {
+      "job_id": "SC003_dialogue_02",
+      "scene_id": "SC003",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "em_santa",
+      "start": 149.58,
+      "end": 152.83,
+      "duration_seconds": 3.25,
+      "text": "Yo inclino la cabeza cuando escucho abrir una lata."
+    },
+    {
+      "job_id": "SC004_narration",
+      "scene_id": "SC004",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "daniela_reference_clone",
+      "start": 165.0,
+      "end": 215.92,
+      "duration_seconds": 50.92,
+      "text": "Ese vaso en el suelo quizá no fue un accidente. Los gatos exploran con sus patas, siguen objetos en movimiento y comprueban qué ocurre cuando empujan algo. Es una conducta relacionada con la curiosidad y el juego. La atención también puede reforzarla: si cada golpe hace que corras a mirar, tu gato aprende que tirar cosas provoca una reacción. El aburrimiento y la falta de oportunidades para explorar también influyen. En vez de gritar, aparta objetos frágiles, medicamentos y plantas tóxicas. Ofrécele sesiones cortas de juego, rascadores, cajas y comederos interactivos. Cambia los juguetes para mantener su interés. Premia el juego seguro y los momentos de calma en su espacio favorito. Así proteges tus cosas y le das una alternativa para investigar."
+    },
+    {
+      "job_id": "SC004_dialogue_01",
+      "scene_id": "SC004",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "em_alex",
+      "start": 216.2,
+      "end": 218.25,
+      "duration_seconds": 2.05,
+      "text": "¡Eso se llama vandalismo!"
+    },
+    {
+      "job_id": "SC004_dialogue_02",
+      "scene_id": "SC004",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "em_santa",
+      "start": 218.53,
+      "end": 222.205,
+      "duration_seconds": 3.675,
+      "text": "No. Es investigación con resultados en el suelo."
+    },
+    {
+      "job_id": "SC005_narration",
+      "scene_id": "SC005",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "daniela_reference_clone",
+      "start": 230.0,
+      "end": 265.96,
+      "duration_seconds": 35.96,
+      "text": "Tu perro corre a recibirte con un juguete en la boca. Muchas veces expresa entusiasmo o invita a jugar, pero no siempre está entregándote un regalo. Puede haber aprendido que llevarlo forma parte del saludo o le ayuda a canalizar la emoción de tu regreso. Observa todo su cuerpo: los movimientos relajados suelen indicar una interacción amistosa. Si se pone rígido, protege el juguete, gruñe o se aleja, no intentes quitárselo por la fuerza. Dale espacio y practica un intercambio tranquilo con otro juguete o un premio. Espera a que baje la emoción antes de comenzar el juego. Respetar sus señales hace que el reencuentro sea mejor para todos."
+    },
+    {
+      "job_id": "SC005_dialogue_01",
+      "scene_id": "SC005",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "em_alex",
+      "start": 266.24,
+      "end": 269.79,
+      "duration_seconds": 3.55,
+      "text": "¡Volviste! ¡Traje algo para compartir contigo!"
+    },
+    {
+      "job_id": "SC005_dialogue_02",
+      "scene_id": "SC005",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "em_santa",
+      "start": 270.07,
+      "end": 273.295,
+      "duration_seconds": 3.225,
+      "text": "Qué detalle. ¿Y quién me trajo algo a mí?"
+    },
+    {
+      "job_id": "SC005_dialogue_03",
+      "scene_id": "SC005",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "em_alex",
+      "start": 273.575,
+      "end": 277.075,
+      "duration_seconds": 3.5,
+      "text": "Tú tienes una caja de juguetes y juegas con una factura."
+    },
+    {
+      "job_id": "SC006_narration",
+      "scene_id": "SC006",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "daniela_reference_clone",
+      "start": 295.0,
+      "end": 341.4,
+      "duration_seconds": 46.4,
+      "text": "Cuando un gato presiona una manta con sus patas delanteras, parece que estuviera amasando. El movimiento comienza cuando es cachorro: durante la lactancia, los gatitos presionan el vientre de su madre mientras se alimentan. Muchos conservan el hábito de adultos y lo repiten cuando están cómodos o se preparan para descansar. Sus patas también tienen glándulas que dejan olor. Si ronronea y tiene el cuerpo relajado, probablemente disfruta el momento. Si sus uñas te molestan, coloca una manta gruesa entre ambos y mantén sus uñas cuidadas. No lo empujes ni lo regañes: es una conducta normal. Si de pronto parece dolorosa o deja de apoyar una pata, consulta al veterinario. Si no, ofrécele una superficie suave donde amasar."
+    },
+    {
+      "job_id": "SC006_dialogue_01",
+      "scene_id": "SC006",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "em_alex",
+      "start": 341.68,
+      "end": 344.83,
+      "duration_seconds": 3.15,
+      "text": "¿Entonces está preparando galletas para todos?"
+    },
+    {
+      "job_id": "SC006_dialogue_02",
+      "scene_id": "SC006",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "em_santa",
+      "start": 345.11,
+      "end": 348.035,
+      "duration_seconds": 2.925,
+      "text": "Sí, pero la receta dice que no se comparten."
+    },
+    {
+      "job_id": "SC007_narration",
+      "scene_id": "SC007",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "daniela_reference_clone",
+      "start": 360.0,
+      "end": 405.0,
+      "duration_seconds": 45.0,
+      "text": "¿Tu gato te mira y cierra los ojos lentamente? Ese parpadeo puede formar parte de una comunicación tranquila. En estudios sobre la interacción entre gatos y personas, los investigadores observaron respuestas positivas cuando las personas devolvían el parpadeo lento. Puedes probarlo sin invadir su espacio: míralo suavemente, entrecierra los ojos despacio, vuelve a abrirlos y espera. No acerques la cara ni mantengas una mirada fija; una mirada fija puede incomodar a algunos gatos. El gesto no lo explica todo. Las orejas, la postura y la cola también ayudan a entender cómo se siente. Si se aleja, respeta su decisión. Si se relaja o parpadea de vuelta, quizá compartan un momento de confianza. No prueba amor, pero comunica calma."
+    },
+    {
+      "job_id": "SC007_dialogue_01",
+      "scene_id": "SC007",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "em_alex",
+      "start": 405.28,
+      "end": 407.805,
+      "duration_seconds": 2.525,
+      "text": "¡Yo también puedo hacer ese parpadeo!"
+    },
+    {
+      "job_id": "SC007_dialogue_02",
+      "scene_id": "SC007",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "em_santa",
+      "start": 408.085,
+      "end": 411.285,
+      "duration_seconds": 3.2,
+      "text": "Eso no cuenta. Te quedaste dormido."
+    },
+    {
+      "job_id": "SC008_narration",
+      "scene_id": "SC008",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "daniela_reference_clone",
+      "start": 425.0,
+      "end": 463.12,
+      "duration_seconds": 38.12,
+      "text": "Ahora sabes que muchos comportamientos tienen más de una explicación. Seguirte, inclinar la cabeza, explorar con las patas, recibirte con un juguete, amasar una manta o parpadear lentamente son señales que debemos entender en su contexto. Cada mascota es diferente. Observa, ofrece alternativas seguras y busca ayuda profesional si notas cambios repentinos o malestar. Cuanto mejor entendemos sus necesidades, mejor podemos cuidarlas. ¿Cuál de estos comportamientos hace tu mascota? Cuéntanoslo y deja una huellita. Esto fue Ah Mira Ese Dato. ¡Nos vemos pronto!"
+    },
+    {
+      "job_id": "SC008_dialogue_01",
+      "scene_id": "SC008",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "em_alex",
+      "start": 463.4,
+      "end": 466.275,
+      "duration_seconds": 2.875,
+      "text": "Yo voto por más paseos, juegos y premios."
+    },
+    {
+      "job_id": "SC008_dialogue_02",
+      "scene_id": "SC008",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "em_santa",
+      "start": 466.555,
+      "end": 469.63,
+      "duration_seconds": 3.075,
+      "text": "Y yo por respetar mis momentos de tranquilidad."
+    }
+  ]
+}

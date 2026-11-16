@@ -1,0 +1,282 @@
+{
+  "language": "en",
+  "sample_rate": 24000,
+  "duration_seconds": 480.0,
+  "cues": [
+    {
+      "job_id": "SC001_narration",
+      "scene_id": "SC001",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "akira_reference_clone",
+      "start": 0.0,
+      "end": 19.52,
+      "duration_seconds": 19.52,
+      "text": "Does your dog follow you around the house, or does your cat appear the moment you close the bathroom door? It may not be random. Everyday behaviors can be connected to curiosity, learning, comfort, and communication. Today, we'll explore six habits people often misunderstand and how to respond without scolding or forcing our pets."
+    },
+    {
+      "job_id": "SC001_dialogue_01",
+      "scene_id": "SC001",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "am_michael",
+      "start": 19.8,
+      "end": 22.425,
+      "duration_seconds": 2.625,
+      "text": "I'm just trying to solve the mystery."
+    },
+    {
+      "job_id": "SC001_dialogue_02",
+      "scene_id": "SC001",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "af_sarah",
+      "start": 22.705,
+      "end": 25.93,
+      "duration_seconds": 3.225,
+      "text": "Then start by respecting a closed door."
+    },
+    {
+      "job_id": "SC002_narration",
+      "scene_id": "SC002",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "akira_reference_clone",
+      "start": 35.0,
+      "end": 76.52,
+      "duration_seconds": 41.52,
+      "text": "When a cat follows you into the bathroom, it may want company, attention, or simply be curious. Cats learn our routines and recognize familiar sounds. A closed door can make the space more interesting because it blocks access to somewhere usually available. If your cat waits calmly or sits nearby, it may simply want to be close. That does not automatically mean separation anxiety. Look at the whole pattern: is your cat relaxed when you leave? Offer daily play, hiding places, and quiet spots to rest. If intense vocalizing, sudden changes, or distress when alone appear, ask a veterinarian for advice. There is no need to scold your cat; being near you may simply be part of its routine."
+    },
+    {
+      "job_id": "SC002_dialogue_01",
+      "scene_id": "SC002",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "am_michael",
+      "start": 76.8,
+      "end": 81.45,
+      "duration_seconds": 4.65,
+      "text": "That's called friendship. I follow my human everywhere."
+    },
+    {
+      "job_id": "SC002_dialogue_02",
+      "scene_id": "SC002",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "af_sarah",
+      "start": 81.73,
+      "end": 85.33,
+      "duration_seconds": 3.6,
+      "text": "You follow anyone who opens the refrigerator."
+    },
+    {
+      "job_id": "SC003_narration",
+      "scene_id": "SC003",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "akira_reference_clone",
+      "start": 100.0,
+      "end": 135.0,
+      "duration_seconds": 35.0,
+      "text": "A dog may tilt its head after hearing a voice, a sound, or a familiar word. It may be paying closer attention, locating the sound, or processing a signal it expects to understand. Some studies link it to word recognition in certain dogs, but it does not explain every case. Context matters: perhaps you said walk, changed your tone, or made a new noise. Speak calmly and give your dog time to respond instead of repeating a command. An occasional tilt with relaxed body language is usually normal. But if it persists or comes with loss of balance, circling, or pain, contact a veterinarian. A cute gesture should never make us ignore a change in health."
+    },
+    {
+      "job_id": "SC003_dialogue_01",
+      "scene_id": "SC003",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "am_michael",
+      "start": 135.28,
+      "end": 138.98,
+      "duration_seconds": 3.7,
+      "text": "You've talked for twenty minutes and still haven't said walk."
+    },
+    {
+      "job_id": "SC003_dialogue_02",
+      "scene_id": "SC003",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "af_sarah",
+      "start": 139.26,
+      "end": 142.685,
+      "duration_seconds": 3.425,
+      "text": "I tilt my head when I hear a can opening."
+    },
+    {
+      "job_id": "SC004_narration",
+      "scene_id": "SC004",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "akira_reference_clone",
+      "start": 165.0,
+      "end": 200.28,
+      "duration_seconds": 35.28,
+      "text": "That glass on the floor may not have been an accident. Cats explore with their paws, follow moving objects, and test what happens when they push something. The behavior is connected to curiosity and play. Attention can reinforce it too: if every crash makes you rush over, your cat may learn that knocking things down gets a reaction. Boredom and too few chances to explore can also contribute. Instead of yelling, move breakable items, medication, and toxic plants out of reach. Offer short play sessions, scratching posts, boxes, and food puzzles. Rotate toys to keep them interesting. Reward safe play and calm moments in a favorite spot. This protects your belongings while giving your cat a better way to investigate."
+    },
+    {
+      "job_id": "SC004_dialogue_01",
+      "scene_id": "SC004",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "am_michael",
+      "start": 200.56,
+      "end": 202.585,
+      "duration_seconds": 2.025,
+      "text": "That's vandalism!"
+    },
+    {
+      "job_id": "SC004_dialogue_02",
+      "scene_id": "SC004",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "af_sarah",
+      "start": 202.865,
+      "end": 207.565,
+      "duration_seconds": 4.7,
+      "text": "No. It's research with results on the floor."
+    },
+    {
+      "job_id": "SC005_narration",
+      "scene_id": "SC005",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "akira_reference_clone",
+      "start": 230.0,
+      "end": 260.56,
+      "duration_seconds": 30.56,
+      "text": "Your dog runs to greet you with a toy in its mouth. It may show excitement or invite play, not necessarily offer a present. Your dog may have learned that carrying it is part of the greeting or helps manage the excitement of your return. Look at the whole body: relaxed movements usually suggest a friendly interaction. If your dog becomes stiff, guards the toy, growls, or moves away, do not take it by force. Give space and practice a calm trade with another toy or a treat. Wait for the excitement to settle before starting a game. Respecting your dog's signals makes coming home better for everyone."
+    },
+    {
+      "job_id": "SC005_dialogue_01",
+      "scene_id": "SC005",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "am_michael",
+      "start": 260.84,
+      "end": 264.44,
+      "duration_seconds": 3.6,
+      "text": "You're back! I brought something to share!"
+    },
+    {
+      "job_id": "SC005_dialogue_02",
+      "scene_id": "SC005",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "af_sarah",
+      "start": 264.72,
+      "end": 268.995,
+      "duration_seconds": 4.275,
+      "text": "How thoughtful. And what did you bring for me?"
+    },
+    {
+      "job_id": "SC005_dialogue_03",
+      "scene_id": "SC005",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "am_michael",
+      "start": 269.275,
+      "end": 272.65,
+      "duration_seconds": 3.375,
+      "text": "You have a whole toy box and play with a receipt."
+    },
+    {
+      "job_id": "SC006_narration",
+      "scene_id": "SC006",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "akira_reference_clone",
+      "start": 295.0,
+      "end": 330.48,
+      "duration_seconds": 35.48,
+      "text": "When a cat presses its front paws into a blanket, it looks as if it is kneading dough. The movement begins in kittenhood: kittens press against their mother's belly while nursing. Many cats keep the habit as adults and repeat it when comfortable or ready to rest. Paw scent glands may also leave a scent. If your cat is purring and its body is relaxed, it is probably enjoying the moment. If the claws hurt, use a thick blanket and keep the nails trimmed. Do not push your cat away or scold it; kneading is normal. If it suddenly seems painful or your cat stops using a paw, contact a veterinarian. Offer a soft kneading spot."
+    },
+    {
+      "job_id": "SC006_dialogue_01",
+      "scene_id": "SC006",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "am_michael",
+      "start": 330.76,
+      "end": 334.185,
+      "duration_seconds": 3.425,
+      "text": "So, is the cat making biscuits for everyone?"
+    },
+    {
+      "job_id": "SC006_dialogue_02",
+      "scene_id": "SC006",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "af_sarah",
+      "start": 334.465,
+      "end": 337.665,
+      "duration_seconds": 3.2,
+      "text": "Yes, but the recipe says not to share."
+    },
+    {
+      "job_id": "SC007_narration",
+      "scene_id": "SC007",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "akira_reference_clone",
+      "start": 360.0,
+      "end": 398.2,
+      "duration_seconds": 38.2,
+      "text": "Does your cat look at you and slowly close its eyes? That slow blink can be part of calm communication. In studies of cat and human interactions, researchers observed positive responses when people returned a cat's slow blink. Try it without invading your cat's space: look gently, slowly narrow your eyes, open them again, and wait. Do not move closer or hold a fixed stare; intense eye contact can make some cats uncomfortable. One gesture is not the whole story. Also watch the ears, posture, and tail. If it walks away, respect that choice. A relaxed blink back may signal trust. It is not a guaranteed test of love, but a simple way to communicate calm."
+    },
+    {
+      "job_id": "SC007_dialogue_01",
+      "scene_id": "SC007",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "am_michael",
+      "start": 398.48,
+      "end": 401.08,
+      "duration_seconds": 2.6,
+      "text": "I can do that slow blink too!"
+    },
+    {
+      "job_id": "SC007_dialogue_02",
+      "scene_id": "SC007",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "af_sarah",
+      "start": 401.36,
+      "end": 405.46,
+      "duration_seconds": 4.1,
+      "text": "That doesn't count. You fell asleep."
+    },
+    {
+      "job_id": "SC008_narration",
+      "scene_id": "SC008",
+      "kind": "narration",
+      "speaker_id": "narrator",
+      "voice_id": "akira_reference_clone",
+      "start": 425.0,
+      "end": 456.96,
+      "duration_seconds": 31.96,
+      "text": "Now you know that familiar behaviors can have more than one explanation. Following you, tilting a head, exploring with paws, greeting you with a toy, kneading a blanket, or blinking slowly should all be understood in context. Every pet is different. Observe, offer safe alternatives, and seek professional advice if you notice sudden changes or discomfort. The better we understand their needs, the better we can care for them. Which behavior does your pet show? Tell us below and leave a paw print. This was Ah Mira Ese Dato. See you soon!"
+    },
+    {
+      "job_id": "SC008_dialogue_01",
+      "scene_id": "SC008",
+      "kind": "dialogue",
+      "speaker_id": "dog",
+      "voice_id": "am_michael",
+      "start": 457.24,
+      "end": 460.64,
+      "duration_seconds": 3.4,
+      "text": "My vote is for more walks, games, and treats."
+    },
+    {
+      "job_id": "SC008_dialogue_02",
+      "scene_id": "SC008",
+      "kind": "dialogue",
+      "speaker_id": "cat",
+      "voice_id": "af_sarah",
+      "start": 460.92,
+      "end": 464.495,
+      "duration_seconds": 3.575,
+      "text": "And my vote is for respecting my quiet time."
+    }
+  ]
+}
