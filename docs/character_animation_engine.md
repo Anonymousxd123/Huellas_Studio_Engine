@@ -36,6 +36,26 @@ python scripts/render_scene_animation.py --spec config/animation/scenes/SC003_ri
     --out projects/episode_001/animation/SC003/rig_pilot_v1
 ```
 
+## Episodio completo con un solo comando
+
+```bash
+python scripts/render_episode_animation.py --episode episode_001 --languages es en
+```
+
+1. Por cada idioma se genera la coreografía a partir de `audio/<idioma>/audio_timeline.json` (`choreography.py`). Es determinista: misma entrada, mismo vídeo.
+   - **Narración**: gestos de curiosidad alternados y algún eco del otro personaje.
+   - **Diálogo**: quien habla mueve la cabeza al ritmo de la frase y la cámara corta a su plano; el otro escucha con una inclinación (Daniela, además, se inclina hacia Akira).
+   - **Escenas concretas**: SC003 (imitación), SC004 (respingo de Akira y sacudida de cola de Daniela), SC005 (botes y meneo de cola), SC008 (meneo suave).
+   - **Pistas**: cabeza, cola, `lift` (salto), `lean` (inclinación del cuerpo) y respiración. La cola y la inclinación de Akira van solo en sentido positivo, para que los cortes de su arte salgan del cuadro y nunca entren.
+2. Planos (`episode.py`, `SHOTS`):
+   - `wide`: plano general.
+   - `dog_medium`: zoom 1.17.
+   - `cat_close`: zoom 1.7.
+
+   Los personajes se vuelven a preparar a la escala de cada plano, sin ampliar el arte por encima de ≈1×.
+3. Render paralelo por fragmentos de 10 s. Es reanudable: si se interrumpe, al relanzarlo reutiliza los fragmentos ya terminados. Las claves incluyen un hash del código y de la coreografía. Después se unen sin recodificar y se añade el audio `final_mix.wav` junto con los subtítulos `mov_text` de cada idioma.
+4. Para renders largos, el script se lanza bajo `caffeinate -i -s`, porque el Mac se suspendió una vez a mitad de un render.
+
 ## Criterios de calidad automáticos
 
 | Métrica | Umbral | Qué detecta |
@@ -54,4 +74,6 @@ Las métricas no sustituyen la revisión visual: cada cambio de rig se revisa co
 - **Bigotes derechos de Daniela**: los trazos tenues que cruzan la cola se quedan en la capa de la cola, que es estática. Al inclinar la cabeza no siguen el movimiento; a escala de escena no se aprecia.
 - **Extremo izquierdo del collar de Akira**: se dobla ligeramente con inclinaciones positivas. Es una decisión deliberada para evitar un pliegue del pelaje; el frente del collar y el medallón no se mueven.
 - **Expresiones** (parpadeo, orejas, boca): requieren dibujos adicionales (por ejemplo, ojos cerrados); no se pueden obtener solo deformando la imagen.
+- **Acciones del guion** sin implementar: caminar (SC001/SC002), empujar el vaso (SC004), juguete en la boca (SC005), amasar (SC006), parpadeo lento (SC007). Necesitan patas articuladas o arte nuevo.
+- **Primer plano de Akira**: no hay primer plano real, porque su arte maestro (≈1000 px) ya se usa al 86 % en el plano general; `dog_medium` es el máximo acercamiento sin ampliar el arte.
 - **Inclinación**: probada hasta +12°/−5° (Akira) y +10°/−4° (Daniela).
