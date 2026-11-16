@@ -196,6 +196,7 @@ def prepare_rig(definition, scale=1.0):
     alpha = rgba[..., 3]
     opaque = alpha > ALPHA_THRESHOLD / 255.0
     rows = np.nonzero(opaque.any(axis=1))[0]
+    cols = np.nonzero(opaque.any(axis=0))[0]
     if rows.size == 0:
         raise ValueError(f"Imagen completamente transparente: {definition.source}")
 
@@ -224,4 +225,5 @@ def prepare_rig(definition, scale=1.0):
         layers=layers,
         breath_base_y=(base * scale) if base is not None else float(rows[-1]),
         breath_top_y=(top * scale) if top is not None else float(rows[0]),
+        base_x=float((cols[0] + cols[-1]) / 2.0),
     )

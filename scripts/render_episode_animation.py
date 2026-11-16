@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from huellas_engine.character_animation.compositor import (  # noqa: E402
-    load_background, place_characters, render_range,
+    SceneRenderer, render_range,
 )
 from huellas_engine.character_animation.episode import (  # noqa: E402
     build_scene_specs, chunk_ranges, spec_fingerprint,
@@ -58,11 +58,11 @@ def render_chunk(job):
     spec, key, start, end, output, crf = job
     if key not in _WORKER_CACHE:
         _WORKER_CACHE.clear()  # one scene at a time keeps memory bounded
-        _WORKER_CACHE[key] = (load_background(spec), place_characters(spec))
-    background, placed = _WORKER_CACHE[key]
+        _WORKER_CACHE[key] = SceneRenderer(spec)
+    renderer = _WORKER_CACHE[key]
     tmp = Path(str(output) + ".partial.mp4")
     started = time.time()
-    render_range(spec, placed, background, start, end, tmp, crf=crf)
+    render_range(renderer, start, end, tmp, crf=crf)
     tmp.replace(output)
     return output, end - start, time.time() - started
 

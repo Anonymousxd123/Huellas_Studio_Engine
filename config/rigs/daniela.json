@@ -1,7 +1,7 @@
 {
   "name": "daniela",
   "source": "~/Huellas_Studio_Assets/characters/rig_prep_v1/daniela/daniela_master_padded.png",
-  "notes": "Coordinates in daniela_master_padded.png pixels (1152x1332). Layers back-to-front: 'tail' (static for now; its own joint comes later) and 'main'. Separating the tail removes the 4-15 px cheek/tail gap from the head's bend zone, so the bend there only stretches transparent space. The tail region hugs the tail's left silhouette (measured row by row from alpha); faint right-whisker strokes over the tail stay with the tail. Rigid head includes ears, whiskers and jaw outline (cut ~12 px below it); the white neck is the bend zone.",
+  "notes": "Coordinates in daniela_master_padded.png pixels (1152x1332). Layers back-to-front: 'tail' (static for now; its own joint comes later) and 'main'. Separating the tail removes the 4-15 px cheek/tail gap from the head's bend zone, so the bend there only stretches transparent space. The tail region hugs the tail's left silhouette (measured row by row from alpha); faint right-whisker strokes over the tail stay with the tail. Rigid head includes ears, whiskers and jaw outline (cut ~12 px below it); the white neck is the bend zone. Tail layer has a 'tail' joint: base anchored behind the back, curl rigid, bend through the middle.",
   "layers": [
     {
       "name": "tail",
@@ -82,6 +82,54 @@
           760,
           482
         ]
+      ],
+      "joints": [
+        {
+          "name": "tail",
+          "pivot": [
+            775,
+            745
+          ],
+          "max_angle": 14,
+          "smoothing_sigma": 0.0,
+          "overlay": false,
+          "rigid_polygon": [
+            [
+              690,
+              380
+            ],
+            [
+              1152,
+              380
+            ],
+            [
+              1152,
+              640
+            ],
+            [
+              690,
+              610
+            ]
+          ],
+          "anchor_polygon": [
+            [
+              690,
+              770
+            ],
+            [
+              1152,
+              750
+            ],
+            [
+              1152,
+              1332
+            ],
+            [
+              690,
+              1332
+            ]
+          ]
+        }
       ]
     },
     {

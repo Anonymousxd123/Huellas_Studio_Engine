@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
-from .deform import render_pose
+from .deform import BODY_KEYS, render_pose
 from .motion import Track, sample_tracks
 from .rig import ALPHA_THRESHOLD, load_rig, prepare_rig
 
@@ -24,6 +24,23 @@ class CharacterPlacement:
     contact_shadow: dict | None = None  # {"opacity", "width", "height", "offset_y"}
 
 
+@dataclass(frozen=True)
+class Shot:
+    """A locked camera framing: crop of the wide frame scaled back to full size.
+
+    `origin` is the crop's top-left in wide-frame pixels; the crop size is
+    (width / zoom, height / zoom). Characters are re-rigged at the shot's
+    scale (not upscaled), and the background is cropped from its original.
+    """
+
+    name: str = "wide"
+    zoom: float = 1.0
+    origin: tuple = (0.0, 0.0)
+
+
+WIDE = Shot()
+
+
 @dataclass
 class SceneSpec:
     scene_id: str
@@ -33,6 +50,14 @@ class SceneSpec:
     fps: int
     duration: float
     characters: list
+    shots: list = field(default_factory=lambda: [(0.0, WIDE)])  # [(start_t, Shot)]
+
+    def shot_at(self, t):
+        current = self.shots[0][1]
+        for start, shot in self.shots:
+            if t + 1e-9 >= start:
+                current = shot
+        return current
 
     @classmethod
     def load(cls, path, root):
@@ -97,27 +122,41 @@ def _contact_shadow(spec, bbox_frame, config):
     return np.concatenate([tint * alpha, alpha], axis=-1)
 
 
-def place_characters(spec):
+def _validate_shot(spec, shot):
+    crop_w, crop_h = spec.width / shot.zoom, spec.height / shot.zoom
+    ox, oy = shot.origin
+    if shot.zoom < 1.0 or ox < -1e-6 or oy < -1e-6 \
+            or ox + crop_w > spec.width + 1e-6 or oy + crop_h > spec.height + 1e-6:
+        raise ValueError(f"Plano fuera del encuadre general: {shot}")
+
+
+def place_characters(spec, shot=WIDE):
+    _validate_shot(spec, shot)
+    zoom = shot.zoom
+    ox, oy = shot.origin
     placed = []
     for character in spec.characters:
         definition = load_rig(character.rig_path)
         source = np.asarray(definition.load_image(), dtype=np.float32) / 255.0
-        x0, y0, x1, y1 = _rest_bbox(source)
-        target_height = character.height * spec.height
-        scale = target_height / (y1 - y0)
-        rig = prepare_rig(definition, scale=scale)
-        bx0, by0, bx1, by1 = _rest_bbox(rig.rgba)
-        frame_x0 = character.center_x * spec.width - (bx1 - bx0) / 2
-        frame_y1 = character.bottom * spec.height
-        offset = (round(frame_x0 - bx0), round(frame_y1 - by1))
-        known = {j.name for j in rig.joints} | {"breath"}
+        sx0, sy0, sx1, sy1 = _rest_bbox(source)
+        scale = character.height * spec.height / (sy1 - sy0)
+        # Rig canvas origin in wide-frame pixels (float), then into the shot.
+        wide_x = character.center_x * spec.width - (sx1 - sx0) * scale / 2 - sx0 * scale
+        wide_y = character.bottom * spec.height - sy1 * scale
+        rig = prepare_rig(definition, scale=scale * zoom)
+        offset = (round((wide_x - ox) * zoom), round((wide_y - oy) * zoom))
+        known = {j.name for j in rig.joints} | BODY_KEYS
         unknown = set(character.tracks) - known
         if unknown:
             raise ValueError(f"Pistas sin articulación en {rig.name}: {sorted(unknown)}")
         shadow = None
         if character.contact_shadow:
-            bbox_frame = (bx0 + offset[0], by0 + offset[1], bx1 + offset[0], by1 + offset[1])
-            shadow = _contact_shadow(spec, bbox_frame, character.contact_shadow)
+            k = scale * zoom
+            bbox_frame = (sx0 * k + offset[0], sy0 * k + offset[1],
+                          sx1 * k + offset[0], sy1 * k + offset[1])
+            config = dict(character.contact_shadow)
+            config["blur"] = config.get("blur", 10) * zoom
+            shadow = _contact_shadow(spec, bbox_frame, config)
         placed.append(PlacedRig(rig=rig, offset=offset, tracks=character.tracks, shadow=shadow))
     return placed
 
@@ -136,27 +175,54 @@ def _composite(canvas, layer, offset):
     canvas[y0:y1, x0:x1] = src + dst * (1.0 - src[..., 3:4])
 
 
-def load_background(spec):
+def load_background(spec, shot=WIDE):
+    _validate_shot(spec, shot)
     with Image.open(spec.background) as image:
-        background = image.convert("RGB").resize(
-            (spec.width, spec.height), Image.Resampling.LANCZOS
-        )
+        image = image.convert("RGB")
+        fx = image.width / spec.width
+        fy = image.height / spec.height
+        ox, oy = shot.origin
+        box = (ox * fx, oy * fy,
+               (ox + spec.width / shot.zoom) * fx, (oy + spec.height / shot.zoom) * fy)
+        background = image.resize((spec.width, spec.height), Image.Resampling.LANCZOS, box=box)
     rgb = np.asarray(background, dtype=np.float32) / 255.0
     return np.concatenate([rgb, np.ones((*rgb.shape[:2], 1), np.float32)], axis=-1)
 
 
 def render_frame(background, placed, t):
     canvas = background.copy()
-    poses = []
-    for item in placed:
+    poses = [sample_tracks(item.tracks, t) for item in placed]
+    for item, pose in zip(placed, poses):
         if item.shadow is not None:
-            _composite(canvas, item.shadow, (0, 0))
-    for item in placed:
-        pose = sample_tracks(item.tracks, t)
-        poses.append(pose)
+            # The contact shadow fades as the character hops off the floor.
+            fade = float(np.clip(1.0 - 8.0 * pose.get("lift", 0.0), 0.4, 1.0))
+            layer = item.shadow if fade == 1.0 else item.shadow * fade
+            _composite(canvas, layer, (0, 0))
+    for item, pose in zip(placed, poses):
         _composite(canvas, render_pose(item.rig, pose), item.offset)
     rgb = np.clip(np.rint(canvas[..., :3] * 255.0), 0, 255).astype(np.uint8)
     return rgb, poses
+
+
+class SceneRenderer:
+    """Renders any frame of a scene, preparing each shot's assets on demand."""
+
+    def __init__(self, spec):
+        self.spec = spec
+        self._shots = {}
+
+    def assets(self, shot):
+        if shot not in self._shots:
+            self._shots[shot] = (load_background(self.spec, shot),
+                                 place_characters(self.spec, shot))
+        return self._shots[shot]
+
+    def frame(self, index):
+        t = index / self.spec.fps
+        shot = self.spec.shot_at(t)
+        background, placed = self.assets(shot)
+        rgb, poses = render_frame(background, placed, t)
+        return rgb, poses, shot
 
 
 def encoder_command(ffmpeg, spec, output_mp4, crf):
@@ -170,18 +236,18 @@ def encoder_command(ffmpeg, spec, output_mp4, crf):
     ]
 
 
-def render_range(spec, placed, background, start_frame, end_frame, output_mp4, crf=16):
+def render_range(renderer, start_frame, end_frame, output_mp4, crf=16):
     """Render frames [start_frame, end_frame) of a scene to one MP4 chunk."""
     ffmpeg = shutil.which("ffmpeg")
     if ffmpeg is None:
         raise FileNotFoundError("No se encontró FFmpeg en PATH")
     output_mp4 = Path(output_mp4)
     output_mp4.parent.mkdir(parents=True, exist_ok=True)
-    process = subprocess.Popen(encoder_command(ffmpeg, spec, output_mp4, crf),
+    process = subprocess.Popen(encoder_command(ffmpeg, renderer.spec, output_mp4, crf),
                                stdin=subprocess.PIPE)
     try:
         for index in range(start_frame, end_frame):
-            rgb, _ = render_frame(background, placed, index / spec.fps)
+            rgb, _, _ = renderer.frame(index)
             process.stdin.write(rgb.tobytes())
     finally:
         process.stdin.close()
@@ -199,8 +265,7 @@ def render_scene(spec, output_mp4, keyframe_dir=None, keyframe_times=(), crf=16,
         raise FileNotFoundError("No se encontró FFmpeg en PATH")
     output_mp4 = Path(output_mp4)
     output_mp4.parent.mkdir(parents=True, exist_ok=True)
-    background = load_background(spec)
-    placed = place_characters(spec)
+    renderer = SceneRenderer(spec)
 
     keyframe_indices = {round(t * spec.fps): t for t in keyframe_times}
     if keyframe_dir:
@@ -212,8 +277,8 @@ def render_scene(spec, output_mp4, keyframe_dir=None, keyframe_times=(), crf=16,
     try:
         for index in range(spec.frame_count):
             t = index / spec.fps
-            rgb, poses = render_frame(background, placed, t)
-            pose_log.append({"t": round(t, 4), "poses": [
+            rgb, poses, shot = renderer.frame(index)
+            pose_log.append({"t": round(t, 4), "shot": shot.name, "poses": [
                 {k: round(v, 4) for k, v in pose.items()} for pose in poses
             ]})
             process.stdin.write(rgb.tobytes())
@@ -232,7 +297,7 @@ def render_scene(spec, output_mp4, keyframe_dir=None, keyframe_times=(), crf=16,
         "frames": spec.frame_count,
         "placements": [
             {"rig": item.rig.name, "offset": list(item.offset), "size": list(item.rig.size)}
-            for item in placed
+            for item in renderer.assets(spec.shots[0][1])[1]
         ],
         "pose_log": pose_log,
     }

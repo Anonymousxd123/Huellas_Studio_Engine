@@ -158,7 +158,8 @@ def test_track_rejects_unsorted_keys_and_unknown_easing():
 def test_akira_rig_quality_gates():
     definition = load_rig(ROOT / "config/rigs/akira.json")
     rig = prepare_rig(definition, scale=0.5)
-    anchor = polygon_mask(rig.size, definition.joints[0].anchor_polygon, 0.5)
+    head = next(j for j in definition.joints if j.name == "head")
+    anchor = polygon_mask(rig.size, head.anchor_polygon, 0.5)
     protected = anchor & (rig.rgba[..., 3] > 0.5)
     for angle in (12.0, -5.0):
         metrics = evaluate_pose(rig, {"head": angle}, protected_mask=protected)
@@ -216,7 +217,8 @@ def test_rig_requires_exactly_one_remainder_layer(tmp_path):
 def test_daniela_rig_quality_gates():
     definition = load_rig(ROOT / "config/rigs/daniela.json")
     rig = prepare_rig(definition, scale=0.5)
-    anchor = polygon_mask(rig.size, definition.joints[0].anchor_polygon, 0.5)
+    head = next(j for j in definition.joints if j.name == "head")
+    anchor = polygon_mask(rig.size, head.anchor_polygon, 0.5)
     protected = anchor & (rig.rgba[..., 3] > 0.5)
     for angle in (10.0, -4.0):
         metrics = evaluate_pose(rig, {"head": angle}, protected_mask=protected)
@@ -311,3 +313,56 @@ def test_speaker_moves_while_talking():
     tracks = scene_tracks(scene, _cues())
     dog = [tracks["dog"]["head"].value(40.3 + i / 24) for i in range(48)]
     assert max(dog) - min(dog) > 2.0
+
+
+def test_lift_and_lean_move_whole_body(tmp_path):
+    rig = prepare_rig(load_rig(_synthetic_character(tmp_path)))
+    rest = render_pose(rig, {})
+    def top_row(frame):
+        return np.nonzero(frame[..., 3].max(axis=1) > 0.5)[0].min()
+    def mean_x(frame):
+        ys, xs = np.nonzero(frame[..., 3] > 0.5)
+        return xs[ys < 120].mean()
+    assert top_row(render_pose(rig, {"lift": 0.05})) < top_row(rest) - 5
+    assert mean_x(render_pose(rig, {"lean": 5})) < mean_x(rest) - 3  # CCW: top moves left
+
+
+def test_shots_validate_and_render_at_shot_scale(tmp_path):
+    from huellas_engine.character_animation.compositor import (
+        SceneRenderer, SceneSpec, Shot, load_background, WIDE,
+    )
+    rig_path = _synthetic_character(tmp_path)
+    Image.new("RGB", (160, 90), (90, 140, 200)).save(tmp_path / "bg.png")
+    spec_path = tmp_path / "scene.json"
+    spec_path.write_text(json.dumps({
+        "scene_id": "T003", "background": "bg.png", "width": 320, "height": 180,
+        "fps": 12, "duration": 2.0,
+        "characters": [{"rig": rig_path.name, "center_x": 0.3, "bottom": 0.95, "height": 0.8}],
+    }), encoding="utf-8")
+    spec = SceneSpec.load(spec_path, tmp_path)
+    close = Shot("close", 2.0, (0.0, 90.0))
+    spec.shots = [(0.0, WIDE), (1.0, close)]
+    renderer = SceneRenderer(spec)
+    _, _, first = renderer.frame(0)
+    _, _, second = renderer.frame(12)
+    assert first == WIDE and second == close
+    wide_rig = renderer.assets(WIDE)[1][0].rig
+    close_rig = renderer.assets(close)[1][0].rig
+    assert close_rig.size[1] == pytest.approx(wide_rig.size[1] * 2, abs=2)
+    with pytest.raises(ValueError):
+        load_background(spec, Shot("bad", 2.0, (200.0, 0.0)))
+
+
+def test_episode_choreography_respects_one_sided_dog_tracks():
+    from huellas_engine.character_animation.choreography import scene_tracks, TRACKS
+    for scene_id in ("SC003", "SC004", "SC005", "SC008"):
+        scene = {"scene_id": scene_id, "start": 10.0, "duration_seconds": 50.0}
+        tracks = scene_tracks(scene, _cues())
+        for name in ("tail", "lean", "lift"):
+            values = [tracks["dog"][name].value(i / 24) for i in range(50 * 24)]
+            assert min(values) >= -1e-6, (scene_id, name)
+        cat_tail = [tracks["cat"]["tail"].value(i / 24) for i in range(50 * 24)]
+        assert max(map(abs, cat_tail)) <= TRACKS["cat"]["tail"][0][1] + 1e-6
+        starts = [t for t, _ in tracks["shots"]]
+        assert starts[0] == 0.0 and tracks["shots"][0][1] == "wide"
+        assert all(b - a >= 1.5 for a, b in zip(starts, starts[1:]))

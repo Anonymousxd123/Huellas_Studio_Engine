@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 from .choreography import scene_tracks
-from .compositor import CharacterPlacement, SceneSpec
+from .compositor import WIDE, CharacterPlacement, SceneSpec, Shot
 
 # Framing validated on all eight episode_001 backgrounds: Akira always on the
 # left with his cropped tail on the frame edge and his cropped body below it.
@@ -18,6 +18,18 @@ LAYOUT = {
     },
 }
 DRAW_ORDER = ("dog", "cat")
+
+# Shots measured against LAYOUT (wide-frame pixels at 1920x1080). Zooms are
+# chosen so neither character's art is upscaled beyond ~1.0x of its master:
+# - dog_medium: push-in favouring Akira; his cropped body stays below frame
+#   and his cropped tail stays on the left edge. Daniela remains in frame.
+# - cat_close: Daniela close-up; Akira's right edge (x~749 + tilt) stays
+#   >40 px outside the crop, Daniela keeps ~49 px of headroom.
+SHOTS = {
+    "wide": WIDE,
+    "dog_medium": Shot("dog_medium", 1.17, (0.0, 1080 - 1080 / 1.17)),
+    "cat_close": Shot("cat_close", 1.7, (1920 - 1920 / 1.7, 420.0)),
+}
 
 
 def resolve_background(episode_dir, scene_id):
@@ -61,6 +73,7 @@ def build_scene_specs(episode_dir, language, root, fps=24, width=1920, height=10
                 contact_shadow=layout.get("contact_shadow"),
             ))
         spec = SceneSpec(
+            shots=[(t, SHOTS[name]) for t, name in tracks["shots"]],
             scene_id=scene_id,
             background=resolve_background(episode_dir, scene_id),
             width=width, height=height, fps=fps,
@@ -77,6 +90,7 @@ def spec_fingerprint(spec, extra=""):
     payload = {
         "background": str(spec.background),
         "size": [spec.width, spec.height, spec.fps, spec.duration],
+        "shots": [[t, shot.name, shot.zoom, list(shot.origin)] for t, shot in spec.shots],
         "characters": [
             {
                 "rig": Path(c.rig_path).read_text(encoding="utf-8"),

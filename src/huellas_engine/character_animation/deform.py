@@ -63,6 +63,7 @@ class PreparedRig:
     layers: list = field(default_factory=list)  # back-to-front
     breath_base_y: float = 0.0  # breathing scales vertically around this row
     breath_top_y: float = 0.0  # rows above this get the full breathing offset
+    base_x: float = 0.0  # horizontal centre of the rest bbox (lean pivot x)
 
     @property
     def size(self):
@@ -205,11 +206,30 @@ def _render_layer(layer, pose, bx, by, order):
     return frame
 
 
+BODY_KEYS = {"breath", "lift", "lean"}
+
+
+def _invert_body(rig, pose, xs, ys):
+    """Whole-body transforms: breath, then lean about the base, then lift.
+
+    lift is a fraction of the rest height (positive = up); lean is in degrees
+    (positive = counter-clockwise on screen) around (base_x, breath_base_y).
+    """
+    lift = float(pose.get("lift", 0.0))
+    lean = float(pose.get("lean", 0.0))
+    if lift:
+        ys = ys + lift * (rig.breath_base_y - rig.breath_top_y)
+    if lean:
+        xs, ys = _rotate(xs, ys, (rig.base_x, rig.breath_base_y), -np.deg2rad(lean))
+    return _invert_breath(rig, float(pose.get("breath", 0.0)), xs, ys)
+
+
 def render_pose(rig, pose=None, order=1):
     """Render the rig in a pose. Returns premultiplied float32 HxWx4.
 
     `pose` maps joint names to angles in degrees and may include "breath"
-    (fraction of the chest-to-head span to lift, e.g. 0.004).
+    (fraction of the chest-to-head span to lift, e.g. 0.004), "lift" and
+    "lean" (see _invert_body).
     """
     pose = pose or {}
     width, height = rig.size
@@ -217,11 +237,11 @@ def render_pose(rig, pose=None, order=1):
 
     known = {j.name for j in rig.joints}
     for name in pose:
-        if name != "breath" and name not in known:
+        if name not in BODY_KEYS and name not in known:
             raise KeyError(f"Articulación desconocida en la pose: {name}")
 
     # Forward order is joints first, then breathing; invert in reverse.
-    bx, by = _invert_breath(rig, pose.get("breath", 0.0), xs, ys)
+    bx, by = _invert_body(rig, pose, xs, ys)
     result = None
     for layer in rig.layers:
         frame = _render_layer(layer, pose, bx, by, order)
