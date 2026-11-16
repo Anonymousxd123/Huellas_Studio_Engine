@@ -64,8 +64,8 @@ def _joint_from_dict(j):
     return JointDefinition(
         name=j["name"],
         pivot=tuple(j["pivot"]),
-        rigid_polygon=[tuple(p) for p in j["rigid_polygon"]],
-        anchor_polygon=[tuple(p) for p in j["anchor_polygon"]],
+        rigid_polygon=j["rigid_polygon"],
+        anchor_polygon=j["anchor_polygon"],
         overlay=j.get("overlay", True),
         max_angle=float(j.get("max_angle", 20.0)),
         smoothing_sigma=float(j.get("smoothing_sigma", 4.0)),
@@ -109,11 +109,18 @@ def load_rig(path):
     )
 
 
+def _polygons(shape):
+    """Accept one polygon [[x, y], ...] or a union [[[x, y], ...], ...]."""
+    if shape and isinstance(shape[0][0], (list, tuple)):
+        return [list(map(tuple, poly)) for poly in shape]
+    return [list(map(tuple, shape))]
+
+
 def polygon_mask(size, polygon, scale=1.0):
     mask = Image.new("L", size, 0)
-    ImageDraw.Draw(mask).polygon(
-        [(x * scale, y * scale) for x, y in polygon], fill=255
-    )
+    draw = ImageDraw.Draw(mask)
+    for poly in _polygons(polygon):
+        draw.polygon([(x * scale, y * scale) for x, y in poly], fill=255)
     return np.asarray(mask, dtype=np.float32) / 255.0 > 0.5
 
 
@@ -184,11 +191,27 @@ def _prepare_joint(jd, size, scale):
     )
 
 
-def prepare_rig(definition, scale=1.0):
+def paste_accessories(image, accessories):
+    """Paint scene accessories (e.g. a toy in the mouth) onto the source art.
+
+    Pasted in source pixels before rigging, so an accessory inside the head's
+    rigid region moves exactly with the head.
+    """
+    from .props import draw_bone_toy  # local: props depends on nothing here
+
+    drawers = {"bone": lambda a: draw_bone_toy(a["length"], a.get("angle", 0.0))}
+    for accessory in accessories or []:
+        art = drawers[accessory["kind"]](accessory)
+        cx, cy = accessory["center"]
+        image.alpha_composite(art, (round(cx - art.width / 2), round(cy - art.height / 2)))
+    return image
+
+
+def prepare_rig(definition, scale=1.0, accessories=None):
     """Scale the source once (LANCZOS) and build masks/fields at that size."""
     if scale <= 0:
         raise ValueError("La escala debe ser positiva")
-    image = definition.load_image()
+    image = paste_accessories(definition.load_image(), accessories)
     if scale != 1.0:
         image = image.resize(
             (max(1, round(image.width * scale)),

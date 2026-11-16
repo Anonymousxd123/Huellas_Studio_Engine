@@ -31,6 +31,11 @@ TRACKS = {
         "lift": ((0.0, 0.04), 0.0, None),
         "lean": ((-3.0, 3.0), 0.0, None),
         "blink": ((0.0, 1.0), 0.0, None),
+        # Front paws: lift (left negative = up, right positive = up), small reach.
+        "paw_l_lift": ((-3.5, 0.0), 0.0, None),
+        "paw_r_lift": ((0.0, 3.5), 0.0, None),
+        "paw_l_reach": ((-8.0, 0.0), 0.0, None),
+        "x": ((-2000.0, 2000.0), 0.0, None),  # wide-frame px
     },
 }
 LIMITS = {role: tracks["head"][0] for role, tracks in TRACKS.items()}
@@ -47,7 +52,7 @@ class Timeline:
     sine: tuple | None
     duration: float
     keys: list = field(default_factory=list)
-    busy_until: float = -10.0
+    busy: list = field(default_factory=list)  # [(start, end)] of scheduled gestures
 
     def __post_init__(self):
         if not self.keys:
@@ -58,16 +63,20 @@ class Timeline:
         return max(low, min(high, value))
 
     def free_at(self, start, end):
-        return start >= self.busy_until + MIN_GAP and end <= self.duration - 0.3
+        if start < 0.0 or end > self.duration - 0.3:
+            return False
+        return all(end + MIN_GAP <= b0 or start >= b1 + MIN_GAP for b0, b1 in self.busy)
 
-    def add(self, start, points):
+    def add(self, start, points, from_value=None):
         """points: [(dt, value, easing)] relative to start, ending at neutral."""
         if points[-1][1] != self.neutral:
             raise ValueError("Un gesto debe terminar en el valor neutro")
-        self.keys.append((start, self.neutral, "hold"))
+        if not self.free_at(start, start + points[-1][0]) and self.busy:
+            raise ValueError("El gesto se solapa con otro ya programado")
+        self.keys.append((start, self.neutral if from_value is None else from_value, "hold"))
         for dt, value, easing in points:
             self.keys.append((start + dt, self.clamp(value), easing))
-        self.busy_until = start + points[-1][0]
+        self.busy.append((start, start + points[-1][0]))
 
     def try_add(self, start, points):
         if self.free_at(start, start + points[-1][0]):
@@ -161,6 +170,38 @@ def _schedule_blinks(timeline, special, rng, duration):
         timeline.try_add(start, points)
 
 
+def hop_walk(start_x, end_x, steps, step=0.36):
+    """Stylised walk for a seated character: small hops with alternating paws.
+
+    Returns point lists (relative times) for x, lift, paw_l_lift, paw_r_lift.
+    The x list ends at end_x; callers append the return/neutral as needed.
+    """
+    x, lift, left, right = [], [], [], []
+    for i in range(steps):
+        t0 = i * step
+        x.append((t0 + step * 0.85, start_x + (end_x - start_x) * (i + 1) / steps, "ease_in_out"))
+        lift.append((t0 + step * 0.45, 0.012, "ease_out"))
+        lift.append((t0 + step, 0.0, "ease_in"))
+        paw = left if i % 2 == 0 else right
+        sign = -1.0 if i % 2 == 0 else 1.0
+        paw.append((t0 + step * 0.4, 2.6 * sign, "ease_in_out"))
+        paw.append((t0 + step * 0.95, 0.0, "ease_in_out"))
+    return x, lift, left, right
+
+
+def knead(duration, beat=0.42):
+    """Alternating paw presses (kneading); returns (left, right) point lists."""
+    left, right, t, use_left = [], [], 0.0, True
+    while t + beat < duration:
+        if use_left:
+            left += [(t + beat * 0.45, -2.8, "ease_in_out"), (t + beat, 0.0, "ease_in_out")]
+        else:
+            right += [(t + beat * 0.45, 2.8, "ease_in_out"), (t + beat, 0.0, "ease_in_out")]
+        use_left = not use_left
+        t += beat
+    return left, right
+
+
 def hop(height, count=1, beat=0.34):
     points, t = [], 0.0
     for _ in range(count):
@@ -231,20 +272,78 @@ def scene_tracks(scene, cues, seed=2026):
         key=lambda c: c["start"],
     )
 
-    # Scene-specific openers.
+    props = {}
+    action_until = 0.0  # narration gestures start after the scene's main action
+
+    # Scene-specific actions from the script.
+    if scene_id == "SC001":  # Daniela follows the human in: she walks into frame
+        steps = 9
+        xs, lifts, left, right = hop_walk(820.0, 0.0, steps)
+        cat["x"].keys = [(0.0, 820.0)]
+        cat["x"].add(0.4, xs, from_value=820.0)
+        cat["lift"].add(0.4, lifts)
+        cat["paw_l_lift"].add(0.4, left)
+        cat["paw_r_lift"].add(0.4, right)
+        cat["tail"].add(0.3, [(0.5, 8.0, "ease_in_out"), (steps * 0.36 + 0.4, 8.0, "hold"),
+                              (steps * 0.36 + 1.4, 0.0, "ease_in_out")])
+        dog["head"].add(0.8, curious_tilt(7.0, hold=1.5))
+        action_until = steps * 0.36 + 2.0
+    if scene_id == "SC002":  # Daniela walks toward the door, waits, walks back
+        steps = 5
+        go, go_lift, go_l, go_r = hop_walk(0.0, 240.0, steps)
+        back, back_lift, back_l, back_r = hop_walk(240.0, 0.0, steps)
+        wait = 9.0
+        offset = go[-1][0] + wait
+        shifted = lambda pts: [(t + offset, v, e) for t, v, e in pts]
+        start_walk = 4.0
+        cat["x"].add(start_walk, go + [(offset, 240.0, "hold")] + shifted(back))
+        cat["lift"].add(start_walk, go_lift + shifted(back_lift))
+        cat["paw_l_lift"].add(start_walk, go_l + shifted(back_l))
+        cat["paw_r_lift"].add(start_walk, go_r + shifted(back_r))
+        dog["head"].add(start_walk + 0.6, curious_tilt(-4.0, hold=2.0))  # follows her
+        action_until = start_walk + offset + steps * 0.36 + 1.0
+    if scene_id == "SC004":  # the glass: lean in, two taps, a push; Akira recoils
+        taps = [(4.0, -6.0, -22.0), (6.6, -6.0, -48.0), (9.6, -8.0, -118.0)]
+        glass_x, glass_angle = [], []
+        cat["lean"].add(3.2, [(0.6, 2.2, "ease_in_out"), (7.4, 2.2, "hold"),
+                              (8.4, 0.0, "ease_in_out")])
+        for t0, reach, slide in taps:
+            cat["paw_l_reach"].try_add(t0, [(0.35, reach, "ease_in_out"),
+                                            (0.9, 0.0, "ease_in_out")])
+            glass_x.append((t0 + 0.32, glass_x[-1][1] if glass_x else 0.0, "hold"))
+            glass_x.append((t0 + 0.75, slide, "ease_out"))
+        last = taps[-1][0] + 0.75
+        glass_angle = [(0.0, 0.0), (last - 0.1, 0.0, "hold"), (last + 0.25, 9.0, "ease_out"),
+                       (last + 0.55, -6.0, "ease_in_out"), (last + 0.85, 3.5, "ease_in_out"),
+                       (last + 1.15, -1.5, "ease_in_out"), (last + 1.45, 0.0, "ease_in_out")]
+        props["glass"] = {"x": Track(keys=[(0.0, 0.0)] + glass_x),
+                          "angle": Track(keys=glass_angle)}
+        # Action in close-up, then cut wide for Akira's reaction.
+        shots += [(3.3, "cat_close"), (last + 0.15, "wide")]
+        dog["lift"].try_add(last + 0.35, hop(0.012, count=1, beat=0.4))
+        dog["lean"].try_add(last + 0.35, hold_pose(2.5, 0.35, 1.2, 0.8))
+        cat["tail"].try_add(last + 0.4, flick(-6.0))
+        cat["head"].try_add(last + 1.6, curious_tilt(6.0, hold=1.2))  # innocent look
+        action_until = last + 5.5
     if scene_id == "SC005":  # welcoming the human: happy bounces and wagging
         dog["lift"].try_add(1.0, hop(0.02, count=3))
         dog["tail"].try_add(0.8, wag(4.0, 3.0, 11.0, 2.0))
-    if scene_id == "SC004":  # the glass: Akira recoils, Daniela's tail flicks
-        dog["lift"].try_add(2.0, hop(0.012, count=1, beat=0.4))
-        dog["lean"].try_add(2.0, hold_pose(2.5, 0.35, 1.2, 0.8))
-        cat["tail"].try_add(1.0, flick(-6.0))
+    if scene_id == "SC006":  # kneading with half-closed, content eyes
+        shots += [(2.6, "cat_close"), (7.9, "wide")]
+        t = 3.0
+        for _ in range(3):
+            left, right = knead(4.2)
+            cat["paw_l_lift"].try_add(t, left)
+            cat["paw_r_lift"].try_add(t, right)
+            cat["blink"].try_add(t, [(0.6, 0.45, "ease_in_out"), (4.0, 0.45, "hold"),
+                                     (4.6, 0.0, "ease_in_out")])
+            t += 14.0
     if scene_id == "SC008":  # warm ending: gentle wag
         dog["tail"].try_add(1.5, wag(3.0, 1.5, 7.0, 2.0, beat=0.34))
 
     # Narration (chronological): gestures before the first dialogue line.
     narration_end = (dialogue[0]["start"] - start - 0.8) if dialogue else duration - 1.0
-    t = rng.uniform(4.5, 6.0) if scene_id in ("SC004", "SC005") else rng.uniform(1.2, 2.5)
+    t = max(action_until, rng.uniform(4.5, 6.0) if scene_id == "SC005" else rng.uniform(1.2, 2.5))
     turn = rng.choice(["dog", "cat"])
     beats = 0
     while t < narration_end - 4.0:
@@ -313,7 +412,7 @@ def scene_tracks(scene, cues, seed=2026):
     for role in ("dog", "cat"):
         _schedule_blinks(roles[role]["blink"], special[role], rng, duration)
 
-    result = {"shots": _normalise_shots(shots, duration)}
+    result = {"shots": _normalise_shots(shots, duration), "props": props}
     for role, timelines in roles.items():
         amp, period, phase = BREATH[role]
         result[role] = {name: tl.track() for name, tl in timelines.items()}

@@ -23,7 +23,7 @@ from huellas_engine.character_animation import (  # noqa: E402
 )
 from huellas_engine.character_animation.deform import to_straight_uint8  # noqa: E402
 from huellas_engine.character_animation.qa import evaluate_pose  # noqa: E402
-from huellas_engine.character_animation.rig import polygon_mask  # noqa: E402
+from huellas_engine.character_animation.rig import _polygons, polygon_mask  # noqa: E402
 
 CHECKER = (236, 236, 236)
 
@@ -52,8 +52,10 @@ def debug_overlay(definition, rig):
         heat[..., 3] = (joint.weight * 110).astype(np.uint8)
         canvas.alpha_composite(Image.fromarray(heat))
         draw = ImageDraw.Draw(canvas)
-        draw.line(jd.rigid_polygon + [jd.rigid_polygon[0]], fill=(255, 60, 60, 255), width=3)
-        draw.line(jd.anchor_polygon + [jd.anchor_polygon[0]], fill=(40, 170, 255, 255), width=3)
+        for poly in _polygons(jd.rigid_polygon):
+            draw.line(poly + [poly[0]], fill=(255, 60, 60, 255), width=3)
+        for poly in _polygons(jd.anchor_polygon):
+            draw.line(poly + [poly[0]], fill=(40, 170, 255, 255), width=3)
         px, py = jd.pivot
         draw.ellipse((px - 10, py - 10, px + 10, py + 10), fill=(255, 215, 0, 255),
                      outline=(0, 0, 0, 255), width=2)

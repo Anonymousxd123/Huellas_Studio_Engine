@@ -4,8 +4,14 @@ import hashlib
 import json
 from pathlib import Path
 
+from functools import lru_cache
+
+import numpy as np
+from PIL import Image
+
 from .choreography import scene_tracks
-from .compositor import WIDE, CharacterPlacement, SceneSpec, Shot
+from .compositor import WIDE, CharacterPlacement, PropPlacement, SceneSpec, Shot, _rest_bbox
+from .rig import load_rig
 
 # Framing validated on all eight episode_001 backgrounds: Akira always on the
 # left with his cropped tail on the frame edge and his cropped body below it.
@@ -25,11 +31,51 @@ DRAW_ORDER = ("dog", "cat")
 #   and his cropped tail stays on the left edge. Daniela remains in frame.
 # - cat_close: Daniela close-up; Akira's right edge (x~749 + tilt) stays
 #   >40 px outside the crop, Daniela keeps ~49 px of headroom.
-SHOTS = {
-    "wide": WIDE,
-    "dog_medium": Shot("dog_medium", 1.17, (0.0, 1080 - 1080 / 1.17)),
-    "cat_close": Shot("cat_close", 1.7, (1920 - 1920 / 1.7, 420.0)),
+DOG_MEDIUM = Shot("dog_medium", 1.17, (0.0, 1080 - 1080 / 1.17))
+DOG_RIGHT_EDGE = 749.0  # Akira's rest bbox right edge in the wide frame (LAYOUT)
+CLEARANCE = 40.0  # keep this many px of Akira outside a Daniela close-up
+
+# Per-scene overrides of LAYOUT (measured on each background at 1920x1080).
+SCENE_LAYOUT = {
+    # SC004: Daniela sits on the coffee table (top surface y~760-840,
+    # x~690-1460) so she can reach the glass; smaller because she is further
+    # back than Akira.
+    "SC004": {"cat": {"center_x": 0.693, "bottom": 0.755, "height": 0.33,
+                      "contact_shadow": {"opacity": 0.32, "width": 0.78, "height": 0.05,
+                                         "offset_y": 0.012, "blur": 7}}},
 }
+# Accessories painted onto the rig source (source px), moving with the head.
+SCENE_ACCESSORIES = {
+    "SC005": {"dog": [{"kind": "bone", "center": [772, 592], "length": 300, "angle": -6}]},
+}
+
+
+@lru_cache(maxsize=None)
+def _source_bbox(rig_path):
+    image = load_rig(rig_path).load_image()
+    return _rest_bbox(np.asarray(image, dtype=np.float32) / 255.0)
+
+
+def _wide_bbox(layout, rig_path, width, height):
+    """Rest bbox of a character in wide-frame px, plus its rig scale."""
+    sx0, sy0, sx1, sy1 = _source_bbox(str(rig_path))
+    scale = layout["height"] * height / (sy1 - sy0)
+    x0 = layout["center_x"] * width - (sx1 - sx0) * scale / 2
+    y1 = layout["bottom"] * height
+    return (x0, y1 - (sy1 - sy0) * scale, x0 + (sx1 - sx0) * scale, y1), scale
+
+
+def cat_close_shot(bbox, art_scale, width, height):
+    """Daniela close-up: ~85% of the frame height, no upscaling, Akira out."""
+    x0, y0, x1, y1 = bbox
+    zoom = 0.85 * height / (y1 - y0)
+    zoom = max(zoom, width / (width - DOG_RIGHT_EDGE - CLEARANCE))  # keep Akira out
+    zoom = round(min(zoom, 2.0, 0.98 / art_scale), 4)  # background and art sharpness
+    crop_w, crop_h = width / zoom, height / zoom
+    ox = min(max((x0 + x1) / 2 - crop_w / 2, DOG_RIGHT_EDGE + CLEARANCE), width - crop_w)
+    oy = min(max((y0 + y1) / 2 - crop_h / 2, 0.0), height - crop_h)
+    # Floor so the crop never exceeds the frame by a rounding hair.
+    return Shot("cat_close", zoom, (np.floor(ox * 100) / 100, np.floor(oy * 100) / 100))
 
 
 def resolve_background(episode_dir, scene_id):
@@ -60,10 +106,12 @@ def build_scene_specs(episode_dir, language, root, fps=24, width=1920, height=10
         cues = [c for c in timeline["cues"] if c["scene_id"] == scene_id]
         tracks = scene_tracks(dict(scene, start=start), cues)
         characters = []
+        layouts = {}
         for role in DRAW_ORDER:
             if role not in scene.get("characters", DRAW_ORDER):
                 continue
-            layout = LAYOUT[role]
+            layout = dict(LAYOUT[role], **SCENE_LAYOUT.get(scene_id, {}).get(role, {}))
+            layouts[role] = layout
             characters.append(CharacterPlacement(
                 rig_path=root / layout["rig"],
                 center_x=layout["center_x"],
@@ -71,9 +119,27 @@ def build_scene_specs(episode_dir, language, root, fps=24, width=1920, height=10
                 height=layout["height"],
                 tracks=tracks[role],
                 contact_shadow=layout.get("contact_shadow"),
+                accessories=SCENE_ACCESSORIES.get(scene_id, {}).get(role, []),
+            ))
+        cat_bbox, cat_scale = _wide_bbox(layouts["cat"], root / layouts["cat"]["rig"],
+                                         width, height)
+        shots = {"wide": WIDE, "dog_medium": DOG_MEDIUM,
+                 "cat_close": cat_close_shot(cat_bbox, cat_scale, width, height)}
+        props = []
+        if "glass" in tracks["props"]:
+            # Just left of Daniela's left front paw (source x 278 at the paw),
+            # standing on the same surface; ~30% of her seated height.
+            sx0 = _source_bbox(str(root / layouts["cat"]["rig"]))[0]
+            paw_left = cat_bbox[0] + (278 - sx0) * cat_scale
+            glass_h = 0.30 * (cat_bbox[3] - cat_bbox[1])
+            props.append(PropPlacement(
+                kind="glass", height=glass_h,
+                base=(paw_left - glass_h * 0.34 - 3, cat_bbox[3] - 3),
+                tracks=tracks["props"]["glass"],
             ))
         spec = SceneSpec(
-            shots=[(t, SHOTS[name]) for t, name in tracks["shots"]],
+            props=props,
+            shots=[(t, shots[name]) for t, name in tracks["shots"]],
             scene_id=scene_id,
             background=resolve_background(episode_dir, scene_id),
             width=width, height=height, fps=fps,
@@ -91,10 +157,14 @@ def spec_fingerprint(spec, extra=""):
         "background": str(spec.background),
         "size": [spec.width, spec.height, spec.fps, spec.duration],
         "shots": [[t, shot.name, shot.zoom, list(shot.origin)] for t, shot in spec.shots],
+        "props": [[p.kind, p.height, list(p.base),
+                   {n: {"keys": [list(k) for k in t.keys], "sine": t.sine}
+                    for n, t in sorted(p.tracks.items())}] for p in spec.props],
         "characters": [
             {
                 "rig": Path(c.rig_path).read_text(encoding="utf-8"),
                 "placement": [c.center_x, c.bottom, c.height],
+                "accessories": c.accessories,
                 "shadow": c.contact_shadow,
                 "tracks": {
                     name: {"keys": [list(k) for k in t.keys], "sine": t.sine}

@@ -366,3 +366,37 @@ def test_episode_choreography_respects_one_sided_dog_tracks():
         starts = [t for t, _ in tracks["shots"]]
         assert starts[0] == 0.0 and tracks["shots"][0][1] == "wide"
         assert all(b - a >= 1.5 for a, b in zip(starts, starts[1:]))
+
+
+def test_timeline_schedules_out_of_order_without_overlap():
+    from huellas_engine.character_animation.choreography import Timeline
+    tl = Timeline((-10.0, 10.0), 0.0, None, 30.0)
+    assert tl.try_add(10.0, [(1.0, 5.0, "ease_in_out"), (2.0, 0.0, "ease_in_out")])
+    assert tl.try_add(2.0, [(1.0, 5.0, "ease_in_out"), (2.0, 0.0, "ease_in_out")])
+    assert not tl.try_add(10.5, [(1.0, 5.0, "ease_in_out"), (2.0, 0.0, "ease_in_out")])
+    track = tl.track()
+    assert [k[0] for k in track.keys] == sorted(k[0] for k in track.keys)
+    assert track.value(11.0) == pytest.approx(5.0)
+
+
+def test_props_draw_at_requested_size_with_transparency():
+    from huellas_engine.character_animation.props import draw_bone_toy, draw_glass
+    glass = draw_glass(120)
+    assert glass.size[1] == 120 and glass.mode == "RGBA"
+    alpha = np.asarray(glass)[..., 3]
+    assert alpha.max() == 255 and alpha[0, 0] == 0
+    bone = draw_bone_toy(300)
+    assert bone.size[0] >= 300 and np.asarray(bone)[..., 3].max() == 255
+
+
+def test_episode_scene_actions_exist():
+    from huellas_engine.character_animation.choreography import scene_tracks
+    def at(name, scene_id, role, track, t):
+        scene = {"scene_id": scene_id, "start": 10.0, "duration_seconds": 50.0}
+        return scene_tracks(scene, _cues())[role][track].value(t)
+    assert at("walk-in", "SC001", "cat", "x", 0.0) > 700  # starts off-screen
+    assert at("walk-in", "SC001", "cat", "x", 6.0) == pytest.approx(0.0)
+    scene = {"scene_id": "SC004", "start": 10.0, "duration_seconds": 50.0}
+    glass = scene_tracks(scene, _cues())["props"]["glass"]["x"]
+    assert glass.value(0) == 0 and glass.value(20) < -100  # pushed left
+    assert at("knead", "SC006", "cat", "paw_l_lift", 3.2) < -1.0

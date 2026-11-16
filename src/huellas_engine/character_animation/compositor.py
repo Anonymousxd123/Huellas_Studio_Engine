@@ -10,6 +10,9 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
 from .deform import BODY_KEYS, render_pose
+from .props import PROP_DRAWERS, to_premultiplied
+
+SCREEN_KEYS = {"x"}  # handled by the compositor: horizontal move in wide-frame px
 from .motion import Track, sample_tracks
 from .rig import ALPHA_THRESHOLD, load_rig, prepare_rig
 
@@ -22,6 +25,17 @@ class CharacterPlacement:
     height: float  # fraction of frame height for the rest-pose bbox height
     tracks: dict = field(default_factory=dict)
     contact_shadow: dict | None = None  # {"opacity", "width", "height", "offset_y"}
+    accessories: list = field(default_factory=list)  # see rig.paste_accessories
+
+
+@dataclass
+class PropPlacement:
+    """A prop drawn behind the characters. base = bottom-centre, wide-frame px."""
+
+    kind: str
+    height: float  # wide-frame px
+    base: tuple
+    tracks: dict = field(default_factory=dict)  # "x", "y" (px), "angle" (deg)
 
 
 @dataclass(frozen=True)
@@ -51,6 +65,7 @@ class SceneSpec:
     duration: float
     characters: list
     shots: list = field(default_factory=lambda: [(0.0, WIDE)])  # [(start_t, Shot)]
+    props: list = field(default_factory=list)  # [PropPlacement]
 
     def shot_at(self, t):
         current = self.shots[0][1]
@@ -96,6 +111,7 @@ class PlacedRig:
     offset: tuple  # integer (x, y) of the rig canvas on the frame
     tracks: dict
     shadow: np.ndarray | None = None  # premultiplied frame-sized layer
+    zoom: float = 1.0
 
 
 def _rest_bbox(rgba):
@@ -143,9 +159,9 @@ def place_characters(spec, shot=WIDE):
         # Rig canvas origin in wide-frame pixels (float), then into the shot.
         wide_x = character.center_x * spec.width - (sx1 - sx0) * scale / 2 - sx0 * scale
         wide_y = character.bottom * spec.height - sy1 * scale
-        rig = prepare_rig(definition, scale=scale * zoom)
+        rig = prepare_rig(definition, scale=scale * zoom, accessories=character.accessories)
         offset = (round((wide_x - ox) * zoom), round((wide_y - oy) * zoom))
-        known = {j.name for j in rig.joints} | BODY_KEYS
+        known = {j.name for j in rig.joints} | BODY_KEYS | SCREEN_KEYS
         unknown = set(character.tracks) - known
         if unknown:
             raise ValueError(f"Pistas sin articulación en {rig.name}: {sorted(unknown)}")
@@ -157,7 +173,8 @@ def place_characters(spec, shot=WIDE):
             config = dict(character.contact_shadow)
             config["blur"] = config.get("blur", 10) * zoom
             shadow = _contact_shadow(spec, bbox_frame, config)
-        placed.append(PlacedRig(rig=rig, offset=offset, tracks=character.tracks, shadow=shadow))
+        placed.append(PlacedRig(rig=rig, offset=offset, tracks=character.tracks,
+                                shadow=shadow, zoom=zoom))
     return placed
 
 
@@ -189,17 +206,57 @@ def load_background(spec, shot=WIDE):
     return np.concatenate([rgb, np.ones((*rgb.shape[:2], 1), np.float32)], axis=-1)
 
 
-def render_frame(background, placed, t):
+@dataclass
+class PlacedProp:
+    image: object  # PIL RGBA at shot scale
+    base: tuple  # bottom-centre in shot px (float)
+    zoom: float
+    tracks: dict
+
+
+def place_props(spec, shot=WIDE):
+    placed = []
+    for prop in spec.props:
+        image = PROP_DRAWERS[prop.kind](prop.height * shot.zoom)
+        base = ((prop.base[0] - shot.origin[0]) * shot.zoom,
+                (prop.base[1] - shot.origin[1]) * shot.zoom)
+        placed.append(PlacedProp(image=image, base=base, zoom=shot.zoom, tracks=prop.tracks))
+    return placed
+
+
+def _draw_prop(canvas, prop, t):
+    values = sample_tracks(prop.tracks, t)
+    image = prop.image
+    angle = values.get("angle", 0.0)
+    w, h = image.size
+    if angle:
+        # Rotate about the bottom centre (the contact point on the surface).
+        pad = Image.new("RGBA", (w * 2, h * 2), (0, 0, 0, 0))
+        pad.alpha_composite(image, (w // 2, 0))
+        image = pad.rotate(angle, resample=Image.Resampling.BICUBIC, center=(w, h))
+        anchor = (w, h)
+    else:
+        anchor = (w / 2, h)
+    x = prop.base[0] + values.get("x", 0.0) * prop.zoom - anchor[0]
+    y = prop.base[1] + values.get("y", 0.0) * prop.zoom - anchor[1]
+    _composite(canvas, to_premultiplied(image), (round(x), round(y)))
+
+
+def render_frame(background, placed, t, props=()):
     canvas = background.copy()
     poses = [sample_tracks(item.tracks, t) for item in placed]
-    for item, pose in zip(placed, poses):
+    shifts = [round(pose.pop("x", 0.0) * item.zoom) for item, pose in zip(placed, poses)]
+    for item, pose, dx in zip(placed, poses, shifts):
         if item.shadow is not None:
             # The contact shadow fades as the character hops off the floor.
             fade = float(np.clip(1.0 - 8.0 * pose.get("lift", 0.0), 0.4, 1.0))
             layer = item.shadow if fade == 1.0 else item.shadow * fade
-            _composite(canvas, layer, (0, 0))
-    for item, pose in zip(placed, poses):
-        _composite(canvas, render_pose(item.rig, pose), item.offset)
+            _composite(canvas, layer, (dx, 0))
+    for prop in props:
+        _draw_prop(canvas, prop, t)
+    for item, pose, dx in zip(placed, poses, shifts):
+        _composite(canvas, render_pose(item.rig, pose),
+                   (item.offset[0] + dx, item.offset[1]))
     rgb = np.clip(np.rint(canvas[..., :3] * 255.0), 0, 255).astype(np.uint8)
     return rgb, poses
 
@@ -214,14 +271,15 @@ class SceneRenderer:
     def assets(self, shot):
         if shot not in self._shots:
             self._shots[shot] = (load_background(self.spec, shot),
-                                 place_characters(self.spec, shot))
+                                 place_characters(self.spec, shot),
+                                 place_props(self.spec, shot))
         return self._shots[shot]
 
     def frame(self, index):
         t = index / self.spec.fps
         shot = self.spec.shot_at(t)
-        background, placed = self.assets(shot)
-        rgb, poses = render_frame(background, placed, t)
+        background, placed, props = self.assets(shot)
+        rgb, poses = render_frame(background, placed, t, props)
         return rgb, poses, shot
 
 
