@@ -23,12 +23,14 @@ TRACKS = {
         "tail": ((0.0, 12.0), 2.0, (1.2, 3.3, 0.4)),
         "lift": ((0.0, 0.025), 0.0, None),
         "lean": ((0.0, 3.0), 0.0, None),
+        "blink": ((0.0, 1.0), 0.0, None),
     },
     "cat": {
         "head": ((-4.0, 10.0), 0.0, (0.7, 5.1, 1.7)),
         "tail": ((-10.0, 10.0), 0.0, (4.0, 4.2, 0.0)),
         "lift": ((0.0, 0.04), 0.0, None),
         "lean": ((-3.0, 3.0), 0.0, None),
+        "blink": ((0.0, 1.0), 0.0, None),
     },
 }
 LIMITS = {role: tracks["head"][0] for role, tracks in TRACKS.items()}
@@ -135,6 +137,28 @@ def wag(duration, low, high, neutral, beat=0.24):
 
 def flick(amount):
     return [(0.25, amount, "ease_in_out"), (0.85, 0.0, "ease_in_out")]
+
+
+def quick_blink():
+    return [(0.07, 1.0, "ease_in"), (0.11, 1.0, "hold"), (0.25, 0.0, "ease_out")]
+
+
+def slow_blink(hold=0.8):
+    """The cat 'I trust you' blink: slow close, hold, slow open."""
+    return [(0.65, 1.0, "ease_in_out"), (0.65 + hold, 1.0, "hold"),
+            (1.45 + hold, 0.0, "ease_in_out")]
+
+
+def _schedule_blinks(timeline, special, rng, duration):
+    """Slow blinks as given; natural quick blinks every ~3-5 s, kept clear of them."""
+    events = list(special)
+    t = rng.uniform(0.8, 2.5)
+    while t < duration - 1.0:
+        if all(abs(t - start) >= 1.5 for start, _ in special):
+            events.append((t, quick_blink()))
+        t += rng.uniform(2.8, 5.5)
+    for start, points in sorted(events, key=lambda e: e[0]):
+        timeline.try_add(start, points)
 
 
 def hop(height, count=1, beat=0.34):
@@ -270,6 +294,24 @@ def scene_tracks(scene, cues, seed=2026):
         shots.append((max(0.0, t0 - 0.15), "dog_medium" if speaker_role == "dog" else "cat_close"))
     if dialogue:
         shots.append((dialogue[-1]["end"] - start + 0.5, "wide"))
+
+    # Blinks: SC007's slow blink (Daniela, then Akira imitates), SC008 calm.
+    special = {"dog": [], "cat": []}
+    if scene_id == "SC007":
+        t = 3.0
+        while t < narration_end - 6.0:
+            special["cat"].append((t, slow_blink(0.9)))
+            special["dog"].append((t + 2.8, slow_blink(0.6)))
+            t += rng.uniform(11.0, 14.0)
+    if scene_id == "SC008":
+        t = 2.0
+        turn = "cat"
+        while t < duration - 4.0:
+            special[turn].append((t, slow_blink(0.5)))
+            turn = "dog" if turn == "cat" else "cat"
+            t += rng.uniform(6.0, 9.0)
+    for role in ("dog", "cat"):
+        _schedule_blinks(roles[role]["blink"], special[role], rng, duration)
 
     result = {"shots": _normalise_shots(shots, duration)}
     for role, timelines in roles.items():

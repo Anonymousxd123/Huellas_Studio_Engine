@@ -14,6 +14,8 @@ from dataclasses import dataclass, field
 import numpy as np
 from scipy import ndimage as ndi
 
+from .eyes import paint_eyelids
+
 FIXED_POINT_ITERATIONS = 3
 NEWTON_ITERATIONS = 6
 
@@ -76,6 +78,7 @@ class Layer:
     name: str
     rgba: np.ndarray  # float32 HxWx4 straight alpha; zero outside this layer
     joints: list = field(default_factory=list)
+    eyes: list = field(default_factory=list)  # eyes.Eye, for blinks
 
     @property
     def premultiplied(self):
@@ -238,6 +241,7 @@ def _render_layer(layer, pose, bx, by, order, body_reach):
             )
         angles.append(angle)
         reach += joint.reach(angle, layer.bbox)
+    source = paint_eyelids(layer.premultiplied, layer.eyes, pose.get("blink", 0.0))
     rx0, ry0, rx1, ry1 = _grow(layer.bbox, reach, width, height)
     roi = (slice(ry0, ry1), slice(rx0, rx1))
     src_x, src_y = bx[roi].copy(), by[roi].copy()
@@ -251,13 +255,13 @@ def _render_layer(layer, pose, bx, by, order, body_reach):
         if src_x[sub].size:
             src_x[sub], src_y[sub] = invert_joint(joint, angle, src_x[sub], src_y[sub])
 
-    part = _sample_rgba(layer.premultiplied, src_x, src_y, order)
+    part = _sample_rgba(source, src_x, src_y, order)
 
     for joint, angle in zip(layer.joints, angles):
         if joint.overlay_alpha is None or angle == 0:
             continue
         rigid_x, rigid_y = _rotate(bx[roi], by[roi], joint.pivot, -np.deg2rad(angle))
-        top = _sample_rgba(layer.premultiplied, rigid_x, rigid_y, order)
+        top = _sample_rgba(source, rigid_x, rigid_y, order)
         coverage = ndi.map_coordinates(
             joint.overlay_alpha, [rigid_y, rigid_x], order=1,
             mode="constant", cval=0.0, prefilter=False
@@ -268,7 +272,7 @@ def _render_layer(layer, pose, bx, by, order, body_reach):
     return frame, roi
 
 
-BODY_KEYS = {"breath", "lift", "lean"}
+BODY_KEYS = {"breath", "lift", "lean", "blink"}
 
 
 def _invert_body(rig, pose, xs, ys):

@@ -9,6 +9,7 @@ from PIL import Image, ImageDraw
 from scipy import ndimage as ndi
 
 from .deform import Joint, Layer, PreparedRig
+from .eyes import build_eye
 
 ALPHA_THRESHOLD = 8
 
@@ -36,6 +37,7 @@ class LayerDefinition:
     name: str
     region_polygon: list | None = None
     joints: list = field(default_factory=list)
+    eyes: list = field(default_factory=list)  # dicts: center, radii, line_width, line_rgb
 
 
 @dataclass
@@ -83,6 +85,7 @@ def load_rig(path):
                     if layer.get("region_polygon") else None
                 ),
                 joints=[_joint_from_dict(j) for j in layer.get("joints", [])],
+                eyes=layer.get("eyes", []),
             )
             for layer in data["layers"]
         ]
@@ -211,10 +214,21 @@ def prepare_rig(definition, scale=1.0):
     for ld in definition.layers:
         mask = region_masks.get(ld.name, ~claimed)
         layer_rgba = rgba * mask[..., None]
+        eyes = [
+            build_eye(
+                rgba,
+                (spec["center"][0] * scale, spec["center"][1] * scale),
+                (spec["radii"][0] * scale, spec["radii"][1] * scale),
+                line_width=max(1.0, spec.get("line_width", 6) * scale),
+                line_rgb=np.array(spec.get("line_rgb", [38, 22, 18]), np.float32) / 255.0,
+            )
+            for spec in ld.eyes
+        ]
         layers.append(Layer(
             name=ld.name,
             rgba=layer_rgba,
             joints=[_prepare_joint(jd, image.size, scale) for jd in ld.joints],
+            eyes=eyes,
         ))
 
     base = definition.breath_base_y
